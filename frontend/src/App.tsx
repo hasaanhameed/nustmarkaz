@@ -37,33 +37,33 @@ const App = () => (
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          
+
           {/* Dashboard */}
           <Route path="/dashboard" element={<DashboardPage />} />
-          
+
           {/* Marketplace */}
           <Route path="/marketplace" element={<MarketplacePage />} />
           <Route path="/marketplace/:id" element={<ProductDetailPage />} />
           <Route path="/marketplace/create" element={<CreateProductPage />} />
-          
+
           {/* Trips */}
           <Route path="/trips" element={<TripsPage />} />
           <Route path="/trips/:id" element={<TripDetailPage />} />
           <Route path="/trips/create" element={<CreateTripPage />} />
-          
+
           {/* Donations */}
           <Route path="/donations" element={<DonationsPage />} />
           <Route path="/donations/:id" element={<DonationDetailPage />} />
           <Route path="/donations/create" element={<CreateDonationPage />} />
-          
+
           {/* Giveaways */}
           <Route path="/giveaways" element={<GiveawaysPage />} />
           <Route path="/giveaways/:id" element={<GiveawayDetailPage />} />
           <Route path="/giveaways/create" element={<CreateGiveawayPage />} />
-          
+
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
-          
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
