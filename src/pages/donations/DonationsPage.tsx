@@ -1,0 +1,65 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ListingCard } from "@/components/ui/ListingCard";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { mockDonations } from "@/data/mockData";
+import { Search, Plus, Heart } from "lucide-react";
+
+export default function DonationsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredDonations = mockDonations.filter((donation) =>
+    donation.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <Layout>
+      <div className="container-custom py-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">Donation Drives</h1>
+            <p className="text-muted-foreground mt-1">Support causes that matter to our community</p>
+          </div>
+          <Link to="/donations/create">
+            <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+              <Plus className="h-4 w-4" />
+              Start Drive
+            </Button>
+          </Link>
+        </div>
+
+        {/* Search */}
+        <div className="relative max-w-md mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search donation drives..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        {/* Donations Grid */}
+        {filteredDonations.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredDonations.map((donation) => (
+              <ListingCard key={donation.id} {...donation} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={Heart}
+            title="No donation drives found"
+            description="Start a donation drive to support a cause you care about."
+            actionLabel="Start Drive"
+            actionHref="/donations/create"
+          />
+        )}
+      </div>
+    </Layout>
+  );
+}
