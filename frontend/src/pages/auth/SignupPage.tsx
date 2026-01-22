@@ -4,10 +4,16 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User, Mail, Lock } from "lucide-react";
-import { createUser } from "@/api/user"; // Import the create user API function
+import { createUser } from "@/api/user";
 
 const departments = [
   "SEECS - School of Electrical Engineering & Computer Science",
@@ -40,54 +46,78 @@ export default function SignupPage() {
     if (!formData.name) {
       newErrors.name = "Name is required";
     }
-    
+
     if (!formData.email) {
       newErrors.email = "Email is required";
-    } else if (!formData.email.includes("@nust.edu.pk")) {
-      newErrors.email = "Please use your NUST email";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords don't match";
     }
-    
+
     if (!formData.department) {
       newErrors.department = "Please select your department";
     }
-    
+
     if (!agreeTerms) {
       newErrors.terms = "You must agree to the terms";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    console.log("=== FORM SUBMITTED ===");
+    console.log("Form data:", formData);
+    console.log("Agree terms:", agreeTerms);
+
+    const isValid = validateForm();
+    console.log("Validation result:", isValid);
+
+    if (isValid) {
+      console.log("Validation passed! Calling API...");
       try {
-        await createUser({
+        const result = await createUser({
           username: formData.name,
           email: formData.email,
           department: formData.department,
-          password: formData.password
+          password: formData.password,
         });
-        navigate("/login"); // Redirect to login page after successful signup
-      } catch (err) {
-        console.error("Registration failed", err);
+        console.log("API Success:", result);
+        navigate("/login");
+      } catch (err: any) {
+        console.error("API Error:", err);
+        console.error("Error response:", err.response?.data);
+        const errorMessage =
+          err.response?.data?.detail ||
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to create account. Please try again.";
+        setErrors({ api: errorMessage });
       }
+    } else {
+      console.log("Validation FAILED - not calling API");
+      console.log("Current errors:", errors);
     }
   };
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
   return (
@@ -106,8 +136,12 @@ export default function SignupPage() {
                     placeholder="Muhammad Ali"
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
+                    className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                )}
               </div>
 
               <div>
@@ -117,17 +151,26 @@ export default function SignupPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="      your.name@nust.edu.pk"
+                    placeholder="your.name@nust.edu.pk"
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
+                    className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div>
                 <Label htmlFor="department">Department</Label>
-                <Select value={formData.department} onValueChange={(value) => handleChange("department", value)}>
-                  <SelectTrigger>
+                <Select
+                  value={formData.department}
+                  onValueChange={(value) => handleChange("department", value)}
+                >
+                  <SelectTrigger
+                    className={errors.department ? "border-red-500" : ""}
+                  >
                     <SelectValue placeholder="Select your department" />
                   </SelectTrigger>
                   <SelectContent>
@@ -138,6 +181,11 @@ export default function SignupPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.department && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.department}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -150,8 +198,12 @@ export default function SignupPage() {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => handleChange("password", e.target.value)}
+                    className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+                )}
               </div>
 
               <div>
@@ -163,18 +215,38 @@ export default function SignupPage() {
                     type="password"
                     placeholder="••••••••"
                     value={formData.confirmPassword}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("confirmPassword", e.target.value)
+                    }
+                    className={`pl-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
                   />
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
 
-              <div>
+              <div className="flex items-start gap-2">
                 <Checkbox
                   id="terms"
                   checked={agreeTerms}
-                  onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
+                  onCheckedChange={(checked) => {
+                    setAgreeTerms(checked as boolean);
+                    if (errors.terms && checked) {
+                      setErrors((prev) => {
+                        const newErrors = { ...prev };
+                        delete newErrors.terms;
+                        return newErrors;
+                      });
+                    }
+                  }}
                 />
-                <Label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer leading-relaxed">
+                <Label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground cursor-pointer leading-relaxed"
+                >
                   I agree to the{" "}
                   <Link to="#" className="text-accent hover:underline">
                     Terms of Service
@@ -185,6 +257,13 @@ export default function SignupPage() {
                   </Link>
                 </Label>
               </div>
+              {errors.terms && (
+                <p className="text-sm text-red-500 mt-1">{errors.terms}</p>
+              )}
+
+              {errors.api && (
+                <p className="text-sm text-red-500 mt-1">{errors.api}</p>
+              )}
 
               <Button type="submit" className="w-full">
                 Create Account

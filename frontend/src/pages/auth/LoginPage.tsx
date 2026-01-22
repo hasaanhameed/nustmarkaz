@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { login } from "@/api/auth"; // Import the login API function
+import { login } from "@/api/auth";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +22,7 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
       localStorage.setItem("access_token", data.access_token);
-      navigate("/dashboard"); // Redirect to a protected page after successful login
+      navigate("/dashboard");
     } catch (err) {
       setError("Invalid credentials");
     }
@@ -44,6 +44,7 @@ export default function LoginPage() {
                     placeholder="your.name@nust.edu.pk"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -57,13 +58,18 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
