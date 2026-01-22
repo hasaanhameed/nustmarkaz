@@ -5,16 +5,15 @@ from schemas.token import Token
 from authorization.auth_token import create_access_token
 from database import get_db
 from models.user import User
+from hashing import Hash  
 
 router = APIRouter(tags=["authentication"])
 
 @router.post("/login", response_model=Token)
 def login(user: UserLogin, db: Session = Depends(get_db)):
-    # Query the user from the database
     db_user = db.query(User).filter(User.email == user.email).first()
 
-    # Verify the user exists and the password matches
-    if db_user is None or db_user.password != user.password:
+    if db_user is None or not Hash.verify(user.password, db_user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
