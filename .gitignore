@@ -29,3 +29,4 @@ backend/.settings/
 .vscode/
 .idea/
 *.iml
+venv/
