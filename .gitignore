@@ -1,32 +1,40 @@
-.DS_Store
-Thumbs.db
-*.log
-*.tmp
-*.swp
-.env
-.env.local
-.env.*.local
+# Node.js / React
+frontend/node_modules/        # Node modules
+frontend/dist/                # Build output (e.g., for production)
+frontend/build/               # Build output
+frontend/.cache/              # Cache folder
+frontend/.next/               # Next.js build folder
+frontend/.vercel/             # Vercel deployment folder
+frontend/npm-debug.log*       # NPM debug logs
+frontend/yarn-debug.log*      # Yarn debug logs
+frontend/yarn-error.log*      # Yarn error logs
 
-frontend/node_modules/
-frontend/dist/
-frontend/build/
-frontend/.cache/
-frontend/.next/
-frontend/.vercel/
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
+# Python / FastAPI
+backend/__pycache__/          # Python bytecode cache
+backend/*.py[cod]             # Python bytecode files
+backend/venv/                 # Virtual environment
+backend/.venv/                # Virtual environment
+backend/.vscode/              # VSCode settings folder
+backend/.idea/                # JetBrains IDE settings folder
+backend/*.iml                 # JetBrains project files
+backend/.classpath            # Eclipse project settings
+backend/.project              # Eclipse project settings
+backend/.settings/            # Eclipse settings folder
 
-backend/__pycache__/
-backend/*.py[cod]
-backend/venv/
-backend/.venv/
+# Environment files
+.env                           # Local environment variables
+.env.local                     # Local environment variables for development
+.env.*.local                   # Local environment variables with specific suffixes
 
-backend/.classpath
-backend/.project
-backend/.settings/
+# Operating system files
+.DS_Store                      # macOS system file
+Thumbs.db                      # Windows system file
 
-.vscode/
-.idea/
-*.iml
-venv/
+# Temporary and log files
+*.log                          # Log files
+*.tmp                          # Temporary files
+*.swp                          # Swap files
+
+# IDE and editor settings
+.vscode/                       # Visual Studio Code settings
+.idea/                         # JetBrains IDE settings
