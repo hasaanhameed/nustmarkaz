@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from schemas.user import CreatorResponse
 
 
 # Schema for product image response
@@ -26,7 +27,7 @@ class ProductCreate(BaseModel):
         from_attributes = True
 
 
-# Schema for product response
+# Schema for product response - uses creator for reusability
 class ProductResponse(BaseModel):
     id: int
     title: str
@@ -37,6 +38,7 @@ class ProductResponse(BaseModel):
     condition: str
     user_id: int
     images: List[ProductImageResponse] = []
+    user: CreatorResponse  
 
     class Config:
         from_attributes = True

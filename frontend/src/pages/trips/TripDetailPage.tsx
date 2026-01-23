@@ -3,12 +3,31 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Calendar, Users, Share2, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  Users,
+  Share2,
+  CheckCircle,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getTripById, Trip } from "@/api/trip";
 
 export default function TripDetailPage() {
@@ -62,8 +81,14 @@ export default function TripDetailPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
+
+  const creatorInitial = trip.creator.username.charAt(0).toUpperCase();
 
   return (
     <Layout>
@@ -80,14 +105,19 @@ export default function TripDetailPage() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="aspect-video rounded-xl overflow-hidden bg-muted mb-6">
-              <img 
-                src={trip.images[0]?.image_path || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"} 
-                alt={trip.title} 
-                className="w-full h-full object-cover" 
+              <img
+                src={
+                  trip.images[0]?.image_path ||
+                  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"
+                }
+                alt={trip.title}
+                className="w-full h-full object-cover"
               />
             </div>
 
-            <Badge className="bg-success text-success-foreground mb-4">Trip</Badge>
+            <Badge className="bg-success text-success-foreground mb-4">
+              Trip
+            </Badge>
             <h1 className="text-3xl font-bold mb-4">{trip.title}</h1>
 
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-6">
@@ -97,7 +127,9 @@ export default function TripDetailPage() {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                <span>{formatDate(trip.start_date)} - {formatDate(trip.end_date)}</span>
+                <span>
+                  {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <Users className="h-4 w-4" />
@@ -107,14 +139,41 @@ export default function TripDetailPage() {
 
             <div className="border-t border-border py-6 mb-6">
               <h2 className="font-semibold text-lg mb-3">About This Trip</h2>
-              <p className="text-muted-foreground leading-relaxed">{trip.description}</p>
+              <p className="text-muted-foreground leading-relaxed">
+                {trip.description}
+              </p>
             </div>
+
+            {/* Creator Info */}
+            <Card className="mb-6">
+              <CardContent className="p-4">
+                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">
+                  Posted by
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-lg font-semibold">
+                    {creatorInitial}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold">{trip.creator.username}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {trip.creator.department}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    View Profile
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="border-t border-border py-6">
               <h2 className="font-semibold text-lg mb-4">Trip Details</h2>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Departure Location</span>
+                  <span className="text-muted-foreground">
+                    Departure Location
+                  </span>
                   <span className="font-medium">{trip.departure_location}</span>
                 </div>
                 <div className="flex justify-between">
@@ -135,7 +194,9 @@ export default function TripDetailPage() {
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
-                <CardTitle className="text-2xl">Rs. {trip.cost_per_person.toLocaleString()}</CardTitle>
+                <CardTitle className="text-2xl">
+                  Rs. {trip.cost_per_person.toLocaleString()}
+                </CardTitle>
                 <p className="text-sm text-muted-foreground">per person</p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -157,13 +218,18 @@ export default function TripDetailPage() {
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
                         <Label>Number of Tickets</Label>
-                        <Select value={ticketCount} onValueChange={setTicketCount}>
+                        <Select
+                          value={ticketCount}
+                          onValueChange={setTicketCount}
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             {[1, 2, 3, 4, 5].map((n) => (
-                              <SelectItem key={n} value={n.toString()}>{n} ticket{n > 1 ? 's' : ''}</SelectItem>
+                              <SelectItem key={n} value={n.toString()}>
+                                {n} ticket{n > 1 ? "s" : ""}
+                              </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -175,10 +241,18 @@ export default function TripDetailPage() {
                       <div className="border-t border-border pt-4">
                         <div className="flex justify-between text-lg font-semibold">
                           <span>Total</span>
-                          <span>Rs. {(trip.cost_per_person * parseInt(ticketCount)).toLocaleString()}</span>
+                          <span>
+                            Rs.{" "}
+                            {(
+                              trip.cost_per_person * parseInt(ticketCount)
+                            ).toLocaleString()}
+                          </span>
                         </div>
                       </div>
-                      <Button onClick={handleBookTicket} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                      <Button
+                        onClick={handleBookTicket}
+                        className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                      >
                         Confirm Booking
                       </Button>
                     </div>
@@ -189,20 +263,6 @@ export default function TripDetailPage() {
                   <Share2 className="h-4 w-4" />
                   Share Trip
                 </Button>
-
-                <Card className="bg-muted/50">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-                        O
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">Organizer</p>
-                        <p className="text-xs text-muted-foreground">Trip Creator</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
               </CardContent>
             </Card>
           </div>

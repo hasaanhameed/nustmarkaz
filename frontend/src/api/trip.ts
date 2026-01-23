@@ -1,13 +1,18 @@
 import api from "./api";
 
-// Trip image type
-interface TripImage {
+export interface TripImage {
   id: number;
   image_path: string;
   trip_id: number;
 }
 
-// Trip type
+export interface Creator {
+  id: number;
+  username: string;
+  email: string;
+  department: string;
+}
+
 export interface Trip {
   id: number;
   title: string;
@@ -20,9 +25,9 @@ export interface Trip {
   cost_per_person: number;
   creator_id: number;
   images: TripImage[];
+  creator: Creator; // Generic creator info
 }
 
-// Trip creation request type
 export interface TripCreateRequest {
   title: string;
   description: string;
@@ -35,40 +40,42 @@ export interface TripCreateRequest {
   image_paths?: string[];
 }
 
-// Function to create a new trip
-export const createTrip = async (tripData: TripCreateRequest): Promise<Trip> => {
+// Get all trips
+export const getAllTrips = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<Trip[]> => {
+  try {
+    const response = await api.get<Trip[]>("/trips/", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch trips:", error);
+    throw error;
+  }
+};
+
+// Get a single trip by ID
+export const getTripById = async (tripId: string): Promise<Trip> => {
+  try {
+    const response = await api.get<Trip>(`/trips/${tripId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch trip ${tripId}:`, error);
+    throw error;
+  }
+};
+
+// Create a new trip
+export const createTrip = async (
+  tripData: TripCreateRequest,
+): Promise<Trip> => {
   try {
     const response = await api.post<Trip>("/trips/", tripData);
     return response.data;
-  } catch (error: any) {
-    console.error("Trip creation failed", error);
-    console.error("Error details:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    throw error;
-  }
-};
-
-// Function to get all trips
-export const getAllTrips = async (): Promise<Trip[]> => {
-  try {
-    const response = await api.get<Trip[]>("/trips");
-    return response.data;
   } catch (error) {
-    console.error("Failed to fetch trips", error);
-    throw error;
-  }
-};
-
-// Function to get a single trip by ID
-export const getTripById = async (id: string | number): Promise<Trip> => {
-  try {
-    const response = await api.get<Trip>(`/trips/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch trip", error);
+    console.error("Failed to create trip:", error);
     throw error;
   }
 };

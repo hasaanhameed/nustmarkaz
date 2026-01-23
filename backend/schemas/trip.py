@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
+from schemas.user import CreatorResponse
 
 
 # Schema for trip image response
@@ -29,7 +30,7 @@ class TripCreate(BaseModel):
         from_attributes = True
 
 
-# Schema for trip response
+# Schema for trip response - includes creator info
 class TripResponse(BaseModel):
     id: int
     title: str
@@ -42,6 +43,7 @@ class TripResponse(BaseModel):
     cost_per_person: float
     creator_id: int
     images: List[TripImageResponse] = []
+    creator: CreatorResponse  
 
     class Config:
         from_attributes = True

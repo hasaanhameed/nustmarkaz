@@ -1,13 +1,18 @@
 import api from "./api";
 
-// Product image type
-interface ProductImage {
+export interface ProductImage {
   id: number;
   image_path: string;
   product_id: number;
 }
 
-// Product type
+export interface Creator {
+  id: number;
+  username: string;
+  email: string;
+  department: string;
+}
+
 export interface Product {
   id: number;
   title: string;
@@ -18,9 +23,9 @@ export interface Product {
   condition: string;
   user_id: number;
   images: ProductImage[];
+  user: Creator; // Generic creator info
 }
 
-// Product creation request type
 export interface ProductCreateRequest {
   title: string;
   description: string;
@@ -31,40 +36,42 @@ export interface ProductCreateRequest {
   image_paths?: string[];
 }
 
-// Function to create a new product
-export const createProduct = async (productData: ProductCreateRequest): Promise<Product> => {
+// Get all products with pagination
+export const getAllProducts = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<Product[]> => {
+  try {
+    const response = await api.get<Product[]>("/products/", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    throw error;
+  }
+};
+
+// Get a single product by ID
+export const getProductById = async (productId: number): Promise<Product> => {
+  try {
+    const response = await api.get<Product>(`/products/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch product ${productId}:`, error);
+    throw error;
+  }
+};
+
+// Create a new product
+export const createProduct = async (
+  productData: ProductCreateRequest,
+): Promise<Product> => {
   try {
     const response = await api.post<Product>("/products/", productData);
     return response.data;
-  } catch (error: any) {
-    console.error("Product creation failed", error);
-    console.error("Error details:", {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-    });
-    throw error;
-  }
-};
-
-// Function to get all products
-export const getAllProducts = async (): Promise<Product[]> => {
-  try {
-    const response = await api.get<Product[]>("/products");
-    return response.data;
   } catch (error) {
-    console.error("Failed to fetch products", error);
-    throw error;
-  }
-};
-
-// Function to get a single product by ID
-export const getProductById = async (id: string | number): Promise<Product> => {
-  try {
-    const response = await api.get<Product>(`/products/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch product", error);
+    console.error("Failed to create product:", error);
     throw error;
   }
 };

@@ -25,3 +25,14 @@ class UserResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+# Schema for creator info - reusable across products, donations, giveaways, etc.
+class CreatorResponse(BaseModel):
+    id: int
+    username: str
+    email: str
+    department: str
+
+    class Config:
+        from_attributes = True

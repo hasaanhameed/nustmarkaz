@@ -45,3 +45,21 @@ def create_product(
     
     return db_product
 
+# Get all products
+@router.get("/", response_model=List[ProductResponse])
+def get_all_products(
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10
+):
+    products = db.query(Product).offset(skip).limit(limit).all()
+    return products
+
+
+# Get a single product by ID
+@router.get("/{product_id}", response_model=ProductResponse)
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product

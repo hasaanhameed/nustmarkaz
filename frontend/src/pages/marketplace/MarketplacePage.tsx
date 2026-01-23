@@ -5,23 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Search, Plus, ShoppingBag } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getAllProducts, Product } from "@/api/product";
 
-const categories = ["All", "Books", "Electronics", "Furniture", "Clothing", "Other"];
+const categories = [
+  "All",
+  "Books",
+  "Electronics",
+  "Furniture",
+  "Clothing",
+  "Other",
+];
 const sortOptions = ["Latest", "Price: Low to High", "Price: High to Low"];
-
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  pickup_location: string;
-  condition: string;
-  user_id: number;
-  images: { id: number; image_path: string; product_id: number }[];
-}
 
 export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,6 +32,7 @@ export default function MarketplacePage() {
   const [sortBy, setSortBy] = useState("Latest");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -36,13 +40,13 @@ export default function MarketplacePage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:8000/products");
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
+      setLoading(true);
+      setError(null);
+      const data = await getAllProducts(0, 100); // Fetch up to 100 products
+      setProducts(data);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError("Failed to load products. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -50,7 +54,9 @@ export default function MarketplacePage() {
 
   // Filter products
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = product.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const matchesCategory = category === "All" || product.category === category;
     return matchesSearch && matchesCategory;
   });
@@ -69,7 +75,9 @@ export default function MarketplacePage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold">Marketplace</h1>
-            <p className="text-muted-foreground mt-1">Buy and sell within the NUST community</p>
+            <p className="text-muted-foreground mt-1">
+              Buy and sell within the NUST community
+            </p>
           </div>
           <Link to="/marketplace/create">
             <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
@@ -118,7 +126,16 @@ export default function MarketplacePage() {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="text-center py-12">Loading products...</div>
+          <div className="flex justify-center items-center py-12">
+            <LoadingSpinner />
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={fetchProducts} variant="outline">
+              Try Again
+            </Button>
+          </div>
         ) : sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedProducts.map((product) => (
@@ -127,11 +144,14 @@ export default function MarketplacePage() {
                 id={product.id.toString()}
                 title={product.title}
                 description={product.description}
-                image={product.images[0]?.image_path || "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=400"}
+                image={
+                  product.images[0]?.image_path ||
+                  "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=400"
+                }
                 type="product"
                 price={product.price}
                 location={product.pickup_location}
-                author={{ name: "User" }} // You can fetch user details later
+                author={{ name: "User" }}
               />
             ))}
           </div>
