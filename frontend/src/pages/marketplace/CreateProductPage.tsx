@@ -8,11 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Upload, X } from "lucide-react";
+import { createProduct, ProductCreateRequest } from "@/api/product";
+import { useToast } from "@/hooks/use-toast";
 
 const categories = ["Books", "Electronics", "Furniture", "Clothing", "Sports", "Stationery", "Other"];
 
 export default function CreateProductPage() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [images, setImages] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -23,6 +26,7 @@ export default function CreateProductPage() {
     condition: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -56,12 +60,42 @@ export default function CreateProductPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Mock submit - replace with API call later
-      console.log("Creating product:", { ...formData, images });
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const productData: ProductCreateRequest = {
+        title: formData.title,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        pickup_location: formData.location,
+        condition: formData.condition,
+        image_paths: images,
+      };
+
+      await createProduct(productData);
+
+      toast({
+        title: "Success!",
+        description: "Your product has been listed successfully.",
+      });
+
       navigate("/marketplace");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.detail || "Failed to create product. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -199,11 +233,21 @@ export default function CreateProductPage() {
               </div>
 
               <div className="flex gap-3">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/marketplace")}>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="flex-1" 
+                  onClick={() => navigate("/marketplace")}
+                  disabled={isSubmitting}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90">
-                  List Product
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "List Product"}
                 </Button>
               </div>
             </form>

@@ -1,26 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { mockProducts } from "@/data/mockData";
-import { Search, Filter, Plus, ShoppingBag } from "lucide-react";
+import { Search, Plus, ShoppingBag } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const categories = ["All", "Books", "Electronics", "Furniture", "Clothing", "Other"];
 const sortOptions = ["Latest", "Price: Low to High", "Price: High to Low"];
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  pickup_location: string;
+  condition: string;
+  user_id: number;
+  images: { id: number; image_path: string; product_id: number }[];
+}
+
 export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [sortBy, setSortBy] = useState("Latest");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock filtering - replace with API calls later
-  const filteredProducts = mockProducts.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/products");
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter products
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = category === "All" || product.category === category;
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === "Price: Low to High") return a.price - b.price;
+    if (sortBy === "Price: High to Low") return b.price - a.price;
+    return 0; // Latest (default order from API)
+  });
 
   return (
     <Layout>
@@ -77,10 +117,22 @@ export default function MarketplacePage() {
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-12">Loading products...</div>
+        ) : sortedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ListingCard key={product.id} {...product} />
+            {sortedProducts.map((product) => (
+              <ListingCard
+                key={product.id}
+                id={product.id.toString()}
+                title={product.title}
+                description={product.description}
+                image={product.images[0]?.image_path || "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=400"}
+                type="product"
+                price={product.price}
+                location={product.pickup_location}
+                author={{ name: "User" }} // You can fetch user details later
+              />
             ))}
           </div>
         ) : (
