@@ -14,3 +14,14 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: str
     password: str
+
+
+# Schema for user response (without password)
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    email: str
+    department: str
+
+    class Config:
+        orm_mode = True

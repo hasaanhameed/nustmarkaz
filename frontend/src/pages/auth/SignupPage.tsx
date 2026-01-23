@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Loader2 } from "lucide-react";
 import { createUser } from "@/api/user";
 
 const departments = [
@@ -38,6 +38,7 @@ export default function SignupPage() {
   });
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -84,6 +85,7 @@ export default function SignupPage() {
 
     if (isValid) {
       console.log("Validation passed! Calling API...");
+      setIsLoading(true);
       try {
         const result = await createUser({
           username: formData.name,
@@ -102,6 +104,8 @@ export default function SignupPage() {
           err.message ||
           "Failed to create account. Please try again.";
         setErrors({ api: errorMessage });
+      } finally {
+        setIsLoading(false);
       }
     } else {
       console.log("Validation FAILED - not calling API");
@@ -137,6 +141,7 @@ export default function SignupPage() {
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
                     className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
+                    disabled={isLoading}
                   />
                 </div>
                 {errors.name && (
@@ -155,6 +160,7 @@ export default function SignupPage() {
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
                     className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
+                    disabled={isLoading}
                   />
                 </div>
                 {errors.email && (
@@ -167,6 +173,7 @@ export default function SignupPage() {
                 <Select
                   value={formData.department}
                   onValueChange={(value) => handleChange("department", value)}
+                  disabled={isLoading}
                 >
                   <SelectTrigger
                     className={errors.department ? "border-red-500" : ""}
@@ -199,6 +206,7 @@ export default function SignupPage() {
                     value={formData.password}
                     onChange={(e) => handleChange("password", e.target.value)}
                     className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
+                    disabled={isLoading}
                   />
                 </div>
                 {errors.password && (
@@ -219,6 +227,7 @@ export default function SignupPage() {
                       handleChange("confirmPassword", e.target.value)
                     }
                     className={`pl-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
+                    disabled={isLoading}
                   />
                 </div>
                 {errors.confirmPassword && (
@@ -242,6 +251,7 @@ export default function SignupPage() {
                       });
                     }
                   }}
+                  disabled={isLoading}
                 />
                 <Label
                   htmlFor="terms"
@@ -265,8 +275,15 @@ export default function SignupPage() {
                 <p className="text-sm text-red-500 mt-1">{errors.api}</p>
               )}
 
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </form>
 

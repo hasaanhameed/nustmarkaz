@@ -8,6 +8,14 @@ interface UserCreateRequest {
   password: string;
 }
 
+// User response type
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  department: string;
+}
+
 // Function to create a new user
 export const createUser = async (userData: UserCreateRequest) => {
   try {
@@ -26,5 +34,19 @@ export const createUser = async (userData: UserCreateRequest) => {
       url: error.config?.url,
     });
     throw error;
+  }
+};
+
+// Function to get current user
+export const getCurrentUser = async (): Promise<User | null> => {
+  try {
+    const token = localStorage.getItem("access_token");
+    if (!token) return null;
+
+    const response = await api.get<User>("/users/me");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to get current user", error);
+    return null;
   }
 };

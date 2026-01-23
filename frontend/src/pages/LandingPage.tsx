@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { GeometricBackground } from "@/components/ui/GeometricBackground";
@@ -15,10 +16,9 @@ import {
   Heart,
   Gift,
   ArrowRight,
-  Users,
-  Shield,
-  Zap,
 } from "lucide-react";
+import { getCurrentUser, User } from "@/api/user";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const features = [
   {
@@ -47,9 +47,197 @@ const features = [
 ];
 
 export default function LandingPage() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+      setIsLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  if (isLoading) {
+    return <Layout><div className="min-h-[60vh]" /></Layout>;
+  }
+
+  if (currentUser) {
+    const allListings = [
+      ...mockProducts.slice(0, 2),
+      ...mockTrips.slice(0, 2),
+      ...mockDonations.slice(0, 1),
+      ...mockGiveaways.slice(0, 1),
+    ];
+
+    return (
+      <Layout>
+        <div className="container-custom py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">Welcome back, {currentUser.username}!</h1>
+            <p className="text-muted-foreground">
+              Here's what's happening on campus.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Link to="/marketplace/create">
+              <div className="p-4 rounded-xl border border-border bg-card hover:border-accent transition-colors group">
+                <ShoppingBag className="h-6 w-6 text-accent mb-2" />
+                <p className="font-medium group-hover:text-accent transition-colors">
+                  Sell Product
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  List something to sell
+                </p>
+              </div>
+            </Link>
+            <Link to="/trips/create">
+              <div className="p-4 rounded-xl border border-border bg-card hover:border-success transition-colors group">
+                <MapPin className="h-6 w-6 text-success mb-2" />
+                <p className="font-medium group-hover:text-success transition-colors">
+                  Organize Trip
+                </p>
+                <p className="text-sm text-muted-foreground">Plan an adventure</p>
+              </div>
+            </Link>
+            <Link to="/donations/create">
+              <div className="p-4 rounded-xl border border-border bg-card hover:border-warning transition-colors group">
+                <Heart className="h-6 w-6 text-warning mb-2" />
+                <p className="font-medium group-hover:text-warning transition-colors">
+                  Start Drive
+                </p>
+                <p className="text-sm text-muted-foreground">Support a cause</p>
+              </div>
+            </Link>
+            <Link to="/giveaways/create">
+              <div className="p-4 rounded-xl border border-border bg-card hover:border-primary transition-colors group">
+                <Gift className="h-6 w-6 text-primary mb-2" />
+                <p className="font-medium group-hover:text-primary transition-colors">
+                  Host Giveaway
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Give back to community
+                </p>
+              </div>
+            </Link>
+          </div>
+
+          <div className="mb-8">
+            <Tabs defaultValue="all">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">Latest Activity</h2>
+                <TabsList>
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="products">Products</TabsTrigger>
+                  <TabsTrigger value="trips">Trips</TabsTrigger>
+                  <TabsTrigger value="donations">Donations</TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="all">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {allListings.map((item) => (
+                    <ListingCard key={item.id} {...item} />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="products">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {mockProducts.slice(0, 8).map((product) => (
+                    <ListingCard key={product.id} {...product} />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="trips">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {mockTrips.slice(0, 8).map((trip) => (
+                    <ListingCard key={trip.id} {...trip} />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="donations">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {mockDonations.slice(0, 8).map((donation) => (
+                    <ListingCard key={donation.id} {...donation} />
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Link to="/marketplace" className="group">
+              <div className="p-6 rounded-xl border border-border bg-card hover:border-accent transition-all hover:shadow-lg">
+                <ShoppingBag className="h-8 w-8 text-accent mb-3" />
+                <h3 className="font-semibold text-lg mb-2 group-hover:text-accent transition-colors">
+                  Marketplace
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Browse {mockProducts.length}+ products
+                </p>
+                <div className="flex items-center gap-2 text-accent text-sm font-medium">
+                  View all <ArrowRight className="h-4 w-4" />
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/trips" className="group">
+              <div className="p-6 rounded-xl border border-border bg-card hover:border-success transition-all hover:shadow-lg">
+                <MapPin className="h-8 w-8 text-success mb-3" />
+                <h3 className="font-semibold text-lg mb-2 group-hover:text-success transition-colors">
+                  Trips
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {mockTrips.length}+ upcoming trips
+                </p>
+                <div className="flex items-center gap-2 text-success text-sm font-medium">
+                  View all <ArrowRight className="h-4 w-4" />
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/donations" className="group">
+              <div className="p-6 rounded-xl border border-border bg-card hover:border-warning transition-all hover:shadow-lg">
+                <Heart className="h-8 w-8 text-warning mb-3" />
+                <h3 className="font-semibold text-lg mb-2 group-hover:text-warning transition-colors">
+                  Donations
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {mockDonations.length} active drives
+                </p>
+                <div className="flex items-center gap-2 text-warning text-sm font-medium">
+                  View all <ArrowRight className="h-4 w-4" />
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/giveaways" className="group">
+              <div className="p-6 rounded-xl border border-border bg-card hover:border-primary transition-all hover:shadow-lg">
+                <Gift className="h-8 w-8 text-primary mb-3" />
+                <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+                  Giveaways
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {mockGiveaways.length} active giveaways
+                </p>
+                <div className="flex items-center gap-2 text-primary text-sm font-medium">
+                  View all <ArrowRight className="h-4 w-4" />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center gradient-hero overflow-hidden">
         <GeometricBackground variant="hero" />
 
@@ -92,7 +280,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container-custom">
           <div className="text-center mb-12">
@@ -122,7 +309,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Latest Products */}
       <section className="py-16 bg-muted/50">
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
@@ -148,21 +334,20 @@ export default function LandingPage() {
 
           <Link
             to="/marketplace"
-            className="md:hidden flex items-center justify-center gap-2 text-accent hover:underline mt-6"
+            className="md:hidden flex items-center justify-center gap-2 text-accent hover:underline mt-8"
           >
             View all products <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
 
-      {/* Upcoming Trips */}
       <section className="py-16 bg-background">
         <div className="container-custom">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="section-title">Upcoming Trips</h2>
               <p className="section-subtitle">
-                Adventure awaits with your classmates
+                Join exciting adventures with fellow students
               </p>
             </div>
             <Link
@@ -173,7 +358,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {mockTrips.map((trip) => (
               <ListingCard key={trip.id} {...trip} />
             ))}
@@ -181,108 +366,23 @@ export default function LandingPage() {
 
           <Link
             to="/trips"
-            className="md:hidden flex items-center justify-center gap-2 text-accent hover:underline mt-6"
+            className="md:hidden flex items-center justify-center gap-2 text-accent hover:underline mt-8"
           >
             View all trips <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
 
-      {/* Donation Drives */}
-      <section className="py-16 bg-muted/50">
-        <div className="container-custom">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="section-title">Active Donation Drives</h2>
-              <p className="section-subtitle">Support causes that matter</p>
-            </div>
-            <Link
-              to="/donations"
-              className="hidden md:flex items-center gap-2 text-accent hover:underline"
-            >
-              View all <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockDonations.map((donation) => (
-              <ListingCard key={donation.id} {...donation} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why NustMarkaz */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="section-title mb-6">Why NustMarkaz?</h2>
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <Shield className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">
-                      Verified Students Only
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      All users are verified NUST students, ensuring a safe and
-                      trusted community.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <Users className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Community Driven</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Built by students, for students. Your feedback shapes the
-                      platform.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <Zap className="h-5 w-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Fast & Easy</h3>
-                    <p className="text-sm text-muted-foreground">
-                      List items in seconds, connect instantly, and transact
-                      within campus.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary to-accent/80 p-8 flex items-center justify-center">
-                <div className="text-center text-primary-foreground">
-                  <div className="text-6xl font-bold mb-2">N</div>
-                  <div className="text-xl font-semibold">NustMarkaz</div>
-                  <div className="text-sm opacity-80 mt-2">
-                    For NUST, By NUST
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 md:py-24 gradient-hero text-primary-foreground">
-        <div className="container-custom text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Get Started?
+      <section className="py-16 md:py-24 gradient-hero relative overflow-hidden">
+        <GeometricBackground variant="hero" />
+        
+        <div className="container-custom relative z-10 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+            Ready to get started?
           </h2>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Join thousands of NUST students already using NustMarkaz to connect,
-            trade, and make memories.
+          <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
+            Join NustMarkaz today and become part of the most vibrant student
+            community at NUST.
           </p>
           <Link to="/signup">
             <Button

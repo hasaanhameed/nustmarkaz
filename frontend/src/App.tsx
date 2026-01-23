@@ -41,25 +41,25 @@ const App = () => (
           {/* Dashboard */}
           <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* Marketplace */}
-          <Route path="/marketplace" element={<MarketplacePage />} />
-          <Route path="/marketplace/:id" element={<ProductDetailPage />} />
+          {/* Marketplace - specific routes before dynamic ones */}
           <Route path="/marketplace/create" element={<CreateProductPage />} />
+          <Route path="/marketplace/:id" element={<ProductDetailPage />} />
+          <Route path="/marketplace" element={<MarketplacePage />} />
 
-          {/* Trips */}
-          <Route path="/trips" element={<TripsPage />} />
-          <Route path="/trips/:id" element={<TripDetailPage />} />
+          {/* Trips - specific routes before dynamic ones */}
           <Route path="/trips/create" element={<CreateTripPage />} />
+          <Route path="/trips/:id" element={<TripDetailPage />} />
+          <Route path="/trips" element={<TripsPage />} />
 
-          {/* Donations */}
-          <Route path="/donations" element={<DonationsPage />} />
-          <Route path="/donations/:id" element={<DonationDetailPage />} />
+          {/* Donations - specific routes before dynamic ones */}
           <Route path="/donations/create" element={<CreateDonationPage />} />
+          <Route path="/donations/:id" element={<DonationDetailPage />} />
+          <Route path="/donations" element={<DonationsPage />} />
 
-          {/* Giveaways */}
-          <Route path="/giveaways" element={<GiveawaysPage />} />
-          <Route path="/giveaways/:id" element={<GiveawayDetailPage />} />
+          {/* Giveaways - specific routes before dynamic ones */}
           <Route path="/giveaways/create" element={<CreateGiveawayPage />} />
+          <Route path="/giveaways/:id" element={<GiveawayDetailPage />} />
+          <Route path="/giveaways" element={<GiveawaysPage />} />
 
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
