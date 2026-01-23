@@ -30,7 +30,7 @@ class TripCreate(BaseModel):
         from_attributes = True
 
 
-# Schema for trip response - includes creator info
+# Schema for trip response
 class TripResponse(BaseModel):
     id: int
     title: str
