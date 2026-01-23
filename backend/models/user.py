@@ -11,4 +11,8 @@ class User(Base):
     department = Column(String, nullable=False)
     password = Column(String, nullable=False)
 
+    # Product relationships
     products = relationship("Product", back_populates="user")
+    
+    # Trip relationships
+    created_trips = relationship("Trip", back_populates="creator")

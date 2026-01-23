@@ -9,11 +9,17 @@ interface LoginResponse {
 // Function to log in a user
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await api.post<LoginResponse>('/login', {
-      email,
-      password
+    // Use FormData for OAuth2 password flow
+    const formData = new FormData();
+    formData.append('username', email);  // OAuth2 uses 'username' field
+    formData.append('password', password);
+    
+    const response = await api.post<LoginResponse>('/login', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
-    return response.data;  // Return the access_token and token_type
+    return response.data;
   } catch (error) {
     console.error("Login failed", error);
     throw error;

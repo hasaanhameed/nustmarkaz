@@ -1,21 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { mockTrips } from "@/data/mockData";
 import { Search, Plus, MapPin } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const destinations = ["All Destinations", "Northern Areas", "Kashmir", "Punjab", "Sindh"];
+import { getAllTrips, Trip } from "@/api/trip";
 
 export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [destination, setDestination] = useState("All Destinations");
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredTrips = mockTrips.filter((trip) =>
+  useEffect(() => {
+    fetchTrips();
+  }, []);
+
+  const fetchTrips = async () => {
+    try {
+      const data = await getAllTrips();
+      setTrips(data);
+    } catch (error) {
+      console.error("Error fetching trips:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTrips = trips.filter((trip) =>
     trip.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -36,9 +49,9 @@ export default function TripsPage() {
           </Link>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
+        {/* Search */}
+        <div className="mb-8">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search trips..."
@@ -47,23 +60,25 @@ export default function TripsPage() {
               className="pl-10"
             />
           </div>
-          <Select value={destination} onValueChange={setDestination}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <SelectValue placeholder="Destination" />
-            </SelectTrigger>
-            <SelectContent>
-              {destinations.map((dest) => (
-                <SelectItem key={dest} value={dest}>{dest}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         {/* Trips Grid */}
-        {filteredTrips.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-12">Loading trips...</div>
+        ) : filteredTrips.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTrips.map((trip) => (
-              <ListingCard key={trip.id} {...trip} />
+              <ListingCard
+                key={trip.id}
+                id={trip.id.toString()}
+                title={trip.title}
+                description={trip.description}
+                image={trip.images[0]?.image_path || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"}
+                type="trip"
+                price={trip.cost_per_person}
+                location={trip.destination}
+                author={{ name: "Organizer" }}
+              />
             ))}
           </div>
         ) : (

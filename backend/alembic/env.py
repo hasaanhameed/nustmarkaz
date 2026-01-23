@@ -12,6 +12,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from database import Base
 from models.user import User
 from models.product import Product, ProductImage
+from models.trip import Trip, TripImage
 
 # this is the Alembic Config object
 config = context.config

@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Upload, X, Plus } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
+import { createTrip, TripCreateRequest } from "@/api/trip";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreateTripPage() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [image, setImage] = useState<string | null>(null);
-  const [inclusions, setInclusions] = useState(["Transport"]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -22,6 +24,7 @@ export default function CreateTripPage() {
     spots: "",
     meetingPoint: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -31,22 +34,41 @@ export default function CreateTripPage() {
     setImage("https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=400");
   };
 
-  const addInclusion = () => {
-    setInclusions((prev) => [...prev, ""]);
-  };
-
-  const updateInclusion = (index: number, value: string) => {
-    setInclusions((prev) => prev.map((item, i) => (i === index ? value : item)));
-  };
-
-  const removeInclusion = (index: number) => {
-    setInclusions((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Creating trip:", { ...formData, image, inclusions });
-    navigate("/trips");
+    
+    setIsSubmitting(true);
+
+    try {
+      const tripData: TripCreateRequest = {
+        title: formData.title,
+        description: formData.description,
+        destination: formData.destination,
+        start_date: formData.departureDate,
+        end_date: formData.returnDate,
+        departure_location: formData.meetingPoint,
+        max_participants: parseInt(formData.spots),
+        cost_per_person: parseFloat(formData.price),
+        image_paths: image ? [image] : [],
+      };
+
+      await createTrip(tripData);
+
+      toast({
+        title: "Success!",
+        description: "Your trip has been created successfully.",
+      });
+
+      navigate("/trips");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.detail || "Failed to create trip. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -99,6 +121,7 @@ export default function CreateTripPage() {
                   placeholder="e.g., Hunza Valley Adventure"
                   value={formData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
+                  required
                 />
               </div>
 
@@ -110,6 +133,7 @@ export default function CreateTripPage() {
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   rows={4}
+                  required
                 />
               </div>
 
@@ -121,6 +145,7 @@ export default function CreateTripPage() {
                     placeholder="e.g., Hunza, Gilgit-Baltistan"
                     value={formData.destination}
                     onChange={(e) => handleChange("destination", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -130,6 +155,7 @@ export default function CreateTripPage() {
                     placeholder="e.g., NUST Main Gate"
                     value={formData.meetingPoint}
                     onChange={(e) => handleChange("meetingPoint", e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -142,6 +168,7 @@ export default function CreateTripPage() {
                     type="date"
                     value={formData.departureDate}
                     onChange={(e) => handleChange("departureDate", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -151,6 +178,7 @@ export default function CreateTripPage() {
                     type="date"
                     value={formData.returnDate}
                     onChange={(e) => handleChange("returnDate", e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -164,6 +192,7 @@ export default function CreateTripPage() {
                     placeholder="25000"
                     value={formData.price}
                     onChange={(e) => handleChange("price", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -174,44 +203,27 @@ export default function CreateTripPage() {
                     placeholder="30"
                     value={formData.spots}
                     onChange={(e) => handleChange("spots", e.target.value)}
+                    required
                   />
                 </div>
               </div>
 
-              {/* Inclusions */}
-              <div className="space-y-2">
-                <Label>What's Included</Label>
-                <div className="space-y-2">
-                  {inclusions.map((item, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        placeholder="e.g., Transport, Meals, Accommodation"
-                        value={item}
-                        onChange={(e) => updateInclusion(index, e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => removeInclusion(index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button type="button" variant="outline" size="sm" onClick={addInclusion} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Add Inclusion
-                  </Button>
-                </div>
-              </div>
-
               <div className="flex gap-3">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/trips")}>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="flex-1" 
+                  onClick={() => navigate("/trips")}
+                  disabled={isSubmitting}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90">
-                  Create Trip
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "Create Trip"}
                 </Button>
               </div>
             </form>
