@@ -32,7 +32,7 @@ const navLinks = [
   { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
   { name: "Trips", href: "/trips", icon: MapPin },
   { name: "Donations", href: "/donations", icon: Heart },
-  { name: "Giveaways", href: "/giveaways", icon: Gift },
+  { name: "Events", href: "/giveaways", icon: Gift },
 ];
 
 export function Navbar() {

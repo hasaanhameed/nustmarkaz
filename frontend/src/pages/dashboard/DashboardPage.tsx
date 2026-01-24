@@ -61,10 +61,10 @@ export default function DashboardPage() {
           <Link to="/giveaways/create">
             <div className="p-4 rounded-xl border border-border bg-card hover:border-primary transition-colors group">
               <p className="font-medium group-hover:text-primary transition-colors">
-                Host Giveaway
+                 Upcoming Events
               </p>
               <p className="text-sm text-muted-foreground">
-                Give back to community
+                Check out Campus Events
               </p>
             </div>
           </Link>

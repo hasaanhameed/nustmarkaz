@@ -15,7 +15,8 @@ export function Footer() {
           </Link>
           
           <p className="text-primary-foreground/80 text-base mb-8 max-w-md">
-            The exclusive student portal for NUST community. Buy, sell, organize trips, and make a difference.
+            The exclusive student portal for NUST community. <br />              
+            All your needs, in one place only.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 text-sm">

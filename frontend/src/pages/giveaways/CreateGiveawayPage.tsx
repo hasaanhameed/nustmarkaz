@@ -6,44 +6,71 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Upload, X, Plus } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
+import { createEvent } from "@/api/event";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreateGiveawayPage() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [image, setImage] = useState<string | null>(null);
-  const [rules, setRules] = useState(["Follow us on Instagram"]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    prize: "",
-    prizeValue: "",
-    endDate: "",
+    society: "",
+    location: "",
+    event_date: "",
+    event_time: "",
   });
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = () => {
-    setImage("https://images.unsplash.com/photo-1678652197831-2d180705cd2c?w=400");
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const addRule = () => {
-    setRules((prev) => [...prev, ""]);
-  };
-
-  const updateRule = (index: number, value: string) => {
-    setRules((prev) => prev.map((item, i) => (i === index ? value : item)));
-  };
-
-  const removeRule = (index: number) => {
-    setRules((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Creating giveaway:", { ...formData, image, rules });
-    navigate("/giveaways");
+    setIsSubmitting(true);
+
+    try {
+      const datetime = `${formData.event_date}T${formData.event_time}:00`;
+      
+      await createEvent({
+        title: formData.title,
+        description: formData.description,
+        society: formData.society,
+        location: formData.location,
+        event_date: datetime,
+        image_paths: image ? [image] : [],
+      });
+
+      toast({
+        title: "Success!",
+        description: "Event created successfully",
+      });
+
+      navigate("/giveaways");
+    } catch (error) {
+      console.error("Error creating event:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create event. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -54,18 +81,18 @@ export default function CreateGiveawayPage() {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Giveaways
+          Back to Events
         </Link>
 
         <Card>
           <CardHeader>
-            <CardTitle>Host a Giveaway</CardTitle>
+            <CardTitle>Post an Event</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Prize Image */}
+              {/* Event Image */}
               <div className="space-y-2">
-                <Label>Prize Image</Label>
+                <Label>Event Image</Label>
                 {image ? (
                   <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
                     <img src={image} alt="" className="w-full h-full object-cover" />
@@ -78,104 +105,103 @@ export default function CreateGiveawayPage() {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={handleImageUpload}
-                    className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-accent transition-colors"
-                  >
+                  <label className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-blue-600 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-blue-600 transition-colors cursor-pointer">
                     <Upload className="h-8 w-8" />
-                    <span>Upload Prize Image</span>
-                  </button>
+                    <span>Upload Event Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="title">Giveaway Title</Label>
+                <Label htmlFor="title">Event Title *</Label>
                 <Input
                   id="title"
-                  placeholder="e.g., iPhone 14 Pro Giveaway"
+                  placeholder="e.g., ACM Tech Talk"
                   value={formData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
+                  required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe the giveaway and how to participate..."
+                  placeholder="Describe the event and what attendees can expect..."
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   rows={4}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="society">Organizing Society *</Label>
+                <Input
+                  id="society"
+                  placeholder="e.g., ACM NUST"
+                  value={formData.society}
+                  onChange={(e) => handleChange("society", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">Location *</Label>
+                <Input
+                  id="location"
+                  placeholder="e.g., Main Auditorium"
+                  value={formData.location}
+                  onChange={(e) => handleChange("location", e.target.value)}
+                  required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="prize">Prize Name</Label>
+                  <Label htmlFor="event_date">Event Date *</Label>
                   <Input
-                    id="prize"
-                    placeholder="e.g., iPhone 14 Pro 128GB"
-                    value={formData.prize}
-                    onChange={(e) => handleChange("prize", e.target.value)}
+                    id="event_date"
+                    type="date"
+                    value={formData.event_date}
+                    onChange={(e) => handleChange("event_date", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="prizeValue">Prize Value (Rs.)</Label>
+                  <Label htmlFor="event_time">Event Time *</Label>
                   <Input
-                    id="prizeValue"
-                    type="number"
-                    placeholder="150000"
-                    value={formData.prizeValue}
-                    onChange={(e) => handleChange("prizeValue", e.target.value)}
+                    id="event_time"
+                    type="time"
+                    value={formData.event_time}
+                    onChange={(e) => handleChange("event_time", e.target.value)}
+                    required
                   />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => handleChange("endDate", e.target.value)}
-                />
-              </div>
-
-              {/* Rules */}
-              <div className="space-y-2">
-                <Label>Participation Rules</Label>
-                <div className="space-y-2">
-                  {rules.map((rule, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        placeholder="e.g., Tag 2 friends in the post"
-                        value={rule}
-                        onChange={(e) => updateRule(index, e.target.value)}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => removeRule(index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button type="button" variant="outline" size="sm" onClick={addRule} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Add Rule
-                  </Button>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/giveaways")}>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="flex-1" 
+                  onClick={() => navigate("/giveaways")}
+                  disabled={isSubmitting}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90">
-                  Create Giveaway
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "Create Event"}
                 </Button>
               </div>
             </form>

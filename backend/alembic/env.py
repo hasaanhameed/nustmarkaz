@@ -13,6 +13,7 @@ from database import Base
 from models.user import User
 from models.product import Product, ProductImage
 from models.trip import Trip, TripImage
+from models.event import Event, EventImage
 
 # this is the Alembic Config object
 config = context.config
