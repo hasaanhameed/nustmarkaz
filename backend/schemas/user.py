@@ -27,7 +27,7 @@ class UserResponse(BaseModel):
         orm_mode = True
 
 
-# Schema for creator info - reusable across products, donations, giveaways, etc.
+# Schema for creator info 
 class CreatorResponse(BaseModel):
     id: int
     username: str
