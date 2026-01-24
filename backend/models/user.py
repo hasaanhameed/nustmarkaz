@@ -16,3 +16,6 @@ class User(Base):
     
     # Trip relationships
     created_trips = relationship("Trip", back_populates="creator")
+
+    # Donation relationships
+    created_donations = relationship("Donation", back_populates="creator")

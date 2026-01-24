@@ -6,16 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { createDonation } from "@/api/donation";
+import { ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreateDonationPage() {
   const navigate = useNavigate();
-  const [image, setImage] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    goal: "",
-    endDate: "",
+    goal_amount: "",
+    end_date: "",
     beneficiary: "",
   });
 
@@ -23,14 +26,50 @@ export default function CreateDonationPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = () => {
-    setImage("https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400");
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Creating donation:", { ...formData, image });
-    navigate("/donations");
+
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.beneficiary ||
+      !formData.goal_amount ||
+      !formData.end_date
+    ) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await createDonation({
+        title: formData.title,
+        description: formData.description,
+        beneficiary: formData.beneficiary,
+        goal_amount: parseFloat(formData.goal_amount),
+        end_date: formData.end_date,
+      });
+
+      toast({
+        title: "Success",
+        description: "Donation drive created successfully!",
+      });
+
+      navigate("/donations");
+    } catch (error) {
+      console.error("Error creating donation:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create donation drive. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,32 +89,6 @@ export default function CreateDonationPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Cover Image */}
-              <div className="space-y-2">
-                <Label>Cover Image</Label>
-                {image ? (
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-                    <img src={image} alt="" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setImage(null)}
-                      className="absolute top-2 right-2 p-1 rounded-full bg-background/80 hover:bg-background"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleImageUpload}
-                    className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-accent transition-colors"
-                  >
-                    <Upload className="h-8 w-8" />
-                    <span>Upload Cover Image</span>
-                  </button>
-                )}
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="title">Drive Title</Label>
                 <Input
@@ -109,32 +122,44 @@ export default function CreateDonationPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="goal">Fundraising Goal (Rs.)</Label>
+                  <Label htmlFor="goal_amount">Fundraising Goal (Rs.)</Label>
                   <Input
-                    id="goal"
+                    id="goal_amount"
                     type="number"
                     placeholder="150000"
-                    value={formData.goal}
-                    onChange={(e) => handleChange("goal", e.target.value)}
+                    value={formData.goal_amount}
+                    onChange={(e) =>
+                      handleChange("goal_amount", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="endDate">End Date</Label>
+                  <Label htmlFor="end_date">End Date</Label>
                   <Input
-                    id="endDate"
+                    id="end_date"
                     type="date"
-                    value={formData.endDate}
-                    onChange={(e) => handleChange("endDate", e.target.value)}
+                    value={formData.end_date}
+                    onChange={(e) => handleChange("end_date", e.target.value)}
                   />
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/donations")}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => navigate("/donations")}
+                  disabled={loading}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90">
-                  Start Drive
+                <Button
+                  type="submit"
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                  disabled={loading}
+                >
+                  {loading ? "Creating..." : "Start Drive"}
                 </Button>
               </div>
             </form>
