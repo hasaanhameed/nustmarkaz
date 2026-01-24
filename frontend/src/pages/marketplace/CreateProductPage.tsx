@@ -1,21 +1,36 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { createProduct, ProductCreateRequest } from "@/api/product";
 import { useToast } from "@/hooks/use-toast";
 
-const categories = ["Books", "Electronics", "Furniture", "Clothing", "Sports", "Stationery", "Other"];
+const categories = [
+  "Books",
+  "Electronics",
+  "Furniture",
+  "Clothing",
+  "Sports",
+  "Stationery",
+  "Other",
+];
 
 export default function CreateProductPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -35,12 +50,48 @@ export default function CreateProductPage() {
     }
   };
 
-  const handleImageUpload = () => {
-    // Mock image upload - replace with actual upload later
-    const mockImages = [
-      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400",
-    ];
-    setImages((prev) => [...prev, ...mockImages].slice(0, 5));
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    // Convert files to data URLs for preview
+    Array.from(files).forEach((file) => {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast({
+          title: "Invalid file",
+          description: "Please upload image files only.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload images smaller than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String = event.target?.result as string;
+        setImages((prev) => [...prev, base64String].slice(0, 5));
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   const removeImage = (index: number) => {
@@ -50,19 +101,21 @@ export default function CreateProductPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.title) newErrors.title = "Title is required";
-    if (!formData.description) newErrors.description = "Description is required";
+    if (!formData.description)
+      newErrors.description = "Description is required";
     if (!formData.price) newErrors.price = "Price is required";
     if (!formData.category) newErrors.category = "Category is required";
     if (!formData.location) newErrors.location = "Location is required";
-    if (images.length === 0) newErrors.images = "At least one image is required";
-    
+    if (images.length === 0)
+      newErrors.images = "At least one image is required";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -91,7 +144,9 @@ export default function CreateProductPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.detail || "Failed to create product. Please try again.",
+        description:
+          error.response?.data?.detail ||
+          "Failed to create product. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -121,8 +176,15 @@ export default function CreateProductPage() {
                 <Label>Product Images</Label>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
                   {images.map((img, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-muted">
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden bg-muted"
+                    >
+                      <img
+                        src={img}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
@@ -133,17 +195,29 @@ export default function CreateProductPage() {
                     </div>
                   ))}
                   {images.length < 5 && (
-                    <button
-                      type="button"
-                      onClick={handleImageUpload}
-                      className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-accent transition-colors"
-                    >
-                      <Upload className="h-6 w-6" />
-                      <span className="text-xs">Upload</span>
-                    </button>
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={triggerFileInput}
+                        className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-accent transition-colors"
+                      >
+                        <Upload className="h-6 w-6" />
+                        <span className="text-xs">Upload</span>
+                      </button>
+                    </>
                   )}
                 </div>
-                {errors.images && <p className="text-sm text-destructive">{errors.images}</p>}
+                {errors.images && (
+                  <p className="text-sm text-destructive">{errors.images}</p>
+                )}
               </div>
 
               {/* Title */}
@@ -156,7 +230,9 @@ export default function CreateProductPage() {
                   onChange={(e) => handleChange("title", e.target.value)}
                   className={errors.title ? "border-destructive" : ""}
                 />
-                {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
+                {errors.title && (
+                  <p className="text-sm text-destructive">{errors.title}</p>
+                )}
               </div>
 
               {/* Description */}
@@ -170,7 +246,11 @@ export default function CreateProductPage() {
                   rows={4}
                   className={errors.description ? "border-destructive" : ""}
                 />
-                {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
+                {errors.description && (
+                  <p className="text-sm text-destructive">
+                    {errors.description}
+                  </p>
+                )}
               </div>
 
               {/* Price & Category */}
@@ -185,21 +265,34 @@ export default function CreateProductPage() {
                     onChange={(e) => handleChange("price", e.target.value)}
                     className={errors.price ? "border-destructive" : ""}
                   />
-                  {errors.price && <p className="text-sm text-destructive">{errors.price}</p>}
+                  {errors.price && (
+                    <p className="text-sm text-destructive">{errors.price}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
-                    <SelectTrigger className={errors.category ? "border-destructive" : ""}>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value) => handleChange("category", value)}
+                  >
+                    <SelectTrigger
+                      className={errors.category ? "border-destructive" : ""}
+                    >
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
+                  {errors.category && (
+                    <p className="text-sm text-destructive">
+                      {errors.category}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -213,13 +306,18 @@ export default function CreateProductPage() {
                   onChange={(e) => handleChange("location", e.target.value)}
                   className={errors.location ? "border-destructive" : ""}
                 />
-                {errors.location && <p className="text-sm text-destructive">{errors.location}</p>}
+                {errors.location && (
+                  <p className="text-sm text-destructive">{errors.location}</p>
+                )}
               </div>
 
               {/* Condition */}
               <div className="space-y-2">
                 <Label>Condition</Label>
-                <Select value={formData.condition} onValueChange={(value) => handleChange("condition", value)}>
+                <Select
+                  value={formData.condition}
+                  onValueChange={(value) => handleChange("condition", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select condition" />
                   </SelectTrigger>
@@ -233,17 +331,17 @@ export default function CreateProductPage() {
               </div>
 
               <div className="flex gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="flex-1" 
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => navigate("/marketplace")}
                   disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
                   disabled={isSubmitting}
                 >

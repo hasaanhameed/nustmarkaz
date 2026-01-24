@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function CreateTripPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -24,19 +25,84 @@ export default function CreateTripPage() {
     spots: "",
     meetingPoint: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
   };
 
-  const handleImageUpload = () => {
-    setImage("https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=400");
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload an image file only.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target?.result as string;
+      setImage(base64String);
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.title) newErrors.title = "Title is required";
+    if (!formData.description)
+      newErrors.description = "Description is required";
+    if (!formData.destination)
+      newErrors.destination = "Destination is required";
+    if (!formData.departureDate)
+      newErrors.departureDate = "Departure date is required";
+    if (!formData.returnDate) newErrors.returnDate = "Return date is required";
+    if (!formData.price) newErrors.price = "Price is required";
+    if (!formData.spots) newErrors.spots = "Number of spots is required";
+    if (!formData.meetingPoint)
+      newErrors.meetingPoint = "Meeting point is required";
+    if (!image) newErrors.image = "Cover image is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -63,7 +129,9 @@ export default function CreateTripPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.detail || "Failed to create trip. Please try again.",
+        description:
+          error.response?.data?.detail ||
+          "Failed to create trip. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -93,7 +161,11 @@ export default function CreateTripPage() {
                 <Label>Cover Image</Label>
                 {image ? (
                   <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-                    <img src={image} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={image}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                     <button
                       type="button"
                       onClick={() => setImage(null)}
@@ -103,14 +175,26 @@ export default function CreateTripPage() {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={handleImageUpload}
-                    className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-accent transition-colors"
-                  >
-                    <Upload className="h-8 w-8" />
-                    <span>Upload Cover Image</span>
-                  </button>
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={triggerFileInput}
+                      className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-accent transition-colors"
+                    >
+                      <Upload className="h-8 w-8" />
+                      <span>Upload Cover Image</span>
+                    </button>
+                  </>
+                )}
+                {errors.image && (
+                  <p className="text-sm text-destructive">{errors.image}</p>
                 )}
               </div>
 
@@ -121,8 +205,11 @@ export default function CreateTripPage() {
                   placeholder="e.g., Hunza Valley Adventure"
                   value={formData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  required
+                  className={errors.title ? "border-destructive" : ""}
                 />
+                {errors.title && (
+                  <p className="text-sm text-destructive">{errors.title}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -133,8 +220,13 @@ export default function CreateTripPage() {
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   rows={4}
-                  required
+                  className={errors.description ? "border-destructive" : ""}
                 />
+                {errors.description && (
+                  <p className="text-sm text-destructive">
+                    {errors.description}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -144,9 +236,16 @@ export default function CreateTripPage() {
                     id="destination"
                     placeholder="e.g., Hunza, Gilgit-Baltistan"
                     value={formData.destination}
-                    onChange={(e) => handleChange("destination", e.target.value)}
-                    required
+                    onChange={(e) =>
+                      handleChange("destination", e.target.value)
+                    }
+                    className={errors.destination ? "border-destructive" : ""}
                   />
+                  {errors.destination && (
+                    <p className="text-sm text-destructive">
+                      {errors.destination}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="meetingPoint">Meeting Point</Label>
@@ -154,9 +253,16 @@ export default function CreateTripPage() {
                     id="meetingPoint"
                     placeholder="e.g., NUST Main Gate"
                     value={formData.meetingPoint}
-                    onChange={(e) => handleChange("meetingPoint", e.target.value)}
-                    required
+                    onChange={(e) =>
+                      handleChange("meetingPoint", e.target.value)
+                    }
+                    className={errors.meetingPoint ? "border-destructive" : ""}
                   />
+                  {errors.meetingPoint && (
+                    <p className="text-sm text-destructive">
+                      {errors.meetingPoint}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -167,9 +273,16 @@ export default function CreateTripPage() {
                     id="departureDate"
                     type="date"
                     value={formData.departureDate}
-                    onChange={(e) => handleChange("departureDate", e.target.value)}
-                    required
+                    onChange={(e) =>
+                      handleChange("departureDate", e.target.value)
+                    }
+                    className={errors.departureDate ? "border-destructive" : ""}
                   />
+                  {errors.departureDate && (
+                    <p className="text-sm text-destructive">
+                      {errors.departureDate}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="returnDate">Return Date</Label>
@@ -178,8 +291,13 @@ export default function CreateTripPage() {
                     type="date"
                     value={formData.returnDate}
                     onChange={(e) => handleChange("returnDate", e.target.value)}
-                    required
+                    className={errors.returnDate ? "border-destructive" : ""}
                   />
+                  {errors.returnDate && (
+                    <p className="text-sm text-destructive">
+                      {errors.returnDate}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -192,8 +310,11 @@ export default function CreateTripPage() {
                     placeholder="25000"
                     value={formData.price}
                     onChange={(e) => handleChange("price", e.target.value)}
-                    required
+                    className={errors.price ? "border-destructive" : ""}
                   />
+                  {errors.price && (
+                    <p className="text-sm text-destructive">{errors.price}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="spots">Total Spots</Label>
@@ -203,27 +324,30 @@ export default function CreateTripPage() {
                     placeholder="30"
                     value={formData.spots}
                     onChange={(e) => handleChange("spots", e.target.value)}
-                    required
+                    className={errors.spots ? "border-destructive" : ""}
                   />
+                  {errors.spots && (
+                    <p className="text-sm text-destructive">{errors.spots}</p>
+                  )}
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="flex-1" 
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => navigate("/trips")}
                   disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Creating..." : "Create Trip"}
+                  {isSubmitting ? "Creating..." : "Organize Trip"}
                 </Button>
               </div>
             </form>

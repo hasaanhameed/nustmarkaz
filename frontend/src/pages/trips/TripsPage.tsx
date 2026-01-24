@@ -7,14 +7,17 @@ import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Search, Plus, MapPin } from "lucide-react";
 import { getAllTrips, Trip } from "@/api/trip";
+import { getCurrentUser, User } from "@/api/user";
 
 export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetchTrips();
+    fetchCurrentUser();
   }, []);
 
   const fetchTrips = async () => {
@@ -28,8 +31,18 @@ export default function TripsPage() {
     }
   };
 
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setCurrentUser(null);
+    }
+  };
+
   const filteredTrips = trips.filter((trip) =>
-    trip.title.toLowerCase().includes(searchQuery.toLowerCase())
+    trip.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -39,14 +52,25 @@ export default function TripsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold">Trips & Events</h1>
-            <p className="text-muted-foreground mt-1">Explore adventures with fellow students</p>
+            <p className="text-muted-foreground mt-1">
+              Explore adventures with fellow students
+            </p>
           </div>
-          <Link to="/trips/create">
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-              <Plus className="h-4 w-4" />
-              Organize Trip
-            </Button>
-          </Link>
+          {currentUser ? (
+            <Link to="/trips/create">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Organize Trip
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Log in to Post
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Search */}
@@ -73,11 +97,14 @@ export default function TripsPage() {
                 id={trip.id.toString()}
                 title={trip.title}
                 description={trip.description}
-                image={trip.images[0]?.image_path || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"}
+                image={
+                  trip.images[0]?.image_path ||
+                  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"
+                }
                 type="trip"
                 price={trip.cost_per_person}
                 location={trip.destination}
-                author={{ name: "Organizer" }}
+                author={{ name: trip.creator.username }}
               />
             ))}
           </div>

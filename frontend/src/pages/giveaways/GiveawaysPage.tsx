@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -7,12 +7,28 @@ import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockGiveaways } from "@/data/mockData";
 import { Search, Plus, Gift } from "lucide-react";
+import { getCurrentUser, User } from "@/api/user";
 
 export default function GiveawaysPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setCurrentUser(null);
+    }
+  };
 
   const filteredGiveaways = mockGiveaways.filter((giveaway) =>
-    giveaway.title.toLowerCase().includes(searchQuery.toLowerCase())
+    giveaway.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -22,14 +38,25 @@ export default function GiveawaysPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold">Giveaways</h1>
-            <p className="text-muted-foreground mt-1">Win exciting prizes from student societies</p>
+            <p className="text-muted-foreground mt-1">
+              Win exciting prizes from student societies
+            </p>
           </div>
-          <Link to="/giveaways/create">
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-              <Plus className="h-4 w-4" />
-              Host Giveaway
-            </Button>
-          </Link>
+          {currentUser ? (
+            <Link to="/giveaways/create">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Host Giveaway
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Log in to Post
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Search */}

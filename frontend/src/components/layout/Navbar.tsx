@@ -1,6 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ShoppingBag, MapPin, Heart, Gift, User, LogIn, LogOut, Loader2 } from "lucide-react";
+import {
+  Menu,
+  X,
+  ShoppingBag,
+  MapPin,
+  Heart,
+  Gift,
+  User,
+  LogIn,
+  LogOut,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -16,7 +27,8 @@ import { cn } from "@/lib/utils";
 import { getCurrentUser, User as UserType } from "@/api/user";
 
 const navLinks = [
-  { name: "Home", href: "/" },
+  { name: "Home", href: "/", loggedOutOnly: true },
+  { name: "Dashboard", href: "/dashboard", loggedInOnly: true },
   { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
   { name: "Trips", href: "/trips", icon: MapPin },
   { name: "Donations", href: "/donations", icon: Heart },
@@ -45,7 +57,7 @@ export function Navbar() {
 
   const handleLogoutConfirm = () => {
     setIsLoggingOut(true);
-    
+
     // Simulate a brief delay for better UX
     setTimeout(() => {
       localStorage.removeItem("access_token");
@@ -56,6 +68,13 @@ export function Navbar() {
     }, 800);
   };
 
+  // Filter nav links based on authentication status
+  const filteredNavLinks = navLinks.filter((link) => {
+    if (link.loggedOutOnly && currentUser) return false;
+    if (link.loggedInOnly && !currentUser) return false;
+    return true;
+  });
+
   return (
     <>
       <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -64,14 +83,16 @@ export function Navbar() {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">N</span>
+                <span className="text-primary-foreground font-bold text-lg">
+                  N
+                </span>
               </div>
               <span className="font-bold text-xl text-primary">NustMarkaz</span>
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
+              {filteredNavLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
@@ -79,7 +100,7 @@ export function Navbar() {
                     "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                     location.pathname === link.href
                       ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
                   )}
                 >
                   {link.name}
@@ -97,9 +118,9 @@ export function Navbar() {
                       {currentUser.username}
                     </Button>
                   </Link>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={handleLogoutClick}
                     className="gap-2"
                   >
@@ -115,7 +136,10 @@ export function Navbar() {
                     </Button>
                   </Link>
                   <Link to="/signup">
-                    <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                    <Button
+                      size="sm"
+                      className="bg-accent text-accent-foreground hover:bg-accent/90"
+                    >
                       Sign up
                     </Button>
                   </Link>
@@ -129,7 +153,11 @@ export function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
 
@@ -137,7 +165,7 @@ export function Navbar() {
           {isOpen && (
             <div className="md:hidden py-4 border-t border-border animate-fade-in">
               <div className="flex flex-col gap-2">
-                {navLinks.map((link) => (
+                {filteredNavLinks.map((link) => (
                   <Link
                     key={link.name}
                     to={link.href}
@@ -146,7 +174,7 @@ export function Navbar() {
                       "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
                       location.pathname === link.href
                         ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted",
                     )}
                   >
                     {link.icon && <link.icon className="h-5 w-5" />}
@@ -204,12 +232,15 @@ export function Navbar() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to log out? You'll need to sign in again to access your account.
+              Are you sure you want to log out? You'll need to sign in again to
+              access your account.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoggingOut}>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel disabled={isLoggingOut}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleLogoutConfirm}
               disabled={isLoggingOut}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

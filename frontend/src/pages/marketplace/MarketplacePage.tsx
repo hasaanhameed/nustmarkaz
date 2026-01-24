@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getAllProducts, Product } from "@/api/product";
+import { getCurrentUser, User } from "@/api/user";
 
 const categories = [
   "All",
@@ -33,9 +34,11 @@ export default function MarketplacePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetchProducts();
+    fetchCurrentUser();
   }, []);
 
   const fetchProducts = async () => {
@@ -49,6 +52,16 @@ export default function MarketplacePage() {
       setError("Failed to load products. Please try again later.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setCurrentUser(null);
     }
   };
 
@@ -79,12 +92,21 @@ export default function MarketplacePage() {
               Buy and sell within the NUST community
             </p>
           </div>
-          <Link to="/marketplace/create">
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-              <Plus className="h-4 w-4" />
-              List Product
-            </Button>
-          </Link>
+          {currentUser ? (
+            <Link to="/marketplace/create">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                List Product
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Log in to Post
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Filters */}
@@ -151,7 +173,7 @@ export default function MarketplacePage() {
                 type="product"
                 price={product.price}
                 location={product.pickup_location}
-                author={{ name: "User" }}
+                author={{ name: product.user.username }}
               />
             ))}
           </div>

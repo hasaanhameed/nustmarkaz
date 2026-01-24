@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -7,12 +7,28 @@ import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockDonations } from "@/data/mockData";
 import { Search, Plus, Heart } from "lucide-react";
+import { getCurrentUser, User } from "@/api/user";
 
 export default function DonationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setCurrentUser(null);
+    }
+  };
 
   const filteredDonations = mockDonations.filter((donation) =>
-    donation.title.toLowerCase().includes(searchQuery.toLowerCase())
+    donation.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -22,14 +38,25 @@ export default function DonationsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold">Donation Drives</h1>
-            <p className="text-muted-foreground mt-1">Support causes that matter to our community</p>
+            <p className="text-muted-foreground mt-1">
+              Support causes that matter to our community
+            </p>
           </div>
-          <Link to="/donations/create">
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-              <Plus className="h-4 w-4" />
-              Start Drive
-            </Button>
-          </Link>
+          {currentUser ? (
+            <Link to="/donations/create">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Start Drive
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+                <Plus className="h-4 w-4" />
+                Log in to Post
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Search */}

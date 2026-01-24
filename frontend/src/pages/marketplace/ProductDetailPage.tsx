@@ -12,6 +12,8 @@ import {
   Share2,
   Heart,
   Flag,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getProductById, Product } from "@/api/product";
@@ -21,6 +23,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -79,6 +82,20 @@ export default function ProductDetailPage() {
   }
 
   const creatorInitial = product.user.username.charAt(0).toUpperCase();
+  const images =
+    product.images && product.images.length > 0
+      ? product.images.map((img) => img.image_path)
+      : ["https://images.unsplash.com/photo-1516826957135-700dedea698c?w=500"];
+
+  const currentImage = images[currentImageIndex];
+
+  const goToPrevious = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <Layout>
@@ -93,16 +110,65 @@ export default function ProductDetailPage() {
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Image */}
-          <div className="aspect-square rounded-xl overflow-hidden bg-muted">
-            <img
-              src={
-                product.images[0]?.image_path ||
-                "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=500"
-              }
-              alt={product.title}
-              className="w-full h-full object-cover"
-            />
+          {/* Image Carousel */}
+          <div>
+            <div className="aspect-square rounded-xl overflow-hidden bg-muted relative mb-4">
+              <img
+                src={currentImage}
+                alt={product.title}
+                className="w-full h-full object-cover"
+              />
+
+              {/* Navigation arrows - only show if multiple images */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={goToPrevious}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                  <button
+                    onClick={goToNext}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                </>
+              )}
+
+              {/* Image counter */}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                  {currentImageIndex + 1} / {images.length}
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnail gallery */}
+            {images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {images.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      index === currentImageIndex
+                        ? "border-accent"
+                        : "border-border hover:border-muted-foreground"
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${product.title} thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Details */}

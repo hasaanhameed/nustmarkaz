@@ -34,7 +34,6 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Link to="/marketplace/create">
             <div className="p-4 rounded-xl border border-border bg-card hover:border-accent transition-colors group">
-              <ShoppingBag className="h-6 w-6 text-accent mb-2" />
               <p className="font-medium group-hover:text-accent transition-colors">
                 Sell Product
               </p>
@@ -45,7 +44,6 @@ export default function DashboardPage() {
           </Link>
           <Link to="/trips/create">
             <div className="p-4 rounded-xl border border-border bg-card hover:border-success transition-colors group">
-              <MapPin className="h-6 w-6 text-success mb-2" />
               <p className="font-medium group-hover:text-success transition-colors">
                 Organize Trip
               </p>
@@ -54,7 +52,6 @@ export default function DashboardPage() {
           </Link>
           <Link to="/donations/create">
             <div className="p-4 rounded-xl border border-border bg-card hover:border-warning transition-colors group">
-              <Heart className="h-6 w-6 text-warning mb-2" />
               <p className="font-medium group-hover:text-warning transition-colors">
                 Start Drive
               </p>
@@ -63,7 +60,6 @@ export default function DashboardPage() {
           </Link>
           <Link to="/giveaways/create">
             <div className="p-4 rounded-xl border border-border bg-card hover:border-primary transition-colors group">
-              <Gift className="h-6 w-6 text-primary mb-2" />
               <p className="font-medium group-hover:text-primary transition-colors">
                 Host Giveaway
               </p>
