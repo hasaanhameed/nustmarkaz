@@ -27,7 +27,7 @@ class ProductCreate(BaseModel):
         from_attributes = True
 
 
-# Schema for product response - uses creator for reusability
+# Schema for product response 
 class ProductResponse(BaseModel):
     id: int
     title: str

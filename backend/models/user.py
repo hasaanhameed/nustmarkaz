@@ -19,3 +19,6 @@ class User(Base):
     
     # Event relationships
     created_events = relationship("Event", back_populates="creator")
+
+    # Donation relationships
+    created_donations = relationship("Donation", back_populates="creator")
