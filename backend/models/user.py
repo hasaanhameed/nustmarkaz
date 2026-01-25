@@ -12,7 +12,7 @@ class User(Base):
     password = Column(String, nullable=False)
 
     # Product relationships
-    products = relationship("Product", back_populates="user")
+    products = relationship("Product", back_populates="creator")
     
     # Trip relationships
     created_trips = relationship("Trip", back_populates="creator")
@@ -23,5 +23,8 @@ class User(Base):
     # Donation relationships
     created_donations = relationship("Donation", back_populates="creator")
 
-    #Lost/Found relationships
+    # Lost/Found relationships
     lost_found_items = relationship("LostFoundItem", back_populates="creator")
+    
+    # Ride relationships
+    created_rides = relationship("Ride", back_populates="creator")
