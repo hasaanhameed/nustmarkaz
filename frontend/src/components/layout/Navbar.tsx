@@ -11,6 +11,8 @@ import {
   LogIn,
   LogOut,
   Loader2,
+  Search,
+  Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +35,8 @@ const navLinks = [
   { name: "Trips", href: "/trips", icon: MapPin },
   { name: "Donations", href: "/donations", icon: Heart },
   { name: "Events", href: "/giveaways", icon: Gift },
+  { name: "Lost & Found", href: "/lost-found", icon: Search },
+  { name: "Car Pooling", href: "/carpooling", icon: Car },
 ];
 
 export function Navbar() {

@@ -22,6 +22,8 @@ import GiveawaysPage from "./pages/giveaways/GiveawaysPage";
 import GiveawayDetailPage from "./pages/giveaways/GiveawayDetailPage";
 import CreateGiveawayPage from "./pages/giveaways/CreateGiveawayPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import LostFoundPage from "./pages/lost-found/LostFoundPage";
+import CarpoolPage from "./pages/carpool/CarpoolPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +65,10 @@ const App = () => (
 
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
+
+          {/* New Modules */}
+          <Route path="/lost-found" element={<LostFoundPage />} />
+          <Route path="/carpooling" element={<CarpoolPage />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

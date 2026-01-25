@@ -1,0 +1,115 @@
+
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Tag, Phone, Mail, MessageCircle } from "lucide-react";
+import { LostFoundItem } from "@/data/mockLostFound";
+import { cn } from "@/lib/utils";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+interface LostFoundCardProps {
+    item: LostFoundItem;
+    onClaim: (id: string) => void;
+}
+
+export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
+    const isLost = item.type === "lost";
+
+    const statusColors = {
+        LOST: "bg-destructive text-destructive-foreground",
+        FOUND: "bg-success text-success-foreground",
+        CLAIMED: "bg-muted text-muted-foreground",
+    };
+
+    const ContactIcon = {
+        Email: Mail,
+        Phone: Phone,
+        Chat: MessageCircle,
+    }[item.contact.type];
+
+    return (
+        <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow">
+            <div className="relative aspect-video overflow-hidden bg-muted">
+                {item.image ? (
+                    <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-secondary/30">
+                        <Tag className="h-12 w-12 opacity-20" />
+                    </div>
+                )}
+                <Badge className={cn("absolute top-3 left-3", statusColors[item.status])}>
+                    {item.status}
+                </Badge>
+                <Badge variant="secondary" className="absolute top-3 right-3 bg-background/80 backdrop-blur">
+                    {item.category}
+                </Badge>
+            </div>
+
+            <CardContent className="p-4 flex-1">
+                <h3 className="font-semibold text-lg line-clamp-1 mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    {item.description}
+                </p>
+
+                <div className="space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 shrink-0" />
+                        <span>{item.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 shrink-0" />
+                        <span>{item.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <ContactIcon className="h-4 w-4 shrink-0" />
+                        <span>{item.contact.value}</span>
+                    </div>
+                </div>
+            </CardContent>
+
+            <CardFooter className="p-4 border-t bg-muted/5">
+                {item.status !== "CLAIMED" ? (
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button className="w-full" variant={isLost ? "default" : "secondary"}>
+                                {isLost ? "I Found This!" : "This is Mine!"}
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Confirm Claim</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Are you sure you want to mark this item as CLAIMED? This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onClaim(item.id)}>
+                                    Yes, Claim Item
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                ) : (
+                    <Button disabled variant="outline" className="w-full opacity-50">
+                        Claimed
+                    </Button>
+                )}
+            </CardFooter>
+        </Card>
+    );
+}
