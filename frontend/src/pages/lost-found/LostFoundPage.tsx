@@ -1,10 +1,8 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Filter, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -12,16 +10,35 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { mockLostFoundItems, LostFoundItem, CAMPUS_LOCATIONS } from "@/data/mockLostFound";
-import { LostFoundCard } from "./components/LostFoundCard";
-import { CreateLostFoundDialog } from "./components/CreateLostFoundDialog";
+import { CAMPUS_LOCATIONS } from "@/data/mockLostFound";
+import { LostFoundCard } from "@/components/ui/LostFoundCard";
+import { CreateLostFoundDialog } from "@/components/ui/CreateLostFoundDialog";
 import { toast } from "sonner";
+import { getAllLostFoundItems, claimItem, LostFoundItem } from "@/api/lostFound";
 
 export default function LostFoundPage() {
-    const [items, setItems] = useState<LostFoundItem[]>(mockLostFoundItems);
+    const [items, setItems] = useState<LostFoundItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All");
     const [locationFilter, setLocationFilter] = useState("All");
+    const [isLoading, setIsLoading] = useState(true);
+
+    const fetchItems = async () => {
+        try {
+            setIsLoading(true);
+            const data = await getAllLostFoundItems();
+            setItems(data);
+        } catch (error) {
+            console.error("Error fetching items:", error);
+            toast.error("Failed to load items");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchItems();
+    }, []);
 
     const filteredItems = items.filter((item) => {
         const matchesSearch =
@@ -35,23 +52,15 @@ export default function LostFoundPage() {
     const lostItems = filteredItems.filter((item) => item.type === "lost");
     const foundItems = filteredItems.filter((item) => item.type === "found");
 
-    const handleAddItem = (newItem: Omit<LostFoundItem, "id" | "status">) => {
-        const item: LostFoundItem = {
-            ...newItem,
-            id: `lf-${Date.now()}`,
-            status: newItem.type === "lost" ? "LOST" : "FOUND",
-        };
-        setItems([item, ...items]);
-        toast.success(`${newItem.type === "lost" ? "Lost" : "Found"} item posted successfully!`);
-    };
-
-    const handleClaimItem = (id: string) => {
-        setItems(
-            items.map((item) =>
-                item.id === id ? { ...item, status: "CLAIMED" } : item
-            )
-        );
-        toast.success("Item marked as claimed!");
+    const handleClaimItem = async (id: number) => {
+        try {
+            await claimItem(id);
+            toast.success("Item marked as claimed!");
+            await fetchItems(); // Refresh the list
+        } catch (error) {
+            console.error("Error claiming item:", error);
+            toast.error("Failed to claim item");
+        }
     };
 
     return (
@@ -65,8 +74,8 @@ export default function LostFoundPage() {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <CreateLostFoundDialog type="lost" onAdd={handleAddItem} />
-                        <CreateLostFoundDialog type="found" onAdd={handleAddItem} />
+                        <CreateLostFoundDialog type="lost" onSuccess={fetchItems} />
+                        <CreateLostFoundDialog type="found" onSuccess={fetchItems} />
                     </div>
                 </div>
 
@@ -107,40 +116,46 @@ export default function LostFoundPage() {
                     </Select>
                 </div>
 
-                <Tabs defaultValue="lost" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-                        <TabsTrigger value="lost">Lost Items ({lostItems.length})</TabsTrigger>
-                        <TabsTrigger value="found">Found Items ({foundItems.length})</TabsTrigger>
-                    </TabsList>
+                {isLoading ? (
+                    <div className="text-center py-12">
+                        <p className="text-muted-foreground">Loading items...</p>
+                    </div>
+                ) : (
+                    <Tabs defaultValue="lost" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+                            <TabsTrigger value="lost">Lost Items ({lostItems.length})</TabsTrigger>
+                            <TabsTrigger value="found">Found Items ({foundItems.length})</TabsTrigger>
+                        </TabsList>
 
-                    <TabsContent value="lost" className="mt-6">
-                        {lostItems.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {lostItems.map((item) => (
-                                    <LostFoundCard key={item.id} item={item} onClaim={handleClaimItem} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-12">
-                                <p className="text-muted-foreground">No lost items matching your filters.</p>
-                            </div>
-                        )}
-                    </TabsContent>
+                        <TabsContent value="lost" className="mt-6">
+                            {lostItems.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {lostItems.map((item) => (
+                                        <LostFoundCard key={item.id} item={item} onClaim={handleClaimItem} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <p className="text-muted-foreground">No lost items matching your filters.</p>
+                                </div>
+                            )}
+                        </TabsContent>
 
-                    <TabsContent value="found" className="mt-6">
-                        {foundItems.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {foundItems.map((item) => (
-                                    <LostFoundCard key={item.id} item={item} onClaim={handleClaimItem} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-12">
-                                <p className="text-muted-foreground">No found items matching your filters.</p>
-                            </div>
-                        )}
-                    </TabsContent>
-                </Tabs>
+                        <TabsContent value="found" className="mt-6">
+                            {foundItems.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {foundItems.map((item) => (
+                                        <LostFoundCard key={item.id} item={item} onClaim={handleClaimItem} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <p className="text-muted-foreground">No found items matching your filters.</p>
+                                </div>
+                            )}
+                        </TabsContent>
+                    </Tabs>
+                )}
             </div>
         </Layout>
     );

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { CAMPUS_LOCATIONS, LostFoundItem } from "@/data/mockLostFound";
+import { CAMPUS_LOCATIONS } from "@/data/mockLostFound";
 import { CalendarIcon, Upload } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -30,22 +29,25 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { createLostFoundItem } from "@/api/lostFound";
+import { toast } from "sonner";
 
 interface CreateLostFoundDialogProps {
     type: "lost" | "found";
-    onAdd: (item: Omit<LostFoundItem, "id" | "status">) => void;
+    onSuccess: () => void;
 }
 
-export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProps) {
+export function CreateLostFoundDialog({ type, onSuccess }: CreateLostFoundDialogProps) {
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState<Date>();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
         category: "",
         description: "",
         location: "",
-        contactType: "Phone",
-        contactValue: "",
+        contactMethod: "phone",
+        contactInfo: "",
         image: "",
     });
 
@@ -60,33 +62,50 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onAdd({
-            title: formData.title,
-            category: formData.category as any,
-            description: formData.description,
-            location: formData.location,
-            date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
-            image: formData.image || undefined,
-            type,
-            contact: {
-                type: formData.contactType as any,
-                value: formData.contactValue,
-            },
-        });
-        setOpen(false);
-        // Reset form
-        setFormData({
-            title: "",
-            category: "",
-            description: "",
-            location: "",
-            contactType: "Phone",
-            contactValue: "",
-            image: "",
-        });
-        setDate(undefined);
+        
+        if (!formData.image) {
+            toast.error("Please upload an image");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            await createLostFoundItem({
+                title: formData.title,
+                category: formData.category,
+                description: formData.description,
+                location: formData.location,
+                date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
+                image_path: formData.image,
+                contact_method: formData.contactMethod,
+                contact_info: formData.contactInfo,
+                type,
+            });
+
+            toast.success(`${type === "lost" ? "Lost" : "Found"} item posted successfully!`);
+            setOpen(false);
+            onSuccess();
+            
+            // Reset form
+            setFormData({
+                title: "",
+                category: "",
+                description: "",
+                location: "",
+                contactMethod: "phone",
+                contactInfo: "",
+                image: "",
+            });
+            setDate(undefined);
+        } catch (error) {
+            console.error("Error creating item:", error);
+            toast.error("Failed to post item. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -105,7 +124,7 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="title">Item Name</Label>
+                        <Label htmlFor="title">Item Name *</Label>
                         <Input
                             id="title"
                             value={formData.title}
@@ -116,7 +135,7 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="category">Category</Label>
+                        <Label htmlFor="category">Category *</Label>
                         <Select onValueChange={(v) => setFormData({ ...formData, category: v })} required>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select category" />
@@ -132,7 +151,7 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="location">Campus Location</Label>
+                        <Label htmlFor="location">Campus Location *</Label>
                         <Select onValueChange={(v) => setFormData({ ...formData, location: v })} required>
                             <SelectTrigger>
                                 <SelectValue placeholder="Where was it?" />
@@ -146,10 +165,11 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Date</Label>
+                        <Label>Date *</Label>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
+                                    type="button"
                                     variant={"outline"}
                                     className={cn(
                                         "w-full justify-start text-left font-normal",
@@ -172,7 +192,7 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">Description *</Label>
                         <Textarea
                             id="description"
                             value={formData.description}
@@ -183,7 +203,7 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Image</Label>
+                        <Label>Image *</Label>
                         <div className="flex items-center gap-4">
                             <Button type="button" variant="outline" className="w-full relative overflow-hidden">
                                 <Upload className="mr-2 h-4 w-4" />
@@ -193,6 +213,7 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                                     className="absolute inset-0 opacity-0 cursor-pointer"
                                     accept="image/*"
                                     onChange={handleImageUpload}
+                                    required
                                 />
                             </Button>
                             {formData.image && (
@@ -207,33 +228,42 @@ export function CreateLostFoundDialog({ type, onAdd }: CreateLostFoundDialogProp
                         <div className="col-span-1">
                             <Label>Method</Label>
                             <Select
-                                defaultValue="Phone"
-                                onValueChange={(v) => setFormData({ ...formData, contactType: v })}
+                                defaultValue="phone"
+                                onValueChange={(v) => setFormData({ ...formData, contactMethod: v })}
                             >
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Phone">Phone</SelectItem>
-                                    <SelectItem value="Email">Email</SelectItem>
-                                    <SelectItem value="Chat">Chat</SelectItem>
+                                    <SelectItem value="phone">Phone</SelectItem>
+                                    <SelectItem value="email">Email</SelectItem>
+                                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="col-span-2">
-                            <Label htmlFor="contact">Contact Info</Label>
+                            <Label htmlFor="contact">Contact Info *</Label>
                             <Input
                                 id="contact"
-                                value={formData.contactValue}
-                                onChange={(e) => setFormData({ ...formData, contactValue: e.target.value })}
+                                type={formData.contactMethod === "email" ? "email" : "text"}
+                                value={formData.contactInfo}
+                                onChange={(e) => setFormData({ ...formData, contactInfo: e.target.value })}
                                 required
-                                placeholder="0300-XXXXXXX"
+                                placeholder={
+                                    formData.contactMethod === "email" 
+                                        ? "your.email@example.com" 
+                                        : formData.contactMethod === "whatsapp"
+                                        ? "0300-XXXXXXX (WhatsApp)"
+                                        : "0300-XXXXXXX"
+                                }
                             />
                         </div>
                     </div>
 
                     <DialogFooter>
-                        <Button type="submit">Post Item</Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? "Posting..." : "Post Item"}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

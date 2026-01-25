@@ -1,9 +1,8 @@
-
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Tag, Phone, Mail, MessageCircle } from "lucide-react";
-import { LostFoundItem } from "@/data/mockLostFound";
+import { LostFoundItem } from "@/api/lostFound";
 import { cn } from "@/lib/utils";
 import {
     AlertDialog,
@@ -16,10 +15,11 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { format } from "date-fns";
 
 interface LostFoundCardProps {
     item: LostFoundItem;
-    onClaim: (id: string) => void;
+    onClaim: (id: number) => void;
 }
 
 export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
@@ -32,17 +32,20 @@ export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
     };
 
     const ContactIcon = {
-        Email: Mail,
-        Phone: Phone,
-        Chat: MessageCircle,
-    }[item.contact.type];
+        email: Mail,
+        phone: Phone,
+        whatsapp: MessageCircle,
+    }[item.contact_method];
+
+    // Format date
+    const formattedDate = format(new Date(item.date), "PPP");
 
     return (
         <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow">
             <div className="relative aspect-video overflow-hidden bg-muted">
-                {item.image ? (
+                {item.image_path ? (
                     <img
-                        src={item.image}
+                        src={item.image_path}
                         alt={item.title}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     />
@@ -72,11 +75,11 @@ export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
                     </div>
                     <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 shrink-0" />
-                        <span>{item.date}</span>
+                        <span>{formattedDate}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <ContactIcon className="h-4 w-4 shrink-0" />
-                        <span>{item.contact.value}</span>
+                        <span className="capitalize">{item.contact_method}: {item.contact_info}</span>
                     </div>
                 </div>
             </CardContent>
