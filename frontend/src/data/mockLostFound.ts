@@ -20,14 +20,18 @@ export const CAMPUS_LOCATIONS = [
     "NBS",
     "SADA",
     "SMME",
-    "Concordia 1",
-    "Concordia 2",
+    "IGIS",
+    "IESE",
+    "IAEC",
+    "RIMMS",
+    "CIPS",
     "H-12 Main Office",
     "Library",
     "C1",
     "C2",
-    "Margalla Hostel",
-    "Fatima Hostel",
+    "C3",
+    "Added in Description"
+    
 ];
 
 export const mockLostFoundItems: LostFoundItem[] = [

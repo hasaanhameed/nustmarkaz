@@ -23,5 +23,8 @@ class User(Base):
     # Donation relationships
     created_donations = relationship("Donation", back_populates="creator")
 
+    # Lost/Found relationships
+    lost_found_items = relationship("LostFoundItem", back_populates="creator")
+    
     # Ride relationships
     created_rides = relationship("Ride", back_populates="creator")
