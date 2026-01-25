@@ -15,7 +15,7 @@ class Product(Base):
 
     images = relationship("ProductImage", back_populates="product")
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
-    user = relationship("User", back_populates="products")
+    creator = relationship("User", back_populates="products")
 
 class ProductImage(Base):
     __tablename__ = 'product_images'
