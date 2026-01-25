@@ -1,20 +1,64 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { mockUserProfile, mockProducts, mockTrips, mockDonations } from "@/data/mockData";
-import { Edit, Mail, Calendar, School, Package, MapPin, Heart, Gift, Settings } from "lucide-react";
+import { EditProfileDialog } from "@/components/EditProfileDialog";
+import { getUserProfile, UserProfile } from "@/api/user";
+import { Mail, School, Package, MapPin, Heart, Gift, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
-  const user = mockUserProfile;
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock user listings - filter to show user's items
-  const userProducts = mockProducts.slice(0, 2);
-  const userTrips = mockTrips.slice(0, 1);
-  const userDonations = mockDonations.slice(0, 1);
+  const fetchProfile = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getUserProfile();
+      setProfile(data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      toast.error("Failed to load profile");
+      navigate("/login");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [navigate]);
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container-custom py-8 flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <Layout>
+        <div className="container-custom py-8">
+          <EmptyState
+            icon={Package}
+            title="Profile not found"
+            description="Please log in to view your profile"
+            actionLabel="Go to Login"
+            actionHref="/login"
+          />
+        </div>
+      </Layout>
+    );
+  }
+
+  const { user, products, trips, donations, events, lost_found_items } = profile;
 
   return (
     <Layout>
@@ -26,32 +70,30 @@ export default function ProfilePage() {
               <CardContent className="pt-6">
                 <div className="text-center mb-6">
                   <div className="h-24 w-24 rounded-full bg-primary mx-auto flex items-center justify-center text-primary-foreground text-3xl font-bold mb-4">
-                    {user.name.charAt(0)}
+                    {user.username.charAt(0).toUpperCase()}
                   </div>
-                  <h1 className="text-2xl font-bold">{user.name}</h1>
+                  <h1 className="text-2xl font-bold">{user.username}</h1>
                   <p className="text-muted-foreground">{user.department}</p>
                 </div>
 
                 <div className="space-y-4 text-sm">
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Mail className="h-4 w-4" />
-                    <span>{user.email}</span>
+                    <span className="truncate">{user.email}</span>
                   </div>
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <School className="h-4 w-4" />
-                    <span>{user.year}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined {user.joinedDate}</span>
+                    <span>{user.department}</span>
                   </div>
                 </div>
 
                 <div className="border-t border-border mt-6 pt-6">
-                  <Button variant="outline" className="w-full gap-2">
-                    <Edit className="h-4 w-4" />
-                    Edit Profile
-                  </Button>
+                  <EditProfileDialog
+                    currentUsername={user.username}
+                    currentDepartment={user.department}
+                    currentEmail={user.email}
+                    onProfileUpdated={fetchProfile}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -65,33 +107,27 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 rounded-lg bg-muted/50">
                     <Package className="h-5 w-5 mx-auto mb-1 text-accent" />
-                    <div className="text-xl font-bold">{user.listings.products}</div>
+                    <div className="text-xl font-bold">{products.length}</div>
                     <div className="text-xs text-muted-foreground">Products</div>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/50">
                     <MapPin className="h-5 w-5 mx-auto mb-1 text-success" />
-                    <div className="text-xl font-bold">{user.listings.trips}</div>
+                    <div className="text-xl font-bold">{trips.length}</div>
                     <div className="text-xs text-muted-foreground">Trips</div>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/50">
                     <Heart className="h-5 w-5 mx-auto mb-1 text-warning" />
-                    <div className="text-xl font-bold">{user.listings.donations}</div>
+                    <div className="text-xl font-bold">{donations.length}</div>
                     <div className="text-xs text-muted-foreground">Donations</div>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/50">
                     <Gift className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <div className="text-xl font-bold">{user.listings.giveaways}</div>
-                    <div className="text-xs text-muted-foreground">Giveaways</div>
+                    <div className="text-xl font-bold">{events.length}</div>
+                    <div className="text-xs text-muted-foreground">Events</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            {/* Settings Link */}
-            <Button variant="ghost" className="w-full mt-4 gap-2 text-muted-foreground">
-              <Settings className="h-4 w-4" />
-              Account Settings
-            </Button>
           </div>
 
           {/* Main Content - Listings */}
@@ -102,18 +138,36 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="products">
-                  <TabsList className="grid grid-cols-4 w-full">
+                  <TabsList className="grid grid-cols-5 w-full">
                     <TabsTrigger value="products">Products</TabsTrigger>
                     <TabsTrigger value="trips">Trips</TabsTrigger>
                     <TabsTrigger value="donations">Donations</TabsTrigger>
-                    <TabsTrigger value="giveaways">Giveaways</TabsTrigger>
+                    <TabsTrigger value="events">Events</TabsTrigger>
+                    <TabsTrigger value="lost-found">Lost&Found</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="products" className="mt-6">
-                    {userProducts.length > 0 ? (
+                    {products.length > 0 ? (
                       <div className="grid sm:grid-cols-2 gap-4">
-                        {userProducts.map((product) => (
-                          <ListingCard key={product.id} {...product} />
+                        {products.map((product) => (
+                          <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                            <Link to={`/marketplace/${product.id}`}>
+                              <div className="aspect-video bg-muted relative overflow-hidden">
+                                {product.image_paths?.[0] ? (
+                                  <img src={product.image_paths[0]} alt={product.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <Package className="h-12 w-12 text-muted-foreground opacity-20" />
+                                  </div>
+                                )}
+                              </div>
+                              <CardContent className="p-4">
+                                <h3 className="font-semibold line-clamp-1">{product.name}</h3>
+                                <p className="text-sm text-muted-foreground">{product.category}</p>
+                                <p className="text-lg font-bold mt-2">Rs. {product.price}</p>
+                              </CardContent>
+                            </Link>
+                          </Card>
                         ))}
                       </div>
                     ) : (
@@ -128,10 +182,30 @@ export default function ProfilePage() {
                   </TabsContent>
 
                   <TabsContent value="trips" className="mt-6">
-                    {userTrips.length > 0 ? (
+                    {trips.length > 0 ? (
                       <div className="grid sm:grid-cols-2 gap-4">
-                        {userTrips.map((trip) => (
-                          <ListingCard key={trip.id} {...trip} />
+                        {trips.map((trip) => (
+                          <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                            <Link to={`/trips/${trip.id}`}>
+                              <div className="aspect-video bg-muted relative overflow-hidden">
+                                {trip.images?.[0]?.image_path ? (
+                                  <img src={trip.images[0].image_path} alt={trip.destination} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <MapPin className="h-12 w-12 text-muted-foreground opacity-20" />
+                                  </div>
+                                )}
+                              </div>
+                              <CardContent className="p-4">
+                                <h3 className="font-semibold line-clamp-1">{trip.title || trip.destination}</h3>
+                                <p className="text-sm text-muted-foreground">{trip.destination}</p>
+                                <div className="flex items-center justify-between mt-2">
+                                  <p className="text-sm text-muted-foreground">{trip.max_participants} max</p>
+                                  <p className="text-lg font-bold">Rs. {trip.cost_per_person}/person</p>
+                                </div>
+                              </CardContent>
+                            </Link>
+                          </Card>
                         ))}
                       </div>
                     ) : (
@@ -146,10 +220,27 @@ export default function ProfilePage() {
                   </TabsContent>
 
                   <TabsContent value="donations" className="mt-6">
-                    {userDonations.length > 0 ? (
+                    {donations.length > 0 ? (
                       <div className="grid sm:grid-cols-2 gap-4">
-                        {userDonations.map((donation) => (
-                          <ListingCard key={donation.id} {...donation} />
+                        {donations.map((donation) => (
+                          <Card key={donation.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                            <Link to={`/donations/${donation.id}`}>
+                              <div className="aspect-video bg-muted relative overflow-hidden">
+                                {donation.image_paths?.[0] ? (
+                                  <img src={donation.image_paths[0]} alt={donation.title} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <Heart className="h-12 w-12 text-muted-foreground opacity-20" />
+                                  </div>
+                                )}
+                              </div>
+                              <CardContent className="p-4">
+                                <h3 className="font-semibold line-clamp-1">{donation.title}</h3>
+                                <p className="text-sm text-muted-foreground">{donation.category}</p>
+                                <p className="text-lg font-bold mt-2">Goal: Rs. {donation.goal_amount}</p>
+                              </CardContent>
+                            </Link>
+                          </Card>
                         ))}
                       </div>
                     ) : (
@@ -163,14 +254,74 @@ export default function ProfilePage() {
                     )}
                   </TabsContent>
 
-                  <TabsContent value="giveaways" className="mt-6">
-                    <EmptyState
-                      icon={Gift}
-                      title="No giveaways hosted"
-                      description="Host your first giveaway for the community"
-                      actionLabel="Host Giveaway"
-                      actionHref="/giveaways/create"
-                    />
+                  <TabsContent value="events" className="mt-6">
+                    {events.length > 0 ? (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {events.map((event) => (
+                          <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                            <Link to={`/giveaways/${event.id}`}>
+                              <div className="aspect-video bg-muted relative overflow-hidden">
+                                {event.image_paths?.[0] ? (
+                                  <img src={event.image_paths[0]} alt={event.title} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <Gift className="h-12 w-12 text-muted-foreground opacity-20" />
+                                  </div>
+                                )}
+                              </div>
+                              <CardContent className="p-4">
+                                <h3 className="font-semibold line-clamp-1">{event.title}</h3>
+                                <p className="text-sm text-muted-foreground">{event.category}</p>
+                                <p className="text-lg font-bold mt-2">{event.is_paid ? `Rs. ${event.price}` : 'Free'}</p>
+                              </CardContent>
+                            </Link>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyState
+                        icon={Gift}
+                        title="No events hosted"
+                        description="Host your first event for the community"
+                        actionLabel="Host Event"
+                        actionHref="/giveaways/create"
+                      />
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="lost-found" className="mt-6">
+                    {lost_found_items.length > 0 ? (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {lost_found_items.map((item) => (
+                          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                            <Link to={`/lost-found`}>
+                              <div className="aspect-video bg-muted relative overflow-hidden">
+                                {item.image_path ? (
+                                  <img src={item.image_path} alt={item.title} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <Package className="h-12 w-12 text-muted-foreground opacity-20" />
+                                  </div>
+                                )}
+                              </div>
+                              <CardContent className="p-4">
+                                <h3 className="font-semibold line-clamp-1">{item.title}</h3>
+                                <p className="text-sm text-muted-foreground">{item.category}</p>
+                                <p className="text-lg font-bold mt-2 capitalize">{item.type}</p>
+                              </CardContent>
+                            </Link>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyState
+                        icon={Package}
+                        title="No lost & found items"
+                        description="Report lost or found items to help the community"
+                        actionLabel="Report Item"
+                        actionHref="/lost-found"
+                      />
+                    )}
                   </TabsContent>
                 </Tabs>
               </CardContent>

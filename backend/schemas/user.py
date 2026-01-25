@@ -11,6 +11,14 @@ class UserCreate(BaseModel):
         orm_mode = True 
 
 
+# Add this after UserCreate
+class UserUpdate(BaseModel):
+    username: str
+    department: str
+
+    class Config:
+        from_attributes = True
+
 class UserLogin(BaseModel):
     email: str
     password: str

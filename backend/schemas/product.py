@@ -38,7 +38,7 @@ class ProductResponse(BaseModel):
     condition: str
     user_id: int
     images: List[ProductImageResponse] = []
-    user: CreatorResponse  
+    creator: CreatorResponse  # Changed from 'user' to 'creator'
 
     class Config:
         from_attributes = True
