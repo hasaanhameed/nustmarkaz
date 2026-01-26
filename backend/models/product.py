@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
 
 class Product(Base):
     __tablename__ = 'products'
@@ -12,7 +13,9 @@ class Product(Base):
     category = Column(String, nullable=False)
     pickup_location = Column(String, nullable=False)
     condition = Column(String, nullable=False)
-    contact_number = Column(String, nullable=False)  # Add this line
+    contact_number = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 

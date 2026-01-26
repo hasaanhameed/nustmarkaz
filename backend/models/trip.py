@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, Float, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Float, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
 
 
 class Trip(Base):
@@ -15,7 +16,9 @@ class Trip(Base):
     departure_location = Column(String, nullable=False)
     max_participants = Column(Integer, nullable=False)
     cost_per_person = Column(Float, nullable=False)
-    contact_number = Column(String, nullable=False)  # Add this line
+    contact_number = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Foreign key to the trip creator
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

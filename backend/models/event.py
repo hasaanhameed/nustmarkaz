@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
 
 
 class Event(Base):
@@ -12,7 +13,9 @@ class Event(Base):
     society = Column(String, nullable=False)
     location = Column(String, nullable=False)
     event_date = Column(DateTime, nullable=False)
-    contact_number = Column(String, nullable=False)  # Add this line
+    contact_number = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Foreign key to the event creator
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

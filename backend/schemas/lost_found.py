@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from schemas.user import CreatorResponse
 
 
@@ -31,6 +31,8 @@ class LostFoundItemResponse(BaseModel):
     contact_info: str
     type: str
     status: str
+    created_at: datetime
+    updated_at: datetime
     creator_id: int
     creator: CreatorResponse
 

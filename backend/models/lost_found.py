@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, Date, Enum, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Date, DateTime, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
 import enum
 
 
@@ -26,15 +27,17 @@ class LostFoundItem(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
-    category = Column(String, nullable=False)  # Books, Electronics, ID Cards, Clothing, Other
-    location = Column(String, nullable=False)  # Campus location
-    date = Column(Date, nullable=False)  # Date lost/found
+    category = Column(String, nullable=False)
+    location = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
     description = Column(Text, nullable=False)
-    image_path = Column(String, nullable=True)  # Optional image
+    image_path = Column(String, nullable=True)
     contact_method = Column(Enum(ContactMethod), nullable=False)
-    contact_info = Column(String, nullable=False)  # Phone/email
-    type = Column(Enum(ItemType), nullable=False)  # lost or found
-    status = Column(Enum(ItemStatus), nullable=False)  # LOST, FOUND, CLAIMED
+    contact_info = Column(String, nullable=False)
+    type = Column(Enum(ItemType), nullable=False)
+    status = Column(Enum(ItemStatus), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     

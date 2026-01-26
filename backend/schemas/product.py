@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 from schemas.user import CreatorResponse
 
 
@@ -21,7 +22,7 @@ class ProductCreate(BaseModel):
     category: str
     pickup_location: str
     condition: str
-    contact_number: str  # Add this line
+    contact_number: str
     image_paths: Optional[List[str]] = []
 
     class Config:
@@ -37,7 +38,9 @@ class ProductResponse(BaseModel):
     category: str
     pickup_location: str
     condition: str
-    contact_number: str  # Add this line
+    contact_number: str
+    created_at: datetime
+    updated_at: datetime
     creator_id: int
     images: List[ProductImageResponse] = []
     creator: CreatorResponse
