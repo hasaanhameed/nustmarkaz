@@ -21,6 +21,7 @@ class EventCreate(BaseModel):
     society: str
     location: str
     event_date: datetime
+    contact_number: str  # Add this line
     image_paths: Optional[List[str]] = []
 
     class Config:
@@ -35,6 +36,7 @@ class EventResponse(BaseModel):
     society: str
     location: str
     event_date: datetime
+    contact_number: str  
     creator_id: int
     creator: CreatorResponse
     images: List[EventImageResponse] = []

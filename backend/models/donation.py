@@ -11,7 +11,8 @@ class Donation(Base):
     description = Column(Text, nullable=False)
     beneficiary = Column(String, nullable=False)  
     goal_amount = Column(Float, nullable=False) 
-    end_date = Column(Date, nullable=False)  # When the donation drive ends
+    end_date = Column(Date, nullable=False)
+    contact_number = Column(String, nullable=False)  # Add this line
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

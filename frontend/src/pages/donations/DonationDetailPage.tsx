@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getDonationById, Donation } from "@/api/donation";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft, Share2, Phone } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 
@@ -146,6 +146,20 @@ export default function DonationDetailPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Contact Information */}
+                <Card className="bg-accent/10">
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-accent" />
+                      <span className="font-medium">{donation.contact_number}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Call to contribute or learn more
+                    </p>
+                  </CardContent>
+                </Card>
+
                 <Button variant="outline" className="w-full gap-2">
                   <Share2 className="h-4 w-4" />
                   Share Drive

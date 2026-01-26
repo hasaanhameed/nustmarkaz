@@ -1,8 +1,8 @@
-"""Initial migration
+"""initial_schema_with_contact_number
 
-Revision ID: 4f47e9f20f5f
+Revision ID: d966b01b5e7b
 Revises: 
-Create Date: 2026-01-24 16:06:59.290331
+Create Date: 2026-01-26 06:12:15.895982
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4f47e9f20f5f'
+revision: str = 'd966b01b5e7b'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -32,6 +32,21 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
+    op.create_table('donations',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=False),
+    sa.Column('beneficiary', sa.String(), nullable=False),
+    sa.Column('goal_amount', sa.Float(), nullable=False),
+    sa.Column('end_date', sa.Date(), nullable=False),
+    sa.Column('contact_number', sa.String(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_donations_id'), 'donations', ['id'], unique=False)
     op.create_table('events',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
@@ -39,11 +54,29 @@ def upgrade() -> None:
     sa.Column('society', sa.String(), nullable=False),
     sa.Column('location', sa.String(), nullable=False),
     sa.Column('event_date', sa.DateTime(), nullable=False),
+    sa.Column('contact_number', sa.String(), nullable=False),
     sa.Column('creator_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_events_id'), 'events', ['id'], unique=False)
+    op.create_table('lost_found_items',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('category', sa.String(), nullable=False),
+    sa.Column('location', sa.String(), nullable=False),
+    sa.Column('date', sa.Date(), nullable=False),
+    sa.Column('description', sa.Text(), nullable=False),
+    sa.Column('image_path', sa.String(), nullable=True),
+    sa.Column('contact_method', sa.Enum('phone', 'email', 'whatsapp', name='contactmethod'), nullable=False),
+    sa.Column('contact_info', sa.String(), nullable=False),
+    sa.Column('type', sa.Enum('lost', 'found', name='itemtype'), nullable=False),
+    sa.Column('status', sa.Enum('LOST', 'FOUND', 'CLAIMED', name='itemstatus'), nullable=False),
+    sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_lost_found_items_id'), 'lost_found_items', ['id'], unique=False)
     op.create_table('products',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
@@ -52,11 +85,33 @@ def upgrade() -> None:
     sa.Column('category', sa.String(), nullable=False),
     sa.Column('pickup_location', sa.String(), nullable=False),
     sa.Column('condition', sa.String(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.Column('contact_number', sa.String(), nullable=False),
+    sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_products_id'), 'products', ['id'], unique=False)
+    op.create_table('rides',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('from_location', sa.String(), nullable=False),
+    sa.Column('to_location', sa.String(), nullable=False),
+    sa.Column('ride_date', sa.String(), nullable=False),
+    sa.Column('ride_time', sa.String(), nullable=False),
+    sa.Column('vehicle_type', sa.String(), nullable=False),
+    sa.Column('vehicle_model', sa.String(), nullable=False),
+    sa.Column('vehicle_color', sa.String(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('contact', sa.String(), nullable=False),
+    sa.Column('driver_id', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['driver_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_rides_from_location'), 'rides', ['from_location'], unique=False)
+    op.create_index(op.f('ix_rides_id'), 'rides', ['id'], unique=False)
+    op.create_index(op.f('ix_rides_ride_date'), 'rides', ['ride_date'], unique=False)
+    op.create_index(op.f('ix_rides_to_location'), 'rides', ['to_location'], unique=False)
     op.create_table('trips',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
@@ -67,6 +122,7 @@ def upgrade() -> None:
     sa.Column('departure_location', sa.String(), nullable=False),
     sa.Column('max_participants', sa.Integer(), nullable=False),
     sa.Column('cost_per_person', sa.Float(), nullable=False),
+    sa.Column('contact_number', sa.String(), nullable=False),
     sa.Column('creator_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -110,10 +166,19 @@ def downgrade() -> None:
     op.drop_table('event_images')
     op.drop_index(op.f('ix_trips_id'), table_name='trips')
     op.drop_table('trips')
+    op.drop_index(op.f('ix_rides_to_location'), table_name='rides')
+    op.drop_index(op.f('ix_rides_ride_date'), table_name='rides')
+    op.drop_index(op.f('ix_rides_id'), table_name='rides')
+    op.drop_index(op.f('ix_rides_from_location'), table_name='rides')
+    op.drop_table('rides')
     op.drop_index(op.f('ix_products_id'), table_name='products')
     op.drop_table('products')
+    op.drop_index(op.f('ix_lost_found_items_id'), table_name='lost_found_items')
+    op.drop_table('lost_found_items')
     op.drop_index(op.f('ix_events_id'), table_name='events')
     op.drop_table('events')
+    op.drop_index(op.f('ix_donations_id'), table_name='donations')
+    op.drop_table('donations')
     op.drop_index(op.f('ix_users_username'), table_name='users')
     op.drop_index(op.f('ix_users_id'), table_name='users')
     op.drop_index(op.f('ix_users_email'), table_name='users')

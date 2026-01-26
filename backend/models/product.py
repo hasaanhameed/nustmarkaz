@@ -12,16 +12,18 @@ class Product(Base):
     category = Column(String, nullable=False)
     pickup_location = Column(String, nullable=False)
     condition = Column(String, nullable=False)
+    contact_number = Column(String, nullable=False)  # Add this line
+    
+    creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
-    images = relationship("ProductImage", back_populates="product")
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     creator = relationship("User", back_populates="products")
+    images = relationship("ProductImage", back_populates="product", cascade="all, delete-orphan")
 
 class ProductImage(Base):
     __tablename__ = 'product_images'
 
     id = Column(Integer, primary_key=True, index=True)
-    image_path = Column(String, nullable=False)  # Path to image on the server
+    image_path = Column(String, nullable=False)
     product_id = Column(Integer, ForeignKey('products.id', ondelete='CASCADE'))
 
     product = relationship("Product", back_populates="images")

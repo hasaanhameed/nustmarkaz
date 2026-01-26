@@ -39,6 +39,7 @@ export default function CreateProductPage() {
     category: "",
     location: "",
     condition: "",
+    contactNumber: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,6 +107,7 @@ export default function CreateProductPage() {
     if (!formData.price) newErrors.price = "Price is required";
     if (!formData.category) newErrors.category = "Category is required";
     if (!formData.location) newErrors.location = "Location is required";
+    if (!formData.contactNumber) newErrors.contactNumber = "Contact number is required";
     if (images.length === 0)
       newErrors.images = "At least one image is required";
 
@@ -130,6 +132,7 @@ export default function CreateProductPage() {
         category: formData.category,
         pickup_location: formData.location,
         condition: formData.condition,
+        contact_number: formData.contactNumber,
         image_paths: images,
       };
 
@@ -222,7 +225,7 @@ export default function CreateProductPage() {
 
               {/* Title */}
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">Title *</Label>
                 <Input
                   id="title"
                   placeholder="e.g., Engineering Textbooks Bundle"
@@ -237,7 +240,7 @@ export default function CreateProductPage() {
 
               {/* Description */}
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
                   placeholder="Describe your product in detail..."
@@ -256,7 +259,7 @@ export default function CreateProductPage() {
               {/* Price & Category */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price (Rs.)</Label>
+                  <Label htmlFor="price">Price (Rs.) *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -270,7 +273,7 @@ export default function CreateProductPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label>Category *</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) => handleChange("category", value)}
@@ -298,7 +301,7 @@ export default function CreateProductPage() {
 
               {/* Location */}
               <div className="space-y-2">
-                <Label htmlFor="location">Pickup Location</Label>
+                <Label htmlFor="location">Pickup Location *</Label>
                 <Input
                   id="location"
                   placeholder="e.g., SEECS Building, H-12 Hostel"
@@ -328,6 +331,22 @@ export default function CreateProductPage() {
                     <SelectItem value="fair">Fair</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Contact Number */}
+              <div className="space-y-2">
+                <Label htmlFor="contactNumber">Contact Number *</Label>
+                <Input
+                  id="contactNumber"
+                  type="tel"
+                  placeholder="03XX-XXXXXXX"
+                  value={formData.contactNumber}
+                  onChange={(e) => handleChange("contactNumber", e.target.value)}
+                  className={errors.contactNumber ? "border-destructive" : ""}
+                />
+                {errors.contactNumber && (
+                  <p className="text-sm text-destructive">{errors.contactNumber}</p>
+                )}
               </div>
 
               <div className="flex gap-3">

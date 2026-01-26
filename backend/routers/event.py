@@ -9,15 +9,13 @@ from authorization.oauth2 import get_current_user
 
 router = APIRouter(prefix="/events", tags=["events"])
 
-
+# Create an Event
 @router.post("/", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
 def create_event(
     event: EventCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Create a new event"""
-    
     # Create the event
     db_event = Event(
         title=event.title,
@@ -25,6 +23,7 @@ def create_event(
         society=event.society,
         location=event.location,
         event_date=event.event_date,
+        contact_number=event.contact_number,
         creator_id=current_user.id
     )
     
@@ -46,23 +45,20 @@ def create_event(
     
     return db_event
 
-
+# Get all events
 @router.get("/", response_model=List[EventResponse])
-def get_all_events(db: Session = Depends(get_db)):
-    """Get all events"""
-    events = db.query(Event).all()
+def get_all_events(
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10
+):
+    events = db.query(Event).offset(skip).limit(limit).all()
     return events
 
-
+# Get a single event by ID
 @router.get("/{event_id}", response_model=EventResponse)
 def get_event(event_id: int, db: Session = Depends(get_db)):
-    """Get a single event by ID"""
     event = db.query(Event).filter(Event.id == event_id).first()
-    
     if not event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Event not found"
-        )
-    
+        raise HTTPException(status_code=404, detail="Event not found")
     return event

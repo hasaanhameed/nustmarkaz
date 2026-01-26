@@ -22,6 +22,7 @@ export default function CreateGiveawayPage() {
     location: "",
     event_date: "",
     event_time: "",
+    contact_number: "",
   });
 
   const handleChange = (field: string, value: string) => {
@@ -52,6 +53,7 @@ export default function CreateGiveawayPage() {
         society: formData.society,
         location: formData.location,
         event_date: datetime,
+        contact_number: formData.contact_number,
         image_paths: image ? [image] : [],
       });
 
@@ -159,6 +161,18 @@ export default function CreateGiveawayPage() {
                   placeholder="e.g., Main Auditorium"
                   value={formData.location}
                   onChange={(e) => handleChange("location", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contact_number">Contact Number *</Label>
+                <Input
+                  id="contact_number"
+                  type="tel"
+                  placeholder="03XX-XXXXXXX"
+                  value={formData.contact_number}
+                  onChange={(e) => handleChange("contact_number", e.target.value)}
                   required
                 />
               </div>

@@ -24,7 +24,8 @@ def create_product(
         category=product.category,
         pickup_location=product.pickup_location,
         condition=product.condition,
-        user_id=current_user.id
+        contact_number=product.contact_number,
+        creator_id=current_user.id
     )
     
     db.add(db_product)
@@ -54,7 +55,6 @@ def get_all_products(
 ):
     products = db.query(Product).offset(skip).limit(limit).all()
     return products
-
 
 # Get a single product by ID
 @router.get("/{product_id}", response_model=ProductResponse)

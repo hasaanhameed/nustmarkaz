@@ -9,9 +9,10 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=False)
-    society = Column(String, nullable=False)  # Which society is organizing
+    society = Column(String, nullable=False)
     location = Column(String, nullable=False)
     event_date = Column(DateTime, nullable=False)
+    contact_number = Column(String, nullable=False)  # Add this line
     
     # Foreign key to the event creator
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

@@ -9,31 +9,13 @@ import {
   Calendar,
   Users,
   Share2,
-  CheckCircle,
+  Phone,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { getTripById, Trip } from "@/api/trip";
 
 export default function TripDetailPage() {
   const { id } = useParams();
-  const [ticketCount, setTicketCount] = useState("1");
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -52,11 +34,6 @@ export default function TripDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleBookTicket = () => {
-    console.log("Booking tickets:", { tripId: id, count: ticketCount });
-    setIsBookingOpen(false);
   };
 
   if (loading) {
@@ -160,9 +137,6 @@ export default function TripDetailPage() {
                       {trip.creator.department}
                     </p>
                   </div>
-                  <Button variant="outline" size="sm">
-                    View Profile
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -190,7 +164,7 @@ export default function TripDetailPage() {
             </div>
           </div>
 
-          {/* Sidebar - Booking Card */}
+          {/* Sidebar */}
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
@@ -205,59 +179,19 @@ export default function TripDetailPage() {
                   <span className="font-medium">{trip.max_participants}</span>
                 </div>
 
-                <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                      Book Now
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Book Tickets</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Number of Tickets</Label>
-                        <Select
-                          value={ticketCount}
-                          onValueChange={setTicketCount}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[1, 2, 3, 4, 5].map((n) => (
-                              <SelectItem key={n} value={n.toString()}>
-                                {n} ticket{n > 1 ? "s" : ""}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="contact">Contact Number</Label>
-                        <Input id="contact" placeholder="+92 300 1234567" />
-                      </div>
-                      <div className="border-t border-border pt-4">
-                        <div className="flex justify-between text-lg font-semibold">
-                          <span>Total</span>
-                          <span>
-                            Rs.{" "}
-                            {(
-                              trip.cost_per_person * parseInt(ticketCount)
-                            ).toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={handleBookTicket}
-                        className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                      >
-                        Confirm Booking
-                      </Button>
+                {/* Contact Information */}
+                <Card className="bg-accent/10">
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-accent" />
+                      <span className="font-medium">{trip.contact_number}</span>
                     </div>
-                  </DialogContent>
-                </Dialog>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Call to book your spot or ask questions
+                    </p>
+                  </CardContent>
+                </Card>
 
                 <Button variant="outline" className="w-full gap-2">
                   <Share2 className="h-4 w-4" />

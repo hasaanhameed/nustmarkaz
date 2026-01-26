@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { Phone } from "lucide-react";
 import {
   ArrowLeft,
   MapPin,
@@ -81,7 +82,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  const creatorInitial = product.user.username.charAt(0).toUpperCase();
+  const creatorInitial = product.creator.username.charAt(0).toUpperCase();
   const images =
     product.images && product.images.length > 0
       ? product.images.map((img) => img.image_path)
@@ -199,45 +200,35 @@ export default function ProductDetailPage() {
               </p>
             </div>
 
-            {/* Creator Info */}
-            <Card className="mb-6">
-              <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">
-                  Posted by
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-lg font-semibold">
-                    {creatorInitial}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold">{product.user.username}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {product.user.department}
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    View Profile
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+{/* Contact Information */}
+<Card className="mb-6 bg-accent/10">
+  <CardContent className="p-4">
+    <h3 className="font-semibold mb-2">Contact Information</h3>
+    <div className="flex items-center gap-2 text-lg">
+      <Phone className="h-5 w-5 text-accent" />
+      <span className="font-medium">{product.contact_number}</span>
+    </div>
+    <p className="text-sm text-muted-foreground mt-2">
+      Call or message the seller to inquire about this product
+    </p>
+  </CardContent>
+</Card>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Contact Creator
-              </Button>
-              <Button variant="outline" size="icon">
-                <Heart className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Share2 className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Flag className="h-4 w-4" />
-              </Button>
-            </div>
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button variant="outline" className="flex-1 gap-2">
+              <Heart className="h-4 w-4" />
+              Save
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2">
+              <Share2 className="h-4 w-4" />
+              Share
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2">
+              <Flag className="h-4 w-4" />
+              Report
+            </Button>
+          </div>
           </div>
         </div>
       </div>

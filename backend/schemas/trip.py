@@ -24,6 +24,7 @@ class TripCreate(BaseModel):
     departure_location: str
     max_participants: int
     cost_per_person: float
+    contact_number: str  # Add this line
     image_paths: Optional[List[str]] = []
 
     class Config:
@@ -41,6 +42,7 @@ class TripResponse(BaseModel):
     departure_location: str
     max_participants: int
     cost_per_person: float
+    contact_number: str  # Add this line
     creator_id: int
     images: List[TripImageResponse] = []
     creator: CreatorResponse  

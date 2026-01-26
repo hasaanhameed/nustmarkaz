@@ -21,6 +21,7 @@ class ProductCreate(BaseModel):
     category: str
     pickup_location: str
     condition: str
+    contact_number: str  # Add this line
     image_paths: Optional[List[str]] = []
 
     class Config:
@@ -36,9 +37,10 @@ class ProductResponse(BaseModel):
     category: str
     pickup_location: str
     condition: str
-    user_id: int
+    contact_number: str  # Add this line
+    creator_id: int
     images: List[ProductImageResponse] = []
-    creator: CreatorResponse  # Changed from 'user' to 'creator'
+    creator: CreatorResponse
 
     class Config:
         from_attributes = True

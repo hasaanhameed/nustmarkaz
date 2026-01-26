@@ -173,7 +173,7 @@ export default function MarketplacePage() {
                 type="product"
                 price={product.price}
                 location={product.pickup_location}
-                author={{ name: product.user.username }}
+                author={{ name: product.creator.username }}
               />
             ))}
           </div>

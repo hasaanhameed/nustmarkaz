@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Share2, Calendar, MapPin, Users } from "lucide-react";
+import { ArrowLeft, Share2, Calendar, MapPin, Users, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getEventById, Event } from "@/api/event";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -92,9 +92,17 @@ export default function GiveawayDetailPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            {/* Event Image Placeholder */}
+            {/* Event Image */}
             <div className="aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 mb-6 flex items-center justify-center">
-              <Calendar className="h-24 w-24 text-white/20" />
+              {event.images?.[0]?.image_path ? (
+                <img 
+                  src={event.images[0].image_path} 
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Calendar className="h-24 w-24 text-white/20" />
+              )}
             </div>
 
             <Badge className="bg-blue-600 text-white mb-4">Event</Badge>
@@ -170,6 +178,20 @@ export default function GiveawayDetailPage() {
                     <span className="font-medium">{event.society}</span>
                   </div>
                 </div>
+
+                {/* Contact Information */}
+                <Card className="bg-accent/10">
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-accent" />
+                      <span className="font-medium">{event.contact_number}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Call for more details or registration
+                    </p>
+                  </CardContent>
+                </Card>
 
                 <Button variant="outline" className="w-full gap-2">
                   <Share2 className="h-4 w-4" />

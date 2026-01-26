@@ -23,9 +23,10 @@ export interface Trip {
   departure_location: string;
   max_participants: number;
   cost_per_person: number;
+  contact_number: string;  // Add this line
   creator_id: number;
   images: TripImage[];
-  creator: Creator; // Generic creator info
+  creator: Creator;
 }
 
 export interface TripCreateRequest {
@@ -37,6 +38,7 @@ export interface TripCreateRequest {
   departure_location: string;
   max_participants: number;
   cost_per_person: number;
+  contact_number: string;  // Add this line
   image_paths?: string[];
 }
 

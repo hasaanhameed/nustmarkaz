@@ -153,8 +153,8 @@ export default function ProfilePage() {
                           <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                             <Link to={`/marketplace/${product.id}`}>
                               <div className="aspect-video bg-muted relative overflow-hidden">
-                                {product.image_paths?.[0] ? (
-                                  <img src={product.image_paths[0]} alt={product.name} className="w-full h-full object-cover" />
+                                {product.images?.[0]?.image_path ? (
+                                  <img src={product.images[0].image_path} alt={product.title} className="w-full h-full object-cover" />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center">
                                     <Package className="h-12 w-12 text-muted-foreground opacity-20" />
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                                 )}
                               </div>
                               <CardContent className="p-4">
-                                <h3 className="font-semibold line-clamp-1">{product.name}</h3>
+                                <h3 className="font-semibold line-clamp-1">{product.title}</h3>
                                 <p className="text-sm text-muted-foreground">{product.category}</p>
                                 <p className="text-lg font-bold mt-2">Rs. {product.price}</p>
                               </CardContent>
@@ -261,8 +261,8 @@ export default function ProfilePage() {
                           <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                             <Link to={`/giveaways/${event.id}`}>
                               <div className="aspect-video bg-muted relative overflow-hidden">
-                                {event.image_paths?.[0] ? (
-                                  <img src={event.image_paths[0]} alt={event.title} className="w-full h-full object-cover" />
+                                {event.images?.[0]?.image_path ? (
+                                  <img src={event.images[0].image_path} alt={event.title} className="w-full h-full object-cover" />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center">
                                     <Gift className="h-12 w-12 text-muted-foreground opacity-20" />
@@ -271,8 +271,8 @@ export default function ProfilePage() {
                               </div>
                               <CardContent className="p-4">
                                 <h3 className="font-semibold line-clamp-1">{event.title}</h3>
-                                <p className="text-sm text-muted-foreground">{event.category}</p>
-                                <p className="text-lg font-bold mt-2">{event.is_paid ? `Rs. ${event.price}` : 'Free'}</p>
+                                <p className="text-sm text-muted-foreground">{event.society}</p>
+                                <p className="text-sm text-muted-foreground mt-1">{new Date(event.event_date).toLocaleDateString()}</p>
                               </CardContent>
                             </Link>
                           </Card>

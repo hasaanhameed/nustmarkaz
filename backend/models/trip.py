@@ -15,6 +15,7 @@ class Trip(Base):
     departure_location = Column(String, nullable=False)
     max_participants = Column(Integer, nullable=False)
     cost_per_person = Column(Float, nullable=False)
+    contact_number = Column(String, nullable=False)  # Add this line
     
     # Foreign key to the trip creator
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

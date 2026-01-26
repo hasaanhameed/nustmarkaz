@@ -20,6 +20,7 @@ export default function CreateDonationPage() {
     goal_amount: "",
     end_date: "",
     beneficiary: "",
+    contact_number: "",
   });
 
   const handleChange = (field: string, value: string) => {
@@ -34,7 +35,8 @@ export default function CreateDonationPage() {
       !formData.description ||
       !formData.beneficiary ||
       !formData.goal_amount ||
-      !formData.end_date
+      !formData.end_date ||
+      !formData.contact_number
     ) {
       toast({
         title: "Error",
@@ -52,6 +54,7 @@ export default function CreateDonationPage() {
         beneficiary: formData.beneficiary,
         goal_amount: parseFloat(formData.goal_amount),
         end_date: formData.end_date,
+        contact_number: formData.contact_number,
       });
 
       toast({
@@ -117,6 +120,17 @@ export default function CreateDonationPage() {
                   placeholder="e.g., Local Orphanage, Community School"
                   value={formData.beneficiary}
                   onChange={(e) => handleChange("beneficiary", e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contact_number">Contact Number</Label>
+                <Input
+                  id="contact_number"
+                  type="tel"
+                  placeholder="03XX-XXXXXXX"
+                  value={formData.contact_number}
+                  onChange={(e) => handleChange("contact_number", e.target.value)}
                 />
               </div>
 

@@ -14,6 +14,7 @@ export interface Donation {
   beneficiary: string;
   goal_amount: number;
   end_date: string;
+  contact_number: string;  // Add this line
   created_at: string;
   updated_at: string;
   creator_id: number;
@@ -26,6 +27,16 @@ export interface DonationCreateRequest {
   beneficiary: string;
   goal_amount: number;
   end_date: string;
+  contact_number: string;  // Add this line
+}
+
+export interface DonationUpdateRequest {
+  title?: string;
+  description?: string;
+  beneficiary?: string;
+  goal_amount?: number;
+  end_date?: string;
+  contact_number?: string;  // Add this line
 }
 
 export interface DonationUpdateRequest {

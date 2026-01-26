@@ -24,6 +24,7 @@ export default function CreateTripPage() {
     price: "",
     spots: "",
     meetingPoint: "",
+    contactNumber: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,6 +91,7 @@ export default function CreateTripPage() {
     if (!formData.spots) newErrors.spots = "Number of spots is required";
     if (!formData.meetingPoint)
       newErrors.meetingPoint = "Meeting point is required";
+    if (!formData.contactNumber) newErrors.contactNumber = "Contact number is required";
     if (!image) newErrors.image = "Cover image is required";
 
     setErrors(newErrors);
@@ -115,6 +117,7 @@ export default function CreateTripPage() {
         departure_location: formData.meetingPoint,
         max_participants: parseInt(formData.spots),
         cost_per_person: parseFloat(formData.price),
+        contact_number: formData.contactNumber,
         image_paths: image ? [image] : [],
       };
 
@@ -158,7 +161,7 @@ export default function CreateTripPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Cover Image */}
               <div className="space-y-2">
-                <Label>Cover Image</Label>
+                <Label>Cover Image *</Label>
                 {image ? (
                   <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
                     <img
@@ -199,7 +202,7 @@ export default function CreateTripPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="title">Trip Title</Label>
+                <Label htmlFor="title">Trip Title *</Label>
                 <Input
                   id="title"
                   placeholder="e.g., Hunza Valley Adventure"
@@ -213,7 +216,7 @@ export default function CreateTripPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
                   placeholder="Describe the trip experience..."
@@ -231,7 +234,7 @@ export default function CreateTripPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="destination">Destination</Label>
+                  <Label htmlFor="destination">Destination *</Label>
                   <Input
                     id="destination"
                     placeholder="e.g., Hunza, Gilgit-Baltistan"
@@ -248,7 +251,7 @@ export default function CreateTripPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="meetingPoint">Meeting Point</Label>
+                  <Label htmlFor="meetingPoint">Meeting Point *</Label>
                   <Input
                     id="meetingPoint"
                     placeholder="e.g., NUST Main Gate"
@@ -268,7 +271,7 @@ export default function CreateTripPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="departureDate">Departure Date</Label>
+                  <Label htmlFor="departureDate">Departure Date *</Label>
                   <Input
                     id="departureDate"
                     type="date"
@@ -285,7 +288,7 @@ export default function CreateTripPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="returnDate">Return Date</Label>
+                  <Label htmlFor="returnDate">Return Date *</Label>
                   <Input
                     id="returnDate"
                     type="date"
@@ -303,7 +306,7 @@ export default function CreateTripPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price per Person (Rs.)</Label>
+                  <Label htmlFor="price">Price per Person (Rs.) *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -317,7 +320,7 @@ export default function CreateTripPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="spots">Total Spots</Label>
+                  <Label htmlFor="spots">Total Spots *</Label>
                   <Input
                     id="spots"
                     type="number"
@@ -330,6 +333,22 @@ export default function CreateTripPage() {
                     <p className="text-sm text-destructive">{errors.spots}</p>
                   )}
                 </div>
+              </div>
+
+              {/* Contact Number */}
+              <div className="space-y-2">
+                <Label htmlFor="contactNumber">Contact Number *</Label>
+                <Input
+                  id="contactNumber"
+                  type="tel"
+                  placeholder="03XX-XXXXXXX"
+                  value={formData.contactNumber}
+                  onChange={(e) => handleChange("contactNumber", e.target.value)}
+                  className={errors.contactNumber ? "border-destructive" : ""}
+                />
+                {errors.contactNumber && (
+                  <p className="text-sm text-destructive">{errors.contactNumber}</p>
+                )}
               </div>
 
               <div className="flex gap-3">

@@ -21,9 +21,10 @@ export interface Product {
   category: string;
   pickup_location: string;
   condition: string;
-  user_id: number;
+  contact_number: string;  // Add this line
+  creator_id: number;
   images: ProductImage[];
-  user: Creator; // Generic creator info
+  creator: Creator;
 }
 
 export interface ProductCreateRequest {
@@ -33,6 +34,7 @@ export interface ProductCreateRequest {
   category: string;
   pickup_location: string;
   condition: string;
+  contact_number: string;  // Add this line
   image_paths?: string[];
 }
 

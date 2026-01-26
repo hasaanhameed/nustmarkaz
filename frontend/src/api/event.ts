@@ -20,6 +20,7 @@ export interface Event {
   society: string;
   location: string;
   event_date: string;
+  contact_number: string;  // Add this line
   creator_id: number;
   creator: Creator;
   images: EventImage[];
@@ -31,7 +32,8 @@ export interface EventCreate {
   society: string;
   location: string;
   event_date: string;
-  image_paths?: string[];  // Add this line
+  contact_number: string;  // Add this line
+  image_paths?: string[];
 }
 
 export const createEvent = async (eventData: EventCreate): Promise<Event> => {
