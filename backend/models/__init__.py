@@ -4,7 +4,6 @@ from .trip import Trip, TripImage
 from .event import Event
 from .donation import Donation
 from .ride import Ride
-from .interaction import UserInteraction
 
 __all__ = [
     "User",
@@ -14,5 +13,4 @@ __all__ = [
     "Event",
     "Donation",
     "Ride",
-    "UserInteraction"
 ]
