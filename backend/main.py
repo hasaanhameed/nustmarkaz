@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import user, authentication, donation, product, trip, event, lost_found, ride
+from routers import user, authentication, donation, product, trip, event, lost_found, ride, interaction
 from database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -24,3 +24,4 @@ app.include_router(trip.router)
 app.include_router(event.router)
 app.include_router(lost_found.router) 
 app.include_router(ride.router)  
+app.include_router(interaction.router)

@@ -28,3 +28,6 @@ class User(Base):
     
     # Ride relationships
     created_rides = relationship("Ride", back_populates="creator")
+
+    # Interaction relationships
+    interactions = relationship("UserInteraction", back_populates="user", cascade="all, delete-orphan")

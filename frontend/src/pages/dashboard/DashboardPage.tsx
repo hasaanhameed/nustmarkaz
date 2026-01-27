@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,26 +10,34 @@ import { getAllDonations, type Donation } from "@/api/donation";
 import { getAllEvents, type Event } from "@/api/event";
 import { getAllRides, type Ride } from "@/api/ride";
 import { getAllLostFoundItems, type LostFoundItem } from "@/api/lostFound";
+import {
+  recordInteraction,
+  getRecentActivityItems,
+  type ActivityItem,
+} from "@/api/interaction";
 
-interface ActivityItem {
+interface DashboardActivityItem {
   id: number;
   title: string;
-  description: string;
-  type: "product" | "trip" | "donation" | "event" | "ride" | "lostFound";
+  description?: string;
+  type: "product" | "trip" | "donation" | "event" | "ride" | "lost_found";
   createdAt?: string;
   [key: string]: unknown;
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [rides, setRides] = useState<Ride[]>([]);
   const [lostFoundItems, setLostFoundItems] = useState<LostFoundItem[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch initial data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -56,6 +64,9 @@ export default function DashboardPage() {
         setEvents(eventsData);
         setRides(ridesData);
         setLostFoundItems(lostFoundData);
+
+        // Fetch recent activity
+        await fetchRecentActivity();
       } catch (err) {
         console.error("Failed to fetch data:", err);
         setError("Failed to load dashboard data");
@@ -67,8 +78,49 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  const getActivityItems = (): ActivityItem[] => {
-    const items: ActivityItem[] = [
+  // Fetch recent activity items
+  const fetchRecentActivity = async () => {
+    try {
+      const activityData = await getRecentActivityItems(10);
+      setRecentActivity(activityData);
+    } catch (err) {
+      console.error("Failed to fetch recent activity:", err);
+    }
+  };
+
+  // Handle item click - record interaction and add to activity
+  const handleItemClick = async (
+    itemId: number,
+    itemType: string,
+    item: any
+  ) => {
+    try {
+      // Record the interaction with backend
+      await recordInteraction(itemId, itemType);
+
+      // Update local recent activity - add to top of list
+      const newActivityItem: ActivityItem = {
+        id: itemId,
+        type: itemType as any,
+        title: item.title,
+        ...item,
+        creator: item.creator || { username: "Unknown" },
+      };
+
+      setRecentActivity((prev) => {
+        // Remove duplicates and add new item to top
+        const filtered = prev.filter(
+          (a) => !(a.id === itemId && a.type === itemType)
+        );
+        return [newActivityItem, ...filtered].slice(0, 10);
+      });
+    } catch (err) {
+      console.error("Failed to record interaction:", err);
+    }
+  };
+
+  const getActivityItems = (): DashboardActivityItem[] => {
+    const items: DashboardActivityItem[] = [
       ...products.slice(0, 2).map((p) => ({ ...p, type: "product" as const })),
       ...trips.slice(0, 2).map((t) => ({ ...t, type: "trip" as const })),
       ...donations
@@ -81,6 +133,29 @@ export default function DashboardPage() {
       const dateB = new Date(b.createdAt || 0).getTime();
       return dateB - dateA;
     });
+  };
+
+  // Wrap ListingCard to intercept clicks
+  const InteractiveListingCard = ({ item, ...props }: any) => {
+    const handleCardClick = async (e: React.MouseEvent) => {
+      // Record interaction when card is clicked
+      await handleItemClick(item.id, item.type, item);
+    };
+
+    // Transform creator to author format for ListingCard
+    const transformedItem = {
+      ...item,
+      author: {
+        name: item.creator?.username || item.creator?.name || "Unknown",
+        avatar: item.creator?.avatar,
+      },
+    };
+
+    return (
+      <div onClick={handleCardClick} role="button" className="cursor-pointer">
+        <ListingCard {...props} {...transformedItem} />
+      </div>
+    );
   };
 
   if (error) {
@@ -166,149 +241,156 @@ export default function DashboardPage() {
 
         {/* Feed */}
         <div className="mb-8">
-          <Tabs defaultValue="all">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Latest Activity</h2>
-              <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="products">Products</TabsTrigger>
-                <TabsTrigger value="trips">Trips</TabsTrigger>
-                <TabsTrigger value="rides">Rides</TabsTrigger>
-                <TabsTrigger value="donations">Donations</TabsTrigger>
-                <TabsTrigger value="events">Events</TabsTrigger>
-                <TabsTrigger value="lostfound">Lost & Found</TabsTrigger>
-              </TabsList>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Latest Activity Feed */}
+            <div className="lg:col-span-2">
+              <Tabs defaultValue="all">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-4">Latest Activity</h2>
+                  <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
+                    <TabsTrigger value="all">All</TabsTrigger>
+                    <TabsTrigger value="products">Products</TabsTrigger>
+                    <TabsTrigger value="trips">Trips</TabsTrigger>
+                    <TabsTrigger value="rides">Rides</TabsTrigger>
+                    <TabsTrigger value="donations">Donations</TabsTrigger>
+                    <TabsTrigger value="events">Events</TabsTrigger>
+                    <TabsTrigger value="lostfound">Lost/Found</TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <p className="text-muted-foreground">Loading activity...</p>
+                  </div>
+                ) : (
+                  <>
+                    <TabsContent value="all">
+                      {getActivityItems().length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">No activity yet</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {getActivityItems().map((item) => (
+                            <InteractiveListingCard
+                              key={`${item.type}-${item.id}`}
+                              item={item}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="products">
+                      {products.length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">No products yet</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {products.map((product) => (
+                            <InteractiveListingCard
+                              key={product.id}
+                              item={{ ...product, type: "product" }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="trips">
+                      {trips.length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">No trips yet</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {trips.map((trip) => (
+                            <InteractiveListingCard
+                              key={trip.id}
+                              item={{ ...trip, type: "trip" }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="rides">
+                      {rides.length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">No rides yet</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {rides.map((ride) => (
+                            <InteractiveListingCard
+                              key={ride.id}
+                              item={{ ...ride, type: "ride" }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="donations">
+                      {donations.length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">
+                            No donations yet
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {donations.map((donation) => (
+                            <InteractiveListingCard
+                              key={donation.id}
+                              item={{ ...donation, type: "donation" }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="events">
+                      {events.length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">No events yet</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {events.map((event) => (
+                            <InteractiveListingCard
+                              key={event.id}
+                              item={{ ...event, type: "event" }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="lostfound">
+                      {lostFoundItems.length === 0 ? (
+                        <div className="text-center py-12">
+                          <p className="text-muted-foreground">
+                            No lost & found items yet
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {lostFoundItems.map((item) => (
+                            <InteractiveListingCard
+                              key={item.id}
+                              item={{ ...item, type: "lost_found" }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+                  </>
+                )}
+              </Tabs>
             </div>
-
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground">Loading activity...</p>
-              </div>
-            ) : (
-              <>
-                <TabsContent value="all">
-                  {getActivityItems().length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No activity yet</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                      {getActivityItems().map((item) => (
-                        <ListingCard
-                          key={`${item.type}-${item.id}`}
-                          {...(item as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="products">
-                  {products.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No products yet</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                      {products.map((product) => (
-                        <ListingCard
-                          key={product.id}
-                          {...(product as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="trips">
-                  {trips.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No trips yet</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {trips.map((trip) => (
-                        <ListingCard
-                          key={trip.id}
-                          {...(trip as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="rides">
-                  {rides.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No rides yet</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {rides.map((ride) => (
-                        <ListingCard
-                          key={ride.id}
-                          {...(ride as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="donations">
-                  {donations.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No donations yet</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {donations.map((donation) => (
-                        <ListingCard
-                          key={donation.id}
-                          {...(donation as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="events">
-                  {events.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No events yet</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {events.map((event) => (
-                        <ListingCard
-                          key={event.id}
-                          {...(event as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="lostfound">
-                  {lostFoundItems.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">
-                        No lost & found items yet
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {lostFoundItems.map((item) => (
-                        <ListingCard
-                          key={item.id}
-                          {...(item as unknown as any)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-              </>
-            )}
-          </Tabs>
+          </div>
         </div>
       </div>
     </Layout>
