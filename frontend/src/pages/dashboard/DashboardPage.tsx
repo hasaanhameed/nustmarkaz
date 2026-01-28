@@ -59,6 +59,7 @@ export default function DashboardPage() {
             description={post.subtitle || ""}
             type={post.type}
             price={post.price}
+            image={post.image}
             author={{
               name: post.creator_username,
             }}
@@ -94,7 +95,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 md:gap-3 mb-6">
           <Link to="/marketplace/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-accent hover:bg-accent/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-accent transition-colors">
@@ -113,10 +114,10 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <Link to="/carpooling">
+          <Link to="/carpooling/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-sky hover:bg-sky/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-sky transition-colors">
-                Post Carpool
+                Offer Ride
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Share a ride</p>
             </div>
@@ -125,9 +126,9 @@ export default function DashboardPage() {
           <Link to="/donations/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-warning hover:bg-warning/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-warning transition-colors">
-                Start Drive
+                Start Donation Drive 
               </p>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Support cause</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Support a cause</p>
             </div>
           </Link>
 
@@ -140,12 +141,21 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <Link to="/lost-found">
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-purple hover:bg-purple/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-purple transition-colors">
-                Lost/Found
+          <Link to="/lost-found?action=lost">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-destructive hover:bg-destructive/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-destructive transition-colors">
+                Report Lost
               </p>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Report item</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Lost an item</p>
+            </div>
+          </Link>
+
+          <Link to="/lost-found?action=found">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-success hover:bg-success/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-success transition-colors">
+                Report Found
+              </p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Found an item</p>
             </div>
           </Link>
         </div>

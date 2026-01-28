@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -12,16 +13,19 @@ import {
 } from "@/components/ui/select";
 import { CAMPUS_LOCATIONS } from "@/data/mockLostFound";
 import { LostFoundCard } from "@/components/ui/LostFoundCard";
-import { CreateLostFoundDialog } from "@/components/ui/CreateLostFoundDialog";
+import { CreateLostFoundDialog } from "./CreateLostFoundDialog";
 import { toast } from "sonner";
 import { getAllLostFoundItems, claimItem, LostFoundItem } from "@/api/lostFound";
 
 export default function LostFoundPage() {
+    const [searchParams] = useSearchParams();
     const [items, setItems] = useState<LostFoundItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All");
     const [locationFilter, setLocationFilter] = useState("All");
     const [isLoading, setIsLoading] = useState(true);
+    const [autoOpenLost, setAutoOpenLost] = useState(false);
+    const [autoOpenFound, setAutoOpenFound] = useState(false);
 
     const fetchItems = async () => {
         try {
@@ -38,7 +42,15 @@ export default function LostFoundPage() {
 
     useEffect(() => {
         fetchItems();
-    }, []);
+        
+        // Check URL parameters for auto-opening dialogs
+        const action = searchParams.get("action");
+        if (action === "lost") {
+            setAutoOpenLost(true);
+        } else if (action === "found") {
+            setAutoOpenFound(true);
+        }
+    }, [searchParams]);
 
     const filteredItems = items.filter((item) => {
         const matchesSearch =
@@ -74,8 +86,22 @@ export default function LostFoundPage() {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <CreateLostFoundDialog type="lost" onSuccess={fetchItems} />
-                        <CreateLostFoundDialog type="found" onSuccess={fetchItems} />
+                        <CreateLostFoundDialog 
+                            type="lost" 
+                            onSuccess={fetchItems}
+                            autoOpen={autoOpenLost}
+                            onOpenChange={(open) => {
+                                if (!open) setAutoOpenLost(false);
+                            }}
+                        />
+                        <CreateLostFoundDialog 
+                            type="found" 
+                            onSuccess={fetchItems}
+                            autoOpen={autoOpenFound}
+                            onOpenChange={(open) => {
+                                if (!open) setAutoOpenFound(false);
+                            }}
+                        />
                     </div>
                 </div>
 

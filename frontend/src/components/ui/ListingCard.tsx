@@ -9,7 +9,7 @@ export interface ListingCardProps {
   title: string;
   description: string;
   image: string;
-  type: "product" | "trip" | "donation" | "giveaway" | "ride" | "event" | "lost_found";
+  type: "product" | "trip" | "donation" | "ride" | "event" | "lost_found";
   price?: number | null;
   location?: string;
   date?: string;

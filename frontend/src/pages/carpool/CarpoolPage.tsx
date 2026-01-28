@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import {
   Select,
@@ -9,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { CAMPUS_LOCATIONS, CITY_LOCATIONS } from "@/data/mockCarpool";
 import { RideCard } from "@/components/ui/RideCard";
-import { OfferRideDialog } from "@/components/ui/OfferRideDialog";
+import { OfferRideDialog } from "./OfferRideDialog";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,16 +27,23 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getCurrentUser } from "@/api/user";
 
 export default function CarpoolPage() {
+  const [searchParams] = useSearchParams();
   const [rides, setRides] = useState<Ride[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fromFilter, setFromFilter] = useState("All");
   const [toFilter, setToFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState<Date>();
+  const [autoOpenDialog, setAutoOpenDialog] = useState(false);
 
-   useEffect(() => {
+  useEffect(() => {
     fetchData();
-  }, []);
+    // Check if we should auto-open the dialog
+    const create = searchParams.get("create");
+    if (create === "true") {
+      setAutoOpenDialog(true);
+    }
+  }, [searchParams]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -87,7 +95,13 @@ export default function CarpoolPage() {
               Find a ride, share a commute, and save money.
             </p>
           </div>
-          <OfferRideDialog onRideCreated={fetchRides} />
+          <OfferRideDialog 
+            onRideCreated={fetchRides} 
+            autoOpen={autoOpenDialog}
+            onOpenChange={(open) => {
+              if (!open) setAutoOpenDialog(false);
+            }}
+          />
         </div>
 
         {/* Filters */}
@@ -162,7 +176,7 @@ export default function CarpoolPage() {
         ) : filteredRides.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRides.map((ride) => (
-                           <RideCard 
+              <RideCard 
                 key={ride.id} 
                 ride={ride} 
                 currentUserId={currentUserId}

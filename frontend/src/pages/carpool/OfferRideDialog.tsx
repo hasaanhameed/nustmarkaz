@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -33,9 +33,11 @@ import { toast } from "sonner";
 
 interface OfferRideDialogProps {
   onRideCreated: () => void;
+  autoOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function OfferRideDialog({ onRideCreated }: OfferRideDialogProps) {
+export function OfferRideDialog({ onRideCreated, autoOpen = false, onOpenChange }: OfferRideDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState<Date>();
@@ -49,6 +51,17 @@ export function OfferRideDialog({ onRideCreated }: OfferRideDialogProps) {
     price: "",
     contact: "",
   });
+
+  useEffect(() => {
+    if (autoOpen) {
+      setOpen(true);
+    }
+  }, [autoOpen]);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    onOpenChange?.(newOpen);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +105,7 @@ export function OfferRideDialog({ onRideCreated }: OfferRideDialogProps) {
         contact: "",
       });
       setDate(undefined);
-      setOpen(false);
+      handleOpenChange(false);
       onRideCreated();
     } catch (error) {
       toast.error("Failed to create ride. Please try again.");
@@ -105,7 +118,7 @@ export function OfferRideDialog({ onRideCreated }: OfferRideDialogProps) {
   const allLocations = [...CAMPUS_LOCATIONS, ...CITY_LOCATIONS].sort();
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="bg-primary text-primary-foreground">
           Offer a Ride

@@ -8,8 +8,8 @@ import {
   Car, 
   Package,
   ChevronRight,
-  MapPin,
-  Clock
+  Clock,
+  Image as ImageIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +19,7 @@ export interface FeedPostProps {
   description: string;
   type: "product" | "trip" | "donation" | "event" | "ride" | "lost_found";
   price?: number | null;
+  image?: string | null;
   author: {
     name: string;
     avatar?: string;
@@ -78,12 +79,17 @@ export function FeedPost({
   description,
   type,
   price,
+  image,
   author,
   createdAt,
   className,
 }: FeedPostProps) {
   const config = typeConfig[type];
   const Icon = config.icon;
+  
+  // Define which post types should show images
+  const showImage = ["product", "trip", "event", "lost_found"].includes(type);
+  const hasValidImage = image && image.trim() !== "" && image !== "null" && image !== "undefined";
   
   // Format timestamp
   const getTimeAgo = (timestamp?: string) => {
@@ -155,16 +161,45 @@ export function FeedPost({
           )}
         </div>
         
-        {/* Content */}
-        <div className="mt-3 ml-11">
-          <h3 className="font-semibold text-base line-clamp-2 group-hover:text-accent transition-colors mb-1.5">
-            {title}
-          </h3>
-          {description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-              {description}
-            </p>
-          )}
+        {/* Content with Optional Image */}
+        <div className="flex gap-3 items-start">
+          <div className="mt-3 ml-11 flex-1 min-w-0">
+            <h3 className="font-semibold text-base line-clamp-2 group-hover:text-accent transition-colors mb-1.5">
+              {title}
+            </h3>
+            {description && (
+              <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                {description}
+              </p>
+            )}
+          </div>
+          
+          {/* Thumbnail Image for specific post types */}
+          {showImage && hasValidImage ? (
+            <div className="flex-shrink-0 mt-3">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border border-border bg-muted/50 flex items-center justify-center">
+                <img
+                  src={image}
+                  alt={title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                  loading="lazy"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = '<div class="flex items-center justify-center w-full h-full"><svg class="w-6 h-6 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>';
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          ) : showImage ? (
+            <div className="flex-shrink-0 mt-3">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                <ImageIcon className="w-6 h-6 text-muted-foreground/30" />
+              </div>
+            </div>
+          ) : null}
         </div>
         
         {/* Footer - View Details Link */}

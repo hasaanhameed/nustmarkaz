@@ -73,12 +73,18 @@ const App = () => (
           <Route path="/donations" element={<DonationsPage />} />
           <Route path="/donations/edit/:id" element={<EditDonationPage />} />
 
-          {/* Giveaways - specific routes before dynamic ones */}
+          {/* Events/Giveaways - specific routes before dynamic ones */}
+          <Route path="/events/create" element={<CreateEventsPage />} />
+          <Route path="/events/edit/:id" element={<EditEventPage />} />
+          <Route path="/events/:id" element={<EventsDetailPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          {/* Alias routes for giveaways */}
           <Route path="/giveaways/create" element={<CreateEventsPage />} />
           <Route path="/giveaways/:id" element={<EventsDetailPage />} />
           <Route path="/giveaways" element={<EventsPage />} />
 
           {/* Carpooling - specific routes before dynamic ones */}
+          <Route path="/carpooling/create" element={<CarpoolPage />} />
           <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
           <Route path="/carpooling" element={<CarpoolPage />} />
 

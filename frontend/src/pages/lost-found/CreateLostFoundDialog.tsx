@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -35,9 +35,11 @@ import { toast } from "sonner";
 interface CreateLostFoundDialogProps {
     type: "lost" | "found";
     onSuccess: () => void;
+    autoOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
-export function CreateLostFoundDialog({ type, onSuccess }: CreateLostFoundDialogProps) {
+export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpenChange }: CreateLostFoundDialogProps) {
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState<Date>();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +52,17 @@ export function CreateLostFoundDialog({ type, onSuccess }: CreateLostFoundDialog
         contactInfo: "",
         image: "",
     });
+
+    useEffect(() => {
+        if (autoOpen) {
+            setOpen(true);
+        }
+    }, [autoOpen]);
+
+    const handleOpenChange = (newOpen: boolean) => {
+        setOpen(newOpen);
+        onOpenChange?.(newOpen);
+    };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -86,7 +99,7 @@ export function CreateLostFoundDialog({ type, onSuccess }: CreateLostFoundDialog
             });
 
             toast.success(`${type === "lost" ? "Lost" : "Found"} item posted successfully!`);
-            setOpen(false);
+            handleOpenChange(false);
             onSuccess();
             
             // Reset form
@@ -109,7 +122,7 @@ export function CreateLostFoundDialog({ type, onSuccess }: CreateLostFoundDialog
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button className={type === "lost" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-success text-success-foreground hover:bg-success/90"}>
                     {type === "lost" ? "Report Lost Item" : "Report Found Item"}
