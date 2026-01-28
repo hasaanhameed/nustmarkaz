@@ -22,10 +22,12 @@ class DonationCreate(BaseModel):
 class DonationUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    beneficiary: Optional[str] = None
     goal_amount: Optional[float] = None
-    end_date: Optional[date] = None
-    contact_number: Optional[str] = None  # Add this line
+    current_amount: Optional[float] = None
+    end_date: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 class DonationResponse(BaseModel):
     id: int

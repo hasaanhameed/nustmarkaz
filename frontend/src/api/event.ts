@@ -20,10 +20,11 @@ export interface Event {
   society: string;
   location: string;
   event_date: string;
-  contact_number: string;  // Add this line
+  contact_number: string;
   creator_id: number;
   creator: Creator;
   images: EventImage[];
+  max_attendees?: number; // <-- Add this line
 }
 
 export interface EventCreate {
@@ -32,9 +33,22 @@ export interface EventCreate {
   society: string;
   location: string;
   event_date: string;
-  contact_number: string;  // Add this line
+  contact_number: string;
   image_paths?: string[];
+
 }
+
+export interface EventCreateRequest {
+  title?: string;
+  description?: string;
+  society?: string;
+  location?: string;
+  event_date?: string;
+  contact_number?: string;
+  image_paths?: string[];
+  max_attendees?: number; // <-- Add this line
+}
+
 
 export const createEvent = async (eventData: EventCreate): Promise<Event> => {
   const response = await api.post('/events/', eventData);
@@ -49,4 +63,16 @@ export const getAllEvents = async (): Promise<Event[]> => {
 export const getEventById = async (id: number): Promise<Event> => {
   const response = await api.get(`/events/${id}`);
   return response.data;
+};
+
+export const updateEvent = async (
+  eventId: number,
+  eventData: Partial<EventCreateRequest>,
+): Promise<Event> => {
+  const response = await api.put<Event>(`/events/${eventId}`, eventData);
+  return response.data;
+};
+
+export const deleteEvent = async (eventId: number): Promise<void> => {
+  await api.delete(`/events/${eventId}`);
 };

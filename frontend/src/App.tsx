@@ -12,19 +12,31 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import MarketplacePage from "./pages/marketplace/MarketplacePage";
 import ProductDetailPage from "./pages/marketplace/ProductDetailPage";
 import CreateProductPage from "./pages/marketplace/CreateProductPage";
+import EditProductPage from "./pages/marketplace/EditProductPage";
 import TripsPage from "./pages/trips/TripsPage";
+
+import EditTripPage from "./pages/trips/EditTripPage";
 import TripDetailPage from "./pages/trips/TripDetailPage";
 import CreateTripPage from "./pages/trips/CreateTripPage";
+
 import DonationsPage from "./pages/donations/DonationsPage";
 import DonationDetailPage from "./pages/donations/DonationDetailPage";
 import CreateDonationPage from "./pages/donations/CreateDonationPage";
-import GiveawaysPage from "./pages/events/EventsPage";
-import GiveawayDetailPage from "./pages/events/EventsDetailPage";
-import CreateGiveawayPage from "./pages/events/CreateEventsPage";
+import EditDonationPage from "./pages/donations/EditDonationPage";
+
+import EventsDetailPage from "./pages/events/EventsDetailPage";
+import CreateEventsPage from "./pages/events/CreateEventsPage";
+import EditEventPage from "./pages/events/EditEventPage";
+import EventsPage from "@/pages/events/EventsPage";
+
+
 import ProfilePage from "./pages/profile/ProfilePage";
+
 import LostFoundPage from "./pages/lost-found/LostFoundPage";
 import CarpoolPage from "./pages/carpool/CarpoolPage";
+import EditCarpoolPage from "./pages/carpool/EditCarpoolPage";
 import NotFound from "./pages/NotFound";
+
 
 const queryClient = new QueryClient();
 
@@ -45,11 +57,13 @@ const App = () => (
 
           {/* Marketplace - specific routes before dynamic ones */}
           <Route path="/marketplace/create" element={<CreateProductPage />} />
+          <Route path="/marketplace/edit/:id" element={<EditProductPage />} />
           <Route path="/marketplace/:id" element={<ProductDetailPage />} />
           <Route path="/marketplace" element={<MarketplacePage />} />
 
           {/* Trips - specific routes before dynamic ones */}
           <Route path="/trips/create" element={<CreateTripPage />} />
+          <Route path="/trips/edit/:id" element={<EditTripPage />} />
           <Route path="/trips/:id" element={<TripDetailPage />} />
           <Route path="/trips" element={<TripsPage />} />
 
@@ -57,18 +71,26 @@ const App = () => (
           <Route path="/donations/create" element={<CreateDonationPage />} />
           <Route path="/donations/:id" element={<DonationDetailPage />} />
           <Route path="/donations" element={<DonationsPage />} />
+          <Route path="/donations/edit/:id" element={<EditDonationPage />} />
 
           {/* Giveaways - specific routes before dynamic ones */}
-          <Route path="/giveaways/create" element={<CreateGiveawayPage />} />
-          <Route path="/giveaways/:id" element={<GiveawayDetailPage />} />
-          <Route path="/giveaways" element={<GiveawaysPage />} />
+       <Route path="/events/create" element={<CreateEventsPage />} />
+<Route path="/events/edit/:id" element={<EditEventPage />} />
+<Route path="/events/:id" element={<EventsDetailPage />} />
+<Route path="/events" element={<EventsPage />} />
+
 
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
 
           {/* New Modules */}
           <Route path="/lost-found" element={<LostFoundPage />} />
-          <Route path="/carpooling" element={<CarpoolPage />} />
+        
+          {/* Carpooling */}
+<Route path="/carpooling/edit/:id" element={<EditCarpoolPage />} />
+<Route path="/carpooling" element={<CarpoolPage />} />
+
+
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

@@ -23,28 +23,44 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllRides, Ride } from "@/api/ride";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { getCurrentUser } from "@/api/user";
 
 export default function CarpoolPage() {
   const [rides, setRides] = useState<Ride[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fromFilter, setFromFilter] = useState("All");
   const [toFilter, setToFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState<Date>();
 
-  useEffect(() => {
-    fetchRides();
+   useEffect(() => {
+    fetchData();
   }, []);
 
-  const fetchRides = async () => {
+  const fetchData = async () => {
     setIsLoading(true);
+    try {
+      const [ridesData, userData] = await Promise.all([
+        getAllRides(0, 50),
+        getCurrentUser(),
+      ]);
+      setRides(ridesData);
+      setCurrentUserId(userData?.id || null);
+    } catch (error) {
+      toast.error("Failed to load rides");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchRides = async () => {
     try {
       const data = await getAllRides(0, 50);
       setRides(data);
     } catch (error) {
       toast.error("Failed to load rides");
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -146,7 +162,12 @@ export default function CarpoolPage() {
         ) : filteredRides.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRides.map((ride) => (
-              <RideCard key={ride.id} ride={ride} />
+                           <RideCard 
+                key={ride.id} 
+                ride={ride} 
+                currentUserId={currentUserId}
+                onRideDeleted={fetchRides}
+              />
             ))}
           </div>
         ) : (

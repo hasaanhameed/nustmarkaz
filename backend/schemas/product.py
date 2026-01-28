@@ -29,6 +29,21 @@ class ProductCreate(BaseModel):
         from_attributes = True
 
 
+# Schema to update a product (all fields optional)
+class ProductUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    category: Optional[str] = None
+    pickup_location: Optional[str] = None
+    condition: Optional[str] = None
+    contact_number: Optional[str] = None
+    image_paths: Optional[List[str]] = None
+
+    class Config:
+        from_attributes = True
+
+
 # Schema for product response 
 class ProductResponse(BaseModel):
     id: int

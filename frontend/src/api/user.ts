@@ -57,6 +57,7 @@ export interface UserProfile {
   user: User;
   products: any[];
   trips: any[];
+  rides: any[];
   donations: any[];
   events: any[];
   lost_found_items: any[];
@@ -66,9 +67,10 @@ export const getUserProfile = async (): Promise<UserProfile> => {
   if (!user) throw new Error("Not authenticated");
 
   // Fetch all user's listings in parallel with error handling
-  const [products, trips, donations, events, lostFoundItems] = await Promise.all([
+  const [products, trips, rides, donations, events, lostFoundItems] = await Promise.all([
     api.get(`/products/`).then(res => res.data.filter((p: any) => p.creator_id === user.id)).catch(() => []),
     api.get(`/trips/`).then(res => res.data.filter((t: any) => t.creator_id === user.id)).catch(() => []),
+    api.get(`/rides/`).then(res => res.data.filter((r: any) => r.driver_id === user.id)).catch(() => []),
     api.get(`/donations/`).then(res => res.data.filter((d: any) => d.creator_id === user.id)).catch(() => []),
     api.get(`/events/`).then(res => res.data.filter((e: any) => e.creator_id === user.id)).catch(() => []),
     api.get(`/lost-found/`).then(res => res.data.filter((lf: any) => lf.creator_id === user.id)).catch(() => []),
@@ -78,6 +80,7 @@ export const getUserProfile = async (): Promise<UserProfile> => {
     user,
     products,
     trips,
+    rides,
     donations,
     events,
     lost_found_items: lostFoundItems,

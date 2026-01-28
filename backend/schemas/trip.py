@@ -31,6 +31,24 @@ class TripCreate(BaseModel):
         from_attributes = True
 
 
+# Schema to update a trip (all fields optional)
+# Schema to update a trip (all fields optional)
+class TripUpdate(BaseModel):
+    title: Optional[str] = None
+    destination: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    departure_location: Optional[str] = None
+    cost_per_person: Optional[float] = None
+    max_participants: Optional[int] = None
+    contact_number: Optional[str] = None
+    image_paths: Optional[List[str]] = None
+
+    class Config:
+        from_attributes = True
+
+
 # Schema for trip response
 class TripResponse(BaseModel):
     id: int

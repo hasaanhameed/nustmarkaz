@@ -50,12 +50,12 @@ export default function DashboardPage() {
           getAllLostFoundItems(),
         ]);
 
-        setProducts(productsData);
-        setTrips(tripsData);
-        setDonations(donationsData);
-        setEvents(eventsData);
-        setRides(ridesData);
-        setLostFoundItems(lostFoundData);
+         setProducts(productsData.filter(p => p?.creator));
+setTrips(tripsData.filter(t => t?.creator));
+setDonations(donationsData.filter(d => d?.creator));
+setEvents(eventsData.filter(e => e?.creator));
+setRides(ridesData.filter(r => r?.driver_id));
+setLostFoundItems(lostFoundData.filter(lf => lf?.creator));;
       } catch (err) {
         console.error("Failed to fetch data:", err);
         setError("Failed to load dashboard data");
@@ -65,7 +65,11 @@ export default function DashboardPage() {
     };
 
     fetchData();
+    
   }, []);
+
+
+
 
   const getActivityItems = (): ActivityItem[] => {
     const items: ActivityItem[] = [

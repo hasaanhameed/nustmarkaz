@@ -14,7 +14,7 @@ export interface Donation {
   beneficiary: string;
   goal_amount: number;
   end_date: string;
-  contact_number: string;  // Add this line
+  contact_number: string;
   created_at: string;
   updated_at: string;
   creator_id: number;
@@ -27,7 +27,7 @@ export interface DonationCreateRequest {
   beneficiary: string;
   goal_amount: number;
   end_date: string;
-  contact_number: string;  // Add this line
+  contact_number: string;
 }
 
 export interface DonationUpdateRequest {
@@ -36,21 +36,13 @@ export interface DonationUpdateRequest {
   beneficiary?: string;
   goal_amount?: number;
   end_date?: string;
-  contact_number?: string;  // Add this line
-}
-
-export interface DonationUpdateRequest {
-  title?: string;
-  description?: string;
-  beneficiary?: string;
-  goal_amount?: number;
-  end_date?: string;
+  contact_number?: string;
 }
 
 // Get all donations
 export const getAllDonations = async (
   skip: number = 0,
-  limit: number = 10,
+  limit: number = 100,
 ): Promise<Donation[]> => {
   try {
     const response = await api.get<Donation[]>("/donations/", {

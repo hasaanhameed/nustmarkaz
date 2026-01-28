@@ -1,15 +1,14 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { Phone } from "lucide-react";
+import { Phone, Pencil, Trash2 } from "lucide-react";
 import {
   ArrowLeft,
   MapPin,
   Calendar,
-  MessageCircle,
   Share2,
   Heart,
   Flag,
@@ -17,17 +16,33 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { getProductById, Product } from "@/api/product";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { getProductById, deleteProduct, Product } from "@/api/product";
+import { getCurrentUser } from "@/api/user";
+import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       if (!id) {
         setError("Product ID not found");
         setLoading(false);
@@ -37,8 +52,12 @@ export default function ProductDetailPage() {
       try {
         setLoading(true);
         setError(null);
-        const productData = await getProductById(parseInt(id));
+        const [productData, userData] = await Promise.all([
+          getProductById(parseInt(id)),
+          getCurrentUser(),
+        ]);
         setProduct(productData);
+        setCurrentUserId(userData?.id || null);
       } catch (err) {
         console.error("Error fetching product:", err);
         setError("Failed to load product details. Please try again later.");
@@ -47,8 +66,24 @@ export default function ProductDetailPage() {
       }
     };
 
-    fetchProduct();
+    fetchData();
   }, [id]);
+
+  const handleDelete = async () => {
+    if (!product) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteProduct(product.id);
+      toast.success("Product deleted successfully");
+      navigate("/marketplace");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -89,6 +124,7 @@ export default function ProductDetailPage() {
       : ["https://images.unsplash.com/photo-1516826957135-700dedea698c?w=500"];
 
   const currentImage = images[currentImageIndex];
+  const isCreator = currentUserId === product.creator_id;
 
   const goToPrevious = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -200,35 +236,75 @@ export default function ProductDetailPage() {
               </p>
             </div>
 
-{/* Contact Information */}
-<Card className="mb-6 bg-accent/10">
-  <CardContent className="p-4">
-    <h3 className="font-semibold mb-2">Contact Information</h3>
-    <div className="flex items-center gap-2 text-lg">
-      <Phone className="h-5 w-5 text-accent" />
-      <span className="font-medium">{product.contact_number}</span>
-    </div>
-    <p className="text-sm text-muted-foreground mt-2">
-      Call or message the seller to inquire about this product
-    </p>
-  </CardContent>
-</Card>
+            {/* Contact Information */}
+            <Card className="mb-6 bg-accent/10">
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-2">Contact Information</h3>
+                <div className="flex items-center gap-2 text-lg">
+                  <Phone className="h-5 w-5 text-accent" />
+                  <span className="font-medium">{product.contact_number}</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Call or message the seller to inquire about this product
+                </p>
+              </CardContent>
+            </Card>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="outline" className="flex-1 gap-2">
-              <Heart className="h-4 w-4" />
-              Save
-            </Button>
-            <Button variant="outline" className="flex-1 gap-2">
-              <Share2 className="h-4 w-4" />
-              Share
-            </Button>
-            <Button variant="outline" className="flex-1 gap-2">
-              <Flag className="h-4 w-4" />
-              Report
-            </Button>
-          </div>
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              {isCreator ? (
+                <>
+                  <Button
+                    onClick={() => navigate(`/marketplace/edit/${product.id}`)}
+                    className="flex-1 gap-2"
+                  >
+                    <Pencil className="h-4 w-4" />
+                    Edit
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="flex-1 gap-2">
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Product</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this product? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleDelete}
+                          disabled={isDeleting}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          {isDeleting ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" className="flex-1 gap-2">
+                    <Heart className="h-4 w-4" />
+                    Save
+                  </Button>
+                  <Button variant="outline" className="flex-1 gap-2">
+                    <Share2 className="h-4 w-4" />
+                    Share
+                  </Button>
+                  <Button variant="outline" className="flex-1 gap-2">
+                    <Flag className="h-4 w-4" />
+                    Report
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

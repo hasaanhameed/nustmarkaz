@@ -1,32 +1,68 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Share2, Calendar, MapPin, Users, Phone } from "lucide-react";
+import { ArrowLeft, Share2, Calendar, MapPin, Users, Phone, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { getEventById, Event } from "@/api/event";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { getEventById, deleteEvent, Event } from "@/api/event";
+import { getCurrentUser } from "@/api/user";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { toast } from "sonner";
 
-export default function GiveawayDetailPage() {
+export default function EventsDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    fetchEvent();
+    fetchData();
   }, [id]);
 
-  const fetchEvent = async () => {
+  const fetchData = async () => {
     try {
       if (id) {
-        const data = await getEventById(parseInt(id));
-        setEvent(data);
+        const [eventData, userData] = await Promise.all([
+          getEventById(parseInt(id)),
+          getCurrentUser(),
+        ]);
+        setEvent(eventData);
+        setCurrentUserId(userData?.id || null);
       }
     } catch (err) {
       console.error("Error fetching event:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!event) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteEvent(event.id);
+      toast.success("Event deleted successfully");
+      navigate("/events");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -49,7 +85,8 @@ export default function GiveawayDetailPage() {
     });
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name?: string) => {
+    if (!name) return "??";
     return name
       .split(' ')
       .map(word => word[0])
@@ -78,11 +115,23 @@ export default function GiveawayDetailPage() {
     );
   }
 
+  if (!event.creator) {
+    return (
+      <Layout>
+        <div className="container-custom py-8">
+          <div className="text-center">Invalid event data</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  const isCreator = currentUserId === event.creator_id;
+
   return (
     <Layout>
       <div className="container-custom py-8">
         <Link
-          to="/giveaways"
+          to="/events"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -193,10 +242,50 @@ export default function GiveawayDetailPage() {
                   </CardContent>
                 </Card>
 
-                <Button variant="outline" className="w-full gap-2">
-                  <Share2 className="h-4 w-4" />
-                  Share Event
-                </Button>
+                {/* Edit/Delete or Share buttons */}
+                {isCreator ? (
+                  <div className="space-y-3">
+                    <Button
+  onClick={() => navigate(`/events/edit/${event.id}`)}
+  className="w-full gap-2"
+>
+  <Pencil className="h-4 w-4" />
+  Edit Event
+</Button>
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-full gap-2">
+                          <Trash2 className="h-4 w-4" />
+                          Delete Event
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Event</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this event? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isDeleting ? "Deleting..." : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                ) : (
+                  <Button variant="outline" className="w-full gap-2">
+                    <Share2 className="h-4 w-4" />
+                    Share Event
+                  </Button>
+                )}
 
                 <Card className="bg-muted/50">
                   <CardContent className="p-4">
@@ -204,11 +293,11 @@ export default function GiveawayDetailPage() {
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10">
                         <AvatarFallback className="bg-blue-100 text-blue-600">
-                          {getInitials(event.creator.username)}
+                          {getInitials(event.creator?.username)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-sm">{event.creator.username}</p>
+                        <p className="font-medium text-sm">{event.creator?.username || "Unknown"}</p>
                       </div>
                     </div>
                   </CardContent>

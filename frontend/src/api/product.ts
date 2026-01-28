@@ -21,7 +21,7 @@ export interface Product {
   category: string;
   pickup_location: string;
   condition: string;
-  contact_number: string;  // Add this line
+  contact_number: string;
   creator_id: number;
   images: ProductImage[];
   creator: Creator;
@@ -34,14 +34,14 @@ export interface ProductCreateRequest {
   category: string;
   pickup_location: string;
   condition: string;
-  contact_number: string;  // Add this line
+  contact_number: string;
   image_paths?: string[];
 }
 
 // Get all products with pagination
 export const getAllProducts = async (
   skip: number = 0,
-  limit: number = 10,
+  limit: number = 100,
 ): Promise<Product[]> => {
   try {
     const response = await api.get<Product[]>("/products/", {
@@ -74,6 +74,30 @@ export const createProduct = async (
     return response.data;
   } catch (error) {
     console.error("Failed to create product:", error);
+    throw error;
+  }
+};
+
+// Update a product
+export const updateProduct = async (
+  productId: number,
+  productData: Partial<ProductCreateRequest>,
+): Promise<Product> => {
+  try {
+    const response = await api.put<Product>(`/products/${productId}`, productData);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to update product ${productId}:`, error);
+    throw error;
+  }
+};
+
+// Delete a product
+export const deleteProduct = async (productId: number): Promise<void> => {
+  try {
+    await api.delete(`/products/${productId}`);
+  } catch (error) {
+    console.error(`Failed to delete product ${productId}:`, error);
     throw error;
   }
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,29 +10,67 @@ import {
   Users,
   Share2,
   Phone,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getTripById, Trip } from "@/api/trip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { getTripById, deleteTrip, Trip } from "@/api/trip";
+import { getCurrentUser } from "@/api/user";
+import { toast } from "sonner";
 
 export default function TripDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [trip, setTrip] = useState<Trip | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (id) {
-      fetchTrip(id);
+      fetchData(id);
     }
   }, [id]);
 
-  const fetchTrip = async (tripId: string) => {
+  const fetchData = async (tripId: string) => {
     try {
-      const data = await getTripById(tripId);
-      setTrip(data);
+      const [tripData, userData] = await Promise.all([
+        getTripById(tripId),
+        getCurrentUser(),
+      ]);
+      setTrip(tripData);
+      setCurrentUserId(userData?.id || null);
     } catch (error) {
       console.error("Error fetching trip:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!trip) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteTrip(trip.id);
+      toast.success("Trip deleted successfully");
+      navigate("/trips");
+    } catch (error) {
+      console.error("Error deleting trip:", error);
+      toast.error("Failed to delete trip");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -66,6 +104,7 @@ export default function TripDetailPage() {
   };
 
   const creatorInitial = trip.creator.username.charAt(0).toUpperCase();
+  const isCreator = currentUserId === trip.creator_id;
 
   return (
     <Layout>
@@ -193,10 +232,49 @@ export default function TripDetailPage() {
                   </CardContent>
                 </Card>
 
-                <Button variant="outline" className="w-full gap-2">
-                  <Share2 className="h-4 w-4" />
-                  Share Trip
-                </Button>
+                {/* Edit/Delete or Share buttons */}
+                {isCreator ? (
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => navigate(`/trips/edit/${trip.id}`)}
+                      className="w-full gap-2"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Edit Trip
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-full gap-2">
+                          <Trash2 className="h-4 w-4" />
+                          Delete Trip
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Trip</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this trip? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isDeleting ? "Deleting..." : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                ) : (
+                  <Button variant="outline" className="w-full gap-2">
+                    <Share2 className="h-4 w-4" />
+                    Share Trip
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </div>

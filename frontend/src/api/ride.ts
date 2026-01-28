@@ -38,7 +38,7 @@ export interface RideCreateRequest {
 // Get all rides with pagination
 export const getAllRides = async (
   skip: number = 0,
-  limit: number = 10,
+  limit: number = 100,
 ): Promise<Ride[]> => {
   try {
     const response = await api.get<Ride[]>("/rides/", {
@@ -71,6 +71,30 @@ export const createRide = async (
     return response.data;
   } catch (error) {
     console.error("Failed to create ride:", error);
+    throw error;
+  }
+};
+
+// Update a ride
+export const updateRide = async (
+  rideId: number,
+  rideData: Partial<RideCreateRequest>,
+): Promise<Ride> => {
+  try {
+    const response = await api.put<Ride>(`/rides/${rideId}`, rideData);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to update ride ${rideId}:`, error);
+    throw error;
+  }
+};
+
+// Delete a ride
+export const deleteRide = async (rideId: number): Promise<void> => {
+  try {
+    await api.delete(`/rides/${rideId}`);
+  } catch (error) {
+    console.error(`Failed to delete ride ${rideId}:`, error);
     throw error;
   }
 };

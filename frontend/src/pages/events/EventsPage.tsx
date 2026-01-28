@@ -10,7 +10,7 @@ import { getAllEvents, Event } from "@/api/event";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-export default function GiveawaysPage() {
+export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -96,7 +96,7 @@ export default function GiveawaysPage() {
             </p>
           </div>
           {currentUser ? (
-            <Link to="/giveaways/create">
+            <Link to="/events/create">
               <Button className="bg-blue-600 text-white hover:bg-blue-700 gap-2">
                 <Plus className="h-4 w-4" />
                 Post Event
@@ -132,7 +132,7 @@ export default function GiveawaysPage() {
                 {filteredEvents.map((event) => (
                   <Link
                     key={event.id}
-                    to={`/giveaways/${event.id}`}
+                    to={`/events/${event.id}`}
                     className="block"
                   >
                     <div className="border-l-4 border-blue-600 bg-card rounded-lg overflow-hidden hover:shadow-md transition-shadow">
@@ -226,7 +226,7 @@ export default function GiveawaysPage() {
                 title="No events found"
                 description="Be the first to post an exciting campus event!"
                 actionLabel="Post Event"
-                actionHref="/giveaways/create"
+                actionHref="/events/create"
               />
             )}
           </div>

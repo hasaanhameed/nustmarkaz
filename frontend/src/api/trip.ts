@@ -23,7 +23,7 @@ export interface Trip {
   departure_location: string;
   max_participants: number;
   cost_per_person: number;
-  contact_number: string;  // Add this line
+  contact_number: string;
   creator_id: number;
   images: TripImage[];
   creator: Creator;
@@ -38,14 +38,14 @@ export interface TripCreateRequest {
   departure_location: string;
   max_participants: number;
   cost_per_person: number;
-  contact_number: string;  // Add this line
+  contact_number: string;
   image_paths?: string[];
 }
 
 // Get all trips
 export const getAllTrips = async (
   skip: number = 0,
-  limit: number = 10,
+  limit: number = 100,
 ): Promise<Trip[]> => {
   try {
     const response = await api.get<Trip[]>("/trips/", {
@@ -78,6 +78,31 @@ export const createTrip = async (
     return response.data;
   } catch (error) {
     console.error("Failed to create trip:", error);
+    throw error;
+  }
+};
+
+// Update a trip
+// Update a trip
+export const updateTrip = async (
+  tripId: number,
+  tripData: Partial<TripCreateRequest>,
+): Promise<Trip> => {
+  try {
+    const response = await api.put<Trip>(`/trips/${tripId}`, tripData);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to update trip ${tripId}:`, error);
+    throw error;
+  }
+};
+
+// Delete a trip
+export const deleteTrip = async (tripId: number): Promise<void> => {
+  try {
+    await api.delete(`/trips/${tripId}`);
+  } catch (error) {
+    console.error(`Failed to delete trip ${tripId}:`, error);
     throw error;
   }
 };

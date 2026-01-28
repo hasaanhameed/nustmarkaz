@@ -51,39 +51,37 @@ def get_donation(donation_id: int, db: Session = Depends(get_db)):
     return donation
 
 # Update a donation
+from schemas.donation import DonationCreate, DonationResponse, DonationUpdate
+# ...existing code...
+
 @router.put("/{donation_id}", response_model=DonationResponse)
 def update_donation(
     donation_id: int,
-    donation_update: DonationUpdate,
+    donation: DonationUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    donation = db.query(Donation).filter(Donation.id == donation_id).first()
-    
-    if not donation:
+    db_donation = db.query(Donation).filter(Donation.id == donation_id).first()
+    if not db_donation:
         raise HTTPException(status_code=404, detail="Donation not found")
-    
-    if donation.creator_id != current_user.id:
+    if db_donation.creator_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this donation")
-    
-    # Update fields if provided
-    if donation_update.title is not None:
-        donation.title = donation_update.title
-    if donation_update.description is not None:
-        donation.description = donation_update.description
-    if donation_update.beneficiary is not None:
-        donation.beneficiary = donation_update.beneficiary
-    if donation_update.goal_amount is not None:
-        donation.goal_amount = donation_update.goal_amount
-    if donation_update.end_date is not None:
-        donation.end_date = donation_update.end_date
-    if donation_update.contact_number is not None:
-        donation.contact_number = donation_update.contact_number
-    
+
+    # Only update fields that are provided
+    if donation.title is not None:
+        db_donation.title = donation.title
+    if donation.description is not None:
+        db_donation.description = donation.description
+    if donation.goal_amount is not None:
+        db_donation.goal_amount = donation.goal_amount
+    if donation.current_amount is not None:
+        db_donation.current_amount = donation.current_amount
+    if donation.end_date is not None:
+        db_donation.end_date = donation.end_date
+
     db.commit()
-    db.refresh(donation)
-    
-    return donation
+    db.refresh(db_donation)
+    return db_donation
 
 # Delete a donation
 @router.delete("/{donation_id}", status_code=status.HTTP_204_NO_CONTENT)

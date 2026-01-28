@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { EditProfileDialog } from "@/components/EditProfileDialog";
 import { getUserProfile, UserProfile } from "@/api/user";
-import { Mail, School, Package, MapPin, Heart, Gift, Loader2 } from "lucide-react";
+import { Mail, School, Package, MapPin, Heart, Gift, Car, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProfilePage() {
@@ -58,7 +58,7 @@ export default function ProfilePage() {
     );
   }
 
-  const { user, products, trips, donations, events, lost_found_items } = profile;
+  const { user, products, trips, rides, donations, events, lost_found_items } = profile;
 
   return (
     <Layout>
@@ -116,15 +116,29 @@ export default function ProfilePage() {
                     <div className="text-xs text-muted-foreground">Trips</div>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-muted/50">
+                    <Car className="h-5 w-5 mx-auto mb-1 text-blue-600" />
+                    <div className="text-xl font-bold">{rides.length}</div>
+                    <div className="text-xs text-muted-foreground">CarPool</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-muted/50">
                     <Heart className="h-5 w-5 mx-auto mb-1 text-warning" />
                     <div className="text-xl font-bold">{donations.length}</div>
                     <div className="text-xs text-muted-foreground">Donations</div>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
+
+
+
+                               <div className="text-center p-3 rounded-lg bg-muted/50">
                     <Gift className="h-5 w-5 mx-auto mb-1 text-primary" />
                     <div className="text-xl font-bold">{events.length}</div>
                     <div className="text-xs text-muted-foreground">Events</div>
                   </div>
+                  <div className="text-center p-3 rounded-lg bg-muted/50">
+                    <Package className="h-5 w-5 mx-auto mb-1 text-purple-600" />
+                    <div className="text-xl font-bold">{lost_found_items.length}</div>
+                    <div className="text-xs text-muted-foreground">Lost&Found</div>
+                  </div>
+                  
                 </div>
               </CardContent>
             </Card>
@@ -138,12 +152,15 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="products">
-                  <TabsList className="grid grid-cols-5 w-full">
+                  <TabsList className="grid grid-cols-6 w-full">
                     <TabsTrigger value="products">Products</TabsTrigger>
                     <TabsTrigger value="trips">Trips</TabsTrigger>
                     <TabsTrigger value="donations">Donations</TabsTrigger>
-                    <TabsTrigger value="events">Events</TabsTrigger>
-                    <TabsTrigger value="lost-found">Lost&Found</TabsTrigger>
+                     <TabsTrigger value="events">Events</TabsTrigger>
+                    <TabsTrigger value="lost-found">Lost & Found</TabsTrigger>
+                    <TabsTrigger value="rides">CarPooling</TabsTrigger>
+                    
+                   
                   </TabsList>
 
                   <TabsContent value="products" className="mt-6">
@@ -219,6 +236,39 @@ export default function ProfilePage() {
                     )}
                   </TabsContent>
 
+                                   <TabsContent value="rides" className="mt-6">
+                    {rides.length > 0 ? (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {rides.map((ride) => (
+                          <Card key={ride.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                            <Link to={`/carpooling`}>
+                              <div className="aspect-video bg-gradient-to-br from-blue-500 to-blue-700 relative overflow-hidden flex items-center justify-center">
+                                <Car className="h-16 w-16 text-white/30" />
+                              </div>
+                              <CardContent className="p-4">
+                                <h3 className="font-semibold line-clamp-1">{ride.from_location} → {ride.to_location}</h3>
+                                <p className="text-sm text-muted-foreground">{ride.ride_date} at {ride.ride_time}</p>
+                                <div className="flex items-center justify-between mt-2">
+                                  <p className="text-sm text-muted-foreground">{ride.vehicle_type}</p>
+                                  <p className="text-lg font-bold">Rs. {ride.price}</p>
+                                </div>
+                              </CardContent>
+                            </Link>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyState
+                        icon={Car}
+                        title="No rides posted"
+                        description="Share your ride and help others commute"
+                        actionLabel="Post Ride"
+                        actionHref="/carpooling"
+                      />
+                    )}
+                  </TabsContent>
+                
+            
                   <TabsContent value="donations" className="mt-6">
                     {donations.length > 0 ? (
                       <div className="grid sm:grid-cols-2 gap-4">
@@ -259,7 +309,7 @@ export default function ProfilePage() {
                       <div className="grid sm:grid-cols-2 gap-4">
                         {events.map((event) => (
                           <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                            <Link to={`/giveaways/${event.id}`}>
+                            <Link to={`/events/${event.id}`}>
                               <div className="aspect-video bg-muted relative overflow-hidden">
                                 {event.images?.[0]?.image_path ? (
                                   <img src={event.images[0].image_path} alt={event.title} className="w-full h-full object-cover" />
@@ -284,7 +334,7 @@ export default function ProfilePage() {
                         title="No events hosted"
                         description="Host your first event for the community"
                         actionLabel="Host Event"
-                        actionHref="/giveaways/create"
+                        actionHref="/events/create"
                       />
                     )}
                   </TabsContent>

@@ -10,7 +10,7 @@ import { ArrowLeft, Upload, X } from "lucide-react";
 import { createEvent } from "@/api/event";
 import { useToast } from "@/hooks/use-toast";
 
-export default function CreateGiveawayPage() {
+export default function CreateEventsPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,7 +62,7 @@ export default function CreateGiveawayPage() {
         description: "Event created successfully",
       });
 
-      navigate("/giveaways");
+      navigate("/events");
     } catch (error) {
       console.error("Error creating event:", error);
       toast({
@@ -79,7 +79,7 @@ export default function CreateGiveawayPage() {
     <Layout>
       <div className="container-custom py-8 max-w-2xl">
         <Link
-          to="/giveaways"
+          to="/events"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -205,7 +205,7 @@ export default function CreateGiveawayPage() {
                   type="button" 
                   variant="outline" 
                   className="flex-1" 
-                  onClick={() => navigate("/giveaways")}
+                  onClick={() => navigate("/events")}
                   disabled={isSubmitting}
                 >
                   Cancel

@@ -1,19 +1,35 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { getDonationById, Donation } from "@/api/donation";
-import { ArrowLeft, Share2, Phone } from "lucide-react";
+import { getDonationById, deleteDonation, Donation } from "@/api/donation";
+import { getCurrentUser } from "@/api/user";
+import { ArrowLeft, Share2, Phone, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 export default function DonationDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [donation, setDonation] = useState<Donation | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchDonation();
@@ -24,13 +40,33 @@ export default function DonationDetailPage() {
     try {
       setLoading(true);
       setError(null);
-      const data = await getDonationById(id);
-      setDonation(data);
+      const [donationData, userData] = await Promise.all([
+        getDonationById(id),
+        getCurrentUser(),
+      ]);
+      setDonation(donationData);
+      setCurrentUserId(userData?.id || null);
     } catch (err) {
       console.error("Error fetching donation:", err);
       setError("Failed to load donation details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!donation) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteDonation(donation.id);
+      toast.success("Donation drive deleted successfully");
+      navigate("/donations");
+    } catch (error) {
+      console.error("Error deleting donation:", error);
+      toast.error("Failed to delete donation drive");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -72,6 +108,8 @@ export default function DonationDetailPage() {
   const daysLeft = Math.ceil(
     (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
   );
+
+  const isCreator = currentUserId === donation.creator_id;
 
   return (
     <Layout>
@@ -160,14 +198,55 @@ export default function DonationDetailPage() {
                   </CardContent>
                 </Card>
 
-                <Button variant="outline" className="w-full gap-2">
-                  <Share2 className="h-4 w-4" />
-                  Share Drive
-                </Button>
-                <p className="text-sm text-muted-foreground">
-                  Help support this cause by sharing it with others in the
-                  community.
-                </p>
+                {/* Edit/Delete or Share buttons */}
+                {isCreator ? (
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => navigate(`/donations/edit/${donation.id}`)}
+                      className="w-full gap-2"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Edit Drive
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="w-full gap-2">
+                          <Trash2 className="h-4 w-4" />
+                          Delete Drive
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Donation Drive</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this donation drive? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isDeleting ? "Deleting..." : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                ) : (
+                  <>
+                    <Button variant="outline" className="w-full gap-2">
+                      <Share2 className="h-4 w-4" />
+                      Share Drive
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Help support this cause by sharing it with others in the
+                      community.
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>

@@ -45,3 +45,16 @@ class EventResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+
+class EventUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    event_date: Optional[str] = None
+    location: Optional[str] = None
+    max_attendees: Optional[int] = None
+
+    class Config:
+        from_attributes = True

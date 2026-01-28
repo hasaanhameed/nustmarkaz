@@ -1,16 +1,49 @@
+import { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Car, Phone } from "lucide-react";
-import { Ride } from "@/api/ride";
+import { Calendar, Clock, Car, Phone, Pencil, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Ride, deleteRide } from "@/api/ride";
+import { toast } from "sonner";
 
 interface RideCardProps {
   ride: Ride;
+  currentUserId?: number | null;
+  onRideDeleted?: () => void;
 }
 
-export function RideCard({ ride }: RideCardProps) {
+export function RideCard({ ride, currentUserId, onRideDeleted }: RideCardProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await deleteRide(ride.id);
+      toast.success("Ride deleted successfully");
+      onRideDeleted?.();
+    } catch (error) {
+      console.error("Error deleting ride:", error);
+      toast.error("Failed to delete ride");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const isDriver = currentUserId === ride.driver_id;
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
-      <CardContent className="p-5 flex-1 cursor-pointer">
+      <CardContent className="p-5 flex-1">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
@@ -71,13 +104,55 @@ export function RideCard({ ride }: RideCardProps) {
         </div>
       </CardContent>
 
-      <CardFooter className="p-4 border-t bg-muted/5 flex items-center justify-between">
-        <div className="font-bold text-lg">Rs. {ride.price}</div>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Phone className="h-4 w-4" />
-          {ride.contact}
+      <CardFooter className="p-4 border-t bg-muted/5 flex flex-col gap-3">
+        <div className="flex items-center justify-between w-full">
+          <div className="font-bold text-lg">Rs. {ride.price}</div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Phone className="h-4 w-4" />
+            {ride.contact}
+          </div>
         </div>
+
+        {isDriver && (
+          <div className="flex gap-2 w-full">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 gap-2"
+              onClick={() => {
+window.location.href = `/carpooling/edit/${ride.id}`;              }}
+            >
+              <Pencil className="h-3 w-3" />
+              Edit
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="flex-1 gap-2">
+                  <Trash2 className="h-3 w-3" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Ride</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this ride? This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );
