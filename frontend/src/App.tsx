@@ -34,7 +34,7 @@ import ProfilePage from "./pages/profile/ProfilePage";
 
 import LostFoundPage from "./pages/lost-found/LostFoundPage";
 import CarpoolPage from "./pages/carpool/CarpoolPage";
-import EditCarpoolPage from "./pages/carpool/EditCarpoolPage";
+import RideDetailPage from "./pages/carpool/RideDetailPage";
 import NotFound from "./pages/NotFound";
 
 
@@ -74,23 +74,19 @@ const App = () => (
           <Route path="/donations/edit/:id" element={<EditDonationPage />} />
 
           {/* Giveaways - specific routes before dynamic ones */}
-       <Route path="/events/create" element={<CreateEventsPage />} />
-<Route path="/events/edit/:id" element={<EditEventPage />} />
-<Route path="/events/:id" element={<EventsDetailPage />} />
-<Route path="/events" element={<EventsPage />} />
+          <Route path="/giveaways/create" element={<CreateEventsPage />} />
+          <Route path="/giveaways/:id" element={<EventsDetailPage />} />
+          <Route path="/giveaways" element={<EventsPage />} />
 
+          {/* Carpooling - specific routes before dynamic ones */}
+          <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
+          <Route path="/carpooling" element={<CarpoolPage />} />
 
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
 
-          {/* New Modules */}
+          {/* Lost & Found */}
           <Route path="/lost-found" element={<LostFoundPage />} />
-        
-          {/* Carpooling */}
-<Route path="/carpooling/edit/:id" element={<EditCarpoolPage />} />
-<Route path="/carpooling" element={<CarpoolPage />} />
-
-
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

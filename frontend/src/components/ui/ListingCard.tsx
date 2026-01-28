@@ -9,14 +9,14 @@ export interface ListingCardProps {
   title: string;
   description: string;
   image: string;
-  type: "product" | "trip" | "donation" | "giveaway";
-  price?: number;
+  type: "product" | "trip" | "donation" | "giveaway" | "ride" | "event" | "lost_found";
+  price?: number | null;
   location?: string;
   date?: string;
   spots?: number;
   spotsLeft?: number;
-  goal?: number;
-  raised?: number;
+  goal?: number | null;
+  raised?: number | null;
   endsIn?: string;
   author: {
     name: string;
@@ -30,6 +30,9 @@ const typeConfig = {
   trip: { label: "Trip", color: "bg-success text-success-foreground", href: "/trips" },
   donation: { label: "Donation", color: "bg-warning text-warning-foreground", href: "/donations" },
   giveaway: { label: "Giveaway", color: "bg-primary text-primary-foreground", href: "/giveaways" },
+  ride: { label: "Ride", color: "bg-sky text-sky-foreground", href: "/carpooling" },
+  event: { label: "Event", color: "bg-primary text-primary-foreground", href: "/giveaways" },
+  lost_found: { label: "Lost/Found", color: "bg-purple text-purple-foreground", href: "/lost-found" },
 };
 
 export function ListingCard({
@@ -101,11 +104,15 @@ export function ListingCard({
           </div>
           
           {/* Progress bar for donations */}
-          {type === "donation" && goal && (
+          {type === "donation" && goal !== null && goal !== undefined && (
             <div className="mt-3">
               <div className="flex justify-between text-sm mb-1">
-                <span className="font-medium">Rs. {raised?.toLocaleString() ?? 0}</span>
-                <span className="text-muted-foreground">of Rs. {goal.toLocaleString()}</span>
+                <span className="font-medium">
+                  Rs. {(raised ?? 0).toLocaleString()}
+                </span>
+                <span className="text-muted-foreground">
+                  of Rs. {goal.toLocaleString()}
+                </span>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div 
@@ -120,11 +127,11 @@ export function ListingCard({
         <CardFooter className="px-4 py-3 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
-              {author.name.charAt(0)}
+              {author.name.charAt(0).toUpperCase()}
             </div>
             <span className="text-sm text-muted-foreground">{author.name}</span>
           </div>
-          {price !== undefined && (
+          {price !== null && price !== undefined && (
             <span className="font-semibold text-foreground">
               Rs. {price.toLocaleString()}
             </span>

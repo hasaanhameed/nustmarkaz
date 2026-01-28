@@ -12,5 +12,5 @@ __all__ = [
     "TripImage",
     "Event",
     "Donation",
-    "Ride"
+    "Ride",
 ]
