@@ -24,6 +24,7 @@ import CreateGiveawayPage from "./pages/events/CreateEventsPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import LostFoundPage from "./pages/lost-found/LostFoundPage";
 import CarpoolPage from "./pages/carpool/CarpoolPage";
+import RideDetailPage from "./pages/carpool/RideDetailPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,12 +64,15 @@ const App = () => (
           <Route path="/giveaways/:id" element={<GiveawayDetailPage />} />
           <Route path="/giveaways" element={<GiveawaysPage />} />
 
+          {/* Carpooling - specific routes before dynamic ones */}
+          <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
+          <Route path="/carpooling" element={<CarpoolPage />} />
+
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
 
-          {/* New Modules */}
+          {/* Lost & Found */}
           <Route path="/lost-found" element={<LostFoundPage />} />
-          <Route path="/carpooling" element={<CarpoolPage />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

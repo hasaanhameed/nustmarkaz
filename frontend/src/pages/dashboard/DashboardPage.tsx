@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { ListingCard } from "@/components/ui/ListingCard";
+import { FeedPost } from "@/components/ui/FeedPost";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, TrendingUp } from "lucide-react";
 import { getLatestPosts, type DashboardCard } from "@/api/dashboard";
 
 export default function DashboardPage() {
@@ -36,33 +36,34 @@ export default function DashboardPage() {
   const renderPosts = (posts: DashboardCard[]) => {
     if (posts.length === 0) {
       return (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No posts yet</p>
+        <div className="text-center py-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
+            <TrendingUp className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <p className="text-muted-foreground font-medium">No activity yet</p>
+          <p className="text-sm text-muted-foreground/70 mt-1">
+            Posts will appear here when they're created
+          </p>
         </div>
       );
     }
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {posts.map((post) => {
-          // Map post type to ListingCard type
-          const cardType = post.type === "event" ? "giveaway" : post.type;
-          
-          return (
-            <ListingCard
-              key={`${post.type}-${post.id}`}
-              id={post.id.toString()}
-              title={post.title}
-              description={post.subtitle || ""}
-              image={post.image || "/placeholder-image.jpg"}
-              type={cardType as "product" | "trip" | "donation" | "giveaway"}
-              price={post.price}
-              author={{
-                name: post.creator_username,
-              }}
-            />
-          );
-        })}
+      <div className="space-y-3">
+        {posts.map((post) => (
+          <FeedPost
+            key={`${post.type}-${post.id}`}
+            id={post.id.toString()}
+            title={post.title}
+            description={post.subtitle || ""}
+            type={post.type}
+            price={post.price}
+            author={{
+              name: post.creator_username,
+            }}
+            createdAt={post.created_at}
+          />
+        ))}
       </div>
     );
   };
@@ -82,127 +83,176 @@ export default function DashboardPage() {
 
   return (
     <Layout>
-      <div className="container-custom py-8">
+      <div className="container-custom py-6 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here's what's happening on campus.
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold mb-1">Campus Feed</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
+            Latest activity from your campus community
           </p>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3 mb-6">
           <Link to="/marketplace/create">
-            <div className="p-4 rounded-xl border border-border bg-card hover:border-accent transition-colors group cursor-pointer h-full">
-              <p className="font-medium text-sm group-hover:text-accent transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-accent hover:bg-accent/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-accent transition-colors">
                 Sell Product
               </p>
-              <p className="text-xs text-muted-foreground">List an item</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">List an item</p>
             </div>
           </Link>
 
           <Link to="/trips/create">
-            <div className="p-4 rounded-xl border border-border bg-card hover:border-success transition-colors group cursor-pointer h-full">
-              <p className="font-medium text-sm group-hover:text-success transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-success hover:bg-success/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-success transition-colors">
                 Organize Trip
               </p>
-              <p className="text-xs text-muted-foreground">Plan adventure</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Plan adventure</p>
             </div>
           </Link>
 
           <Link to="/carpooling">
-            <div className="p-4 rounded-xl border border-border bg-card hover:border-sky transition-colors group cursor-pointer h-full">
-              <p className="font-medium text-sm group-hover:text-sky transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-sky hover:bg-sky/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-sky transition-colors">
                 Post Carpool
               </p>
-              <p className="text-xs text-muted-foreground">Share a ride</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Share a ride</p>
             </div>
           </Link>
 
           <Link to="/donations/create">
-            <div className="p-4 rounded-xl border border-border bg-card hover:border-warning transition-colors group cursor-pointer h-full">
-              <p className="font-medium text-sm group-hover:text-warning transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-warning hover:bg-warning/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-warning transition-colors">
                 Start Drive
               </p>
-              <p className="text-xs text-muted-foreground">Support cause</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Support cause</p>
             </div>
           </Link>
 
           <Link to="/giveaways/create">
-            <div className="p-4 rounded-xl border border-border bg-card hover:border-primary transition-colors group cursor-pointer h-full">
-              <p className="font-medium text-sm group-hover:text-primary transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Post Event
               </p>
-              <p className="text-xs text-muted-foreground">Organize event</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Organize event</p>
             </div>
           </Link>
 
           <Link to="/lost-found">
-            <div className="p-4 rounded-xl border border-border bg-card hover:border-purple transition-colors group cursor-pointer h-full">
-              <p className="font-medium text-sm group-hover:text-purple transition-colors">
-                Post Lost/Found
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-purple hover:bg-purple/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-purple transition-colors">
+                Lost/Found
               </p>
-              <p className="text-xs text-muted-foreground">Report item</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Report item</p>
             </div>
           </Link>
         </div>
 
-        {/* Feed */}
-        <div className="mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Latest Activity Feed */}
-            <div className="lg:col-span-2">
-              <Tabs defaultValue="all">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-4">Latest Activity</h2>
-                  <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="products">Products</TabsTrigger>
-                    <TabsTrigger value="trips">Trips</TabsTrigger>
-                    <TabsTrigger value="rides">Rides</TabsTrigger>
-                    <TabsTrigger value="donations">Donations</TabsTrigger>
-                    <TabsTrigger value="events">Events</TabsTrigger>
-                    <TabsTrigger value="lostfound">Lost/Found</TabsTrigger>
-                  </TabsList>
+        {/* Feed Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Feed - Takes 2 columns on large screens */}
+          <div className="lg:col-span-2">
+            <Tabs defaultValue="all" className="w-full">
+              <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 pb-4 mb-4 border-b">
+                <h2 className="text-lg font-semibold mb-3">Activity Feed</h2>
+                <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full h-auto p-1 bg-muted/50">
+                  <TabsTrigger value="all" className="text-xs md:text-sm py-2">
+                    All
+                  </TabsTrigger>
+                  <TabsTrigger value="products" className="text-xs md:text-sm py-2">
+                    Products
+                  </TabsTrigger>
+                  <TabsTrigger value="trips" className="text-xs md:text-sm py-2">
+                    Trips
+                  </TabsTrigger>
+                  <TabsTrigger value="rides" className="text-xs md:text-sm py-2">
+                    Rides
+                  </TabsTrigger>
+                  <TabsTrigger value="donations" className="text-xs md:text-sm py-2">
+                    Donations
+                  </TabsTrigger>
+                  <TabsTrigger value="events" className="text-xs md:text-sm py-2">
+                    Events
+                  </TabsTrigger>
+                  <TabsTrigger value="lostfound" className="text-xs md:text-sm py-2">
+                    Lost/Found
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-4"></div>
+                  <p className="text-sm text-muted-foreground">Loading feed...</p>
                 </div>
+              ) : (
+                <>
+                  <TabsContent value="all" className="mt-0">
+                    {renderPosts(allPosts)}
+                  </TabsContent>
 
-                {loading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <p className="text-muted-foreground">Loading activity...</p>
+                  <TabsContent value="products" className="mt-0">
+                    {renderPosts(filterPostsByType("product"))}
+                  </TabsContent>
+
+                  <TabsContent value="trips" className="mt-0">
+                    {renderPosts(filterPostsByType("trip"))}
+                  </TabsContent>
+
+                  <TabsContent value="rides" className="mt-0">
+                    {renderPosts(filterPostsByType("ride"))}
+                  </TabsContent>
+
+                  <TabsContent value="donations" className="mt-0">
+                    {renderPosts(filterPostsByType("donation"))}
+                  </TabsContent>
+
+                  <TabsContent value="events" className="mt-0">
+                    {renderPosts(filterPostsByType("event"))}
+                  </TabsContent>
+
+                  <TabsContent value="lostfound" className="mt-0">
+                    {renderPosts(filterPostsByType("lost_found"))}
+                  </TabsContent>
+                </>
+              )}
+            </Tabs>
+          </div>
+
+          {/* Right Sidebar - Quick Stats/Info */}
+          <div className="lg:col-span-1 hidden lg:block">
+            <div className="sticky top-4 space-y-4">
+              {/* Quick Stats Card */}
+              <div className="rounded-lg border bg-card p-4">
+                <h3 className="font-semibold text-sm mb-3 text-muted-foreground">
+                  Campus Activity
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Total Posts</span>
+                    <span className="font-semibold">{allPosts.length}</span>
                   </div>
-                ) : (
-                  <>
-                    <TabsContent value="all">
-                      {renderPosts(allPosts)}
-                    </TabsContent>
-
-                    <TabsContent value="products">
-                      {renderPosts(filterPostsByType("product"))}
-                    </TabsContent>
-
-                    <TabsContent value="trips">
-                      {renderPosts(filterPostsByType("trip"))}
-                    </TabsContent>
-
-                    <TabsContent value="rides">
-                      {renderPosts(filterPostsByType("ride"))}
-                    </TabsContent>
-
-                    <TabsContent value="donations">
-                      {renderPosts(filterPostsByType("donation"))}
-                    </TabsContent>
-
-                    <TabsContent value="events">
-                      {renderPosts(filterPostsByType("event"))}
-                    </TabsContent>
-
-                    <TabsContent value="lostfound">
-                      {renderPosts(filterPostsByType("lost_found"))}
-                    </TabsContent>
-                  </>
-                )}
-              </Tabs>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Products</span>
+                    <span className="font-semibold">
+                      {filterPostsByType("product").length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Trips</span>
+                    <span className="font-semibold">
+                      {filterPostsByType("trip").length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Events</span>
+                    <span className="font-semibold">
+                      {filterPostsByType("event").length}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
