@@ -1,41 +1,37 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground">
-      <div className="container-custom py-12 md:py-16">
-        {/* Centered Brand Section */}
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
-          <Link to="/" className="flex items-center gap-2 mb-4">
-            <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-xl">N</span>
-            </div>
-            <span className="font-bold text-2xl">NustMarkaz</span>
+    <footer className="bg-primary text-primary-foreground border-t border-white/5">
+      <div className="container-custom py-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Minimal Brand Identifier */}
+          <Link to="/" className="group flex items-center gap-4 transition-transform hover:scale-105">
+            <img
+              src="/images/finallogo.jpeg"
+              alt="Logo"
+              className="h-10 w-10 rounded-xl object-cover shadow-lg border border-white/10"
+            />
           </Link>
-          
-          <p className="text-primary-foreground/80 text-base mb-8 max-w-md">
-            The exclusive student portal for NUST community. <br />              
-            All your needs, in one place only.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 text-sm">
-            <div className="flex items-center gap-2 text-primary-foreground/80">
-              <MapPin className="h-4 w-4 flex-shrink-0" />
-              <span>NUST, H-12, Islamabad</span>
+
+          {/* Grounded Contact & Meta */}
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 text-[10px] font-black uppercase tracking-[0.2em] text-primary-foreground/40">
+            <div className="flex items-center gap-3 transition-colors hover:text-accent">
+              <MapPin className="h-4 w-4" />
+              <span>H-12 Islamabad</span>
             </div>
-            <div className="flex items-center gap-2 text-primary-foreground/80">
-              <Mail className="h-4 w-4 flex-shrink-0" />
-              <span>support@nustmarkaz.pk</span>
+            <div className="flex items-center gap-3 transition-colors hover:text-accent">
+              <span className="opacity-40">© {new Date().getFullYear()}</span>
+              <span className="text-primary-foreground/60 tracking-normal font-bold normal-case text-xs">Built for NUSTians</span>
             </div>
           </div>
-        </div>
 
-        {/* Copyright */}
-        <div className="border-t border-primary-foreground/20 mt-12 pt-8 text-center">
-          <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} NustMarkaz v1.0.0. All rights reserved.
-          </p>
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-primary-foreground/30">
+            <a href="#" className="hover:text-accent transition-colors">Privacy</a>
+            <a href="#" className="hover:text-accent transition-colors">Terms</a>
+            <a href="#" className="hover:text-accent transition-colors">Contact</a>
+          </div>
         </div>
       </div>
     </footer>

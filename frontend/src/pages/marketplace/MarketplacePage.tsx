@@ -83,109 +83,131 @@ export default function MarketplacePage() {
 
   return (
     <Layout>
-      <div className="container-custom py-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Marketplace</h1>
-            <p className="text-muted-foreground mt-1">
-              Buy and sell within the NUST community
-            </p>
-          </div>
-          {currentUser ? (
-            <Link to="/marketplace/create">
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-                <Plus className="h-4 w-4" />
-                List Product
-              </Button>
-            </Link>
-          ) : (
-            <Link to="/login">
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-                <Plus className="h-4 w-4" />
-                Log in to Post
-              </Button>
-            </Link>
-          )}
-        </div>
+      <div className="bg-background min-h-screen relative overflow-hidden">
+        {/* Rich Background Treatment */}
+        <div className="absolute inset-0 bg-grid-subtle opacity-100 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[140px] -mr-64 -mt-64" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] -ml-32 -mb-32" />
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+        <div className="container-custom py-12 relative z-10">
+          {/* Marketplace Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-20 animate-entrance">
+            <div className="max-w-2xl text-left">
+              <h1 className="text-6xl md:text-8xl font-black text-foreground mb-6 tracking-tight leading-none">
+                Explore the <span className="text-primary italic">Market.</span>
+              </h1>
+              <p className="text-xl text-muted-foreground font-medium leading-relaxed">
+                Discover verified campus listings from your fellow NUSTians. Secure, sustainable, and student-powered.
+              </p>
+            </div>
+            {currentUser ? (
+              <Link to="/marketplace/create" className="animate-entrance" style={{ animationDelay: '0.1s' }}>
+                <Button className="h-16 px-10 rounded-[1.5rem] gap-3 font-bold text-lg shadow-xl shadow-primary/20 btn-hover-effect">
+                  <Plus className="h-6 w-6" />
+                  List an Item
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login" className="animate-entrance" style={{ animationDelay: '0.1s' }}>
+                <Button className="h-16 px-10 rounded-[1.5rem] gap-3 font-bold text-lg shadow-xl shadow-primary/20 btn-hover-effect">
+                  <Plus className="h-6 w-6" />
+                  Sign in to Post
+                </Button>
+              </Link>
+            )}
           </div>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
 
-        {/* Products Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <LoadingSpinner />
+          <div className="flex flex-col gap-10">
+            {/* Filters Section */}
+            <div className="flex flex-col md:flex-row gap-6 mb-12 animate-entrance" style={{ animationDelay: '0.2s' }}>
+              <div className="relative flex-1">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60" />
+                <Input
+                  placeholder="What are you looking for?"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-16 h-16 bg-white/40 backdrop-blur-md border-border/50 focus:bg-white focus:border-primary/30 rounded-2xl text-foreground font-medium transition-all shadow-sm"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="w-full sm:w-[200px] h-16 bg-white/40 backdrop-blur-md border-border/50 rounded-2xl text-foreground/70 font-bold hover:bg-white transition-colors shadow-sm">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border/50">
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat} className="rounded-lg font-medium">
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-full sm:w-[200px] h-16 bg-white/40 backdrop-blur-md border-border/50 rounded-2xl text-foreground/70 font-bold hover:bg-white transition-colors shadow-sm">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl border-border/50">
+                    {sortOptions.map((option) => (
+                      <SelectItem key={option} value={option} className="rounded-lg font-medium">
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Content Area */}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div key={i} className="h-[400px] rounded-[2rem] bg-secondary/30 animate-pulse border border-border/50" />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-32 animate-entrance bg-white/40 backdrop-blur-md rounded-[3rem] border border-border/50">
+                <p className="text-destructive font-bold mb-6 text-lg">{error}</p>
+                <Button onClick={fetchProducts} variant="outline" className="h-14 px-8 rounded-xl font-bold border-border/60 hover:border-primary/30">
+                  Try Again
+                </Button>
+              </div>
+            ) : sortedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {sortedProducts.map((product, i) => (
+                  <div
+                    key={product.id}
+                    className="animate-entrance"
+                    style={{ animationDelay: `${0.3 + (i % 8) * 0.1}s` }}
+                  >
+                    <ListingCard
+                      id={product.id.toString()}
+                      title={product.title}
+                      description={product.description}
+                      image={
+                        product.images[0]?.image_path ||
+                        "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=400"
+                      }
+                      type="product"
+                      price={product.price}
+                      location={product.pickup_location}
+                      author={{ name: product.creator.username }}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="animate-entrance">
+                <EmptyState
+                  icon={ShoppingBag}
+                  title="No listings found"
+                  description="Try adjusting your filters or search to discover what your campus has to offer."
+                  onAction={() => { setCategory("All"); setSearchQuery(""); }}
+                  actionLabel="Back to All"
+                />
+              </div>
+            )}
           </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={fetchProducts} variant="outline">
-              Try Again
-            </Button>
-          </div>
-        ) : sortedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedProducts.map((product) => (
-              <ListingCard
-                key={product.id}
-                id={product.id.toString()}
-                title={product.title}
-                description={product.description}
-                image={
-                  product.images[0]?.image_path ||
-                  "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=400"
-                }
-                type="product"
-                price={product.price}
-                location={product.pickup_location}
-                author={{ name: product.creator.username }}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            icon={ShoppingBag}
-            title="No products found"
-            description="Try adjusting your search or filters to find what you're looking for."
-            actionLabel="List a Product"
-            actionHref="/marketplace/create"
-          />
-        )}
+        </div>
       </div>
     </Layout>
   );

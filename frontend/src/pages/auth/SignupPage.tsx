@@ -12,7 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { User, Mail, Lock, Loader2 } from "lucide-react";
+import { ModernBackground } from "@/components/ui/modern-background";
+import { cn } from "@/lib/utils";
+import { User, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { createUser } from "@/api/user";
 
 const departments = [
@@ -126,173 +128,175 @@ export default function SignupPage() {
 
   return (
     <Layout showFooter={false}>
-      <div className="min-h-[calc(100vh-64px)] flex">
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="w-full max-w-md">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <Label htmlFor="name">Full Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Muhammad Ali"
-                    value={formData.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
-                    className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
-                    disabled={isLoading}
+      <div className="relative min-h-[calc(100vh-80px)] overflow-hidden flex items-center justify-center p-6 md:p-12">
+        <ModernBackground />
+
+        <div className="w-full max-w-xl animate-entrance">
+          <div className="bg-white/40 backdrop-blur-3xl rounded-[3.5rem] border border-white/40 p-10 md:p-16 shadow-2xl overflow-hidden relative group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+
+            <div className="relative z-10">
+              <div className="flex justify-center mb-10">
+                <Link to="/" className="transition-transform hover:scale-110 duration-500">
+                  <img
+                    src="/images/finallogo.jpeg"
+                    alt="Logo"
+                    className="h-20 w-20 rounded-2xl object-cover shadow-xl border border-border/50"
                   />
-                </div>
-                {errors.name && (
-                  <p className="text-sm text-red-500 mt-1">{errors.name}</p>
-                )}
+                </Link>
               </div>
 
-              <div>
-                <Label htmlFor="email">NUST Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your.name@nust.edu.pk"
-                    value={formData.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
-                    disabled={isLoading}
-                  />
-                </div>
-                {errors.email && (
-                  <p className="text-sm text-red-500 mt-1">{errors.email}</p>
-                )}
+              <div className="text-center mb-12">
+                <h1 className="text-5xl font-black text-foreground mb-4 tracking-[-0.04em]">Join the Hub.</h1>
+                <p className="text-muted-foreground font-bold text-lg opacity-70">Connect with your campus community.</p>
               </div>
 
-              <div>
-                <Label htmlFor="department">Department</Label>
-                <Select
-                  value={formData.department}
-                  onValueChange={(value) => handleChange("department", value)}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger
-                    className={errors.department ? "border-red-500" : ""}
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">Full Name</Label>
+                    <div className="relative group/input">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Muhammad Ali"
+                        value={formData.name}
+                        onChange={(e) => handleChange("name", e.target.value)}
+                        className={cn(
+                          "h-14 pl-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all",
+                          errors.name && "border-red-500 bg-red-50/10"
+                        )}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.name && <p className="text-xs font-bold text-red-500 ml-1">{errors.name}</p>}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">NUST Email</Label>
+                    <div className="relative group/input">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your.id@nust.edu.pk"
+                        value={formData.email}
+                        onChange={(e) => handleChange("email", e.target.value)}
+                        className={cn(
+                          "h-14 pl-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all",
+                          errors.email && "border-red-500 bg-red-50/10"
+                        )}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.email && <p className="text-xs font-bold text-red-500 ml-1">{errors.email}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="department" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">Department</Label>
+                  <Select
+                    value={formData.department}
+                    onValueChange={(value) => handleChange("department", value)}
+                    disabled={isLoading}
                   >
-                    <SelectValue placeholder="Select your department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.department && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.department}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={(e) => handleChange("password", e.target.value)}
-                    className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
-                    disabled={isLoading}
-                  />
+                    <SelectTrigger className={cn(
+                      "h-14 rounded-2xl bg-white/50 border-white/40 focus:bg-white transition-all",
+                      errors.department && "border-red-500"
+                    )}>
+                      <SelectValue placeholder="Select your department" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-border/50 shadow-2xl">
+                      {departments.map((dept) => (
+                        <SelectItem key={dept} value={dept} className="rounded-xl my-1 mx-1 hover:bg-secondary">
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.department && <p className="text-xs font-bold text-red-500 ml-1">{errors.department}</p>}
                 </div>
-                {errors.password && (
-                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
-                )}
-              </div>
 
-              <div>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleChange("confirmPassword", e.target.value)
-                    }
-                    className={`pl-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
-                    disabled={isLoading}
-                  />
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">Password</Label>
+                    <div className="relative group/input">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={(e) => handleChange("password", e.target.value)}
+                        className={cn(
+                          "h-14 pl-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all",
+                          errors.password && "border-red-500 bg-red-50/10"
+                        )}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.password && <p className="text-xs font-bold text-red-500 ml-1">{errors.password}</p>}
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="confirmPassword" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">Confirm</Label>
+                    <div className="relative group/input">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        value={formData.confirmPassword}
+                        onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                        className={cn(
+                          "h-14 pl-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all",
+                          errors.confirmPassword && "border-red-500 bg-red-50/10"
+                        )}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    {errors.confirmPassword && <p className="text-xs font-bold text-red-500 ml-1">{errors.confirmPassword}</p>}
+                  </div>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.confirmPassword}
-                  </p>
+
+                <div className="flex items-start gap-3 bg-secondary/20 p-6 rounded-3xl border border-border/10">
+                  <Checkbox
+                    id="terms"
+                    checked={agreeTerms}
+                    onCheckedChange={(checked) => {
+                      setAgreeTerms(checked as boolean);
+                      if (errors.terms && checked) {
+                        setErrors((prev) => {
+                          const newErrors = { ...prev };
+                          delete newErrors.terms;
+                          return newErrors;
+                        });
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="mt-1 rounded-md"
+                  />
+                  <Label htmlFor="terms" className="text-sm font-bold text-muted-foreground cursor-pointer leading-relaxed">
+                    I agree to the <Link to="#" className="text-primary hover:underline">Terms</Link> and <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>.
+                  </Label>
+                </div>
+                {errors.terms && (
+                  <p className="text-xs font-bold text-red-500 ml-1">{errors.terms}</p>
                 )}
-              </div>
 
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreeTerms}
-                  onCheckedChange={(checked) => {
-                    setAgreeTerms(checked as boolean);
-                    if (errors.terms && checked) {
-                      setErrors((prev) => {
-                        const newErrors = { ...prev };
-                        delete newErrors.terms;
-                        return newErrors;
-                      });
-                    }
-                  }}
-                  disabled={isLoading}
-                />
-                <Label
-                  htmlFor="terms"
-                  className="text-sm text-muted-foreground cursor-pointer leading-relaxed"
-                >
-                  I agree to the{" "}
-                  <Link to="#" className="text-accent hover:underline">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="#" className="text-accent hover:underline">
-                    Privacy Policy
-                  </Link>
-                </Label>
-              </div>
-              {errors.terms && (
-                <p className="text-sm text-red-500 mt-1">{errors.terms}</p>
-              )}
+                {errors.api && <p className="text-sm font-bold text-red-500 text-center">{errors.api}</p>}
 
-              {errors.api && (
-                <p className="text-sm text-red-500 mt-1">{errors.api}</p>
-              )}
+                <Button type="submit" className="w-full h-16 text-xl font-black rounded-3xl shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin" /> : "Create Account"}
+                </Button>
+              </form>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  "Create Account"
-                )}
-              </Button>
-            </form>
-
-            <p className="text-center text-sm mt-6">
-              Already have an account?{" "}
-              <Link to="/login" className="text-accent hover:underline">
-                Sign in
-              </Link>
-            </p>
+              <p className="text-center text-base mt-10 font-bold text-muted-foreground">
+                Already have an account?{" "}
+                <Link to="/login" className="text-primary hover:underline">Sign in</Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -110,6 +110,9 @@ export default {
         "float": "float 3s ease-in-out infinite",
         "pulse-slow": "pulse-slow 4s ease-in-out infinite",
       },
+      transitionTimingFunction: {
+        "human": "cubic-bezier(0.23, 1, 0.32, 1)",
+      },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },

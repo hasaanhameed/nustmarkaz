@@ -3,16 +3,18 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
-  ShoppingBag,
+  ShoppingBasket,
   MapPin,
   Heart,
-  Gift,
+  CalendarDays,
   User,
   LogIn,
   LogOut,
   Loader2,
   Search,
   Car,
+  Home,
+  Compass,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,16 +27,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { getCurrentUser, User as UserType } from "@/api/user";
 
 const navLinks = [
-  { name: "Home", href: "/", loggedOutOnly: true },
-  { name: "Dashboard", href: "/dashboard", loggedInOnly: true },
-  { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
+  { name: "Home", href: "/", icon: Home, loggedOutOnly: true },
+  { name: "Dashboard", href: "/dashboard", icon: User, loggedInOnly: true },
+  { name: "Marketplace", href: "/marketplace", icon: ShoppingBasket },
   { name: "Trips", href: "/trips", icon: MapPin },
   { name: "Donations", href: "/donations", icon: Heart },
-  { name: "Events", href: "/events", icon: Gift },
+  { name: "Events", href: "/events", icon: CalendarDays },
   { name: "Lost & Found", href: "/lost-found", icon: Search },
   { name: "Car Pooling", href: "/carpooling", icon: Car },
 ];
@@ -61,8 +70,6 @@ export function Navbar() {
 
   const handleLogoutConfirm = () => {
     setIsLoggingOut(true);
-
-    // Simulate a brief delay for better UX
     setTimeout(() => {
       localStorage.removeItem("access_token");
       setCurrentUser(null);
@@ -72,7 +79,6 @@ export function Navbar() {
     }, 800);
   };
 
-  // Filter nav links based on authentication status
   const filteredNavLinks = navLinks.filter((link) => {
     if (link.loggedOutOnly && currentUser) return false;
     if (link.loggedInOnly && !currentUser) return false;
@@ -81,173 +87,145 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      <nav className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container-custom">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">
-                  N
-                </span>
-              </div>
-              <span className="font-bold text-xl text-primary">NustMarkaz</span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-1">
-              {filteredNavLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={cn(
-                    "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                    location.pathname === link.href
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
-
-            {/* Desktop Auth Buttons */}
-            <div className="hidden md:flex items-center gap-3">
-              {currentUser ? (
-                <>
-                  <Link to="/profile">
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <User className="h-4 w-4" />
-                      {currentUser.username}
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleLogoutClick}
-                    className="gap-2"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
+          <div className="flex h-20 items-center justify-between">
+            {/* Left: Hamburger + Logo */}
+            <div className="flex items-center gap-6">
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full h-12 w-12 hover:bg-secondary transition-colors">
+                    <Menu className="h-7 w-7 text-foreground/70" />
+                    <span className="sr-only">Toggle menu</span>
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login">
-                    <Button variant="ghost" size="sm">
-                      Log in
-                    </Button>
-                  </Link>
-                  <Link to="/signup">
-                    <Button
-                      size="sm"
-                      className="bg-accent text-accent-foreground hover:bg-accent/90"
-                    >
-                      Sign up
-                    </Button>
-                  </Link>
-                </>
-              )}
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 border-r-border/30 shadow-2xl">
+                  <div className="flex flex-col h-full bg-background">
+                    <SheetHeader className="p-10 border-b border-border/50 text-left">
+                      <SheetTitle className="flex justify-center">
+                        <img
+                          src="/images/finallogo.jpeg"
+                          alt="Logo"
+                          className="h-20 w-20 rounded-2xl object-cover shadow-lg border border-border/50"
+                        />
+                      </SheetTitle>
+                    </SheetHeader>
+
+                    <div className="flex-1 overflow-y-auto py-8 px-6">
+                      <div className="space-y-2">
+                        {filteredNavLinks.map((link) => (
+                          <Link
+                            key={link.name}
+                            to={link.href}
+                            onClick={() => setIsOpen(false)}
+                            className={cn(
+                              "flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-bold transition-all duration-300",
+                              location.pathname === link.href
+                                ? "bg-primary text-primary-foreground shadow-xl shadow-primary/20 translate-x-2"
+                                : "text-foreground/60 hover:text-primary hover:bg-primary/5 hover:translate-x-2",
+                            )}
+                          >
+                            {link.icon && <link.icon className="h-6 w-6 opacity-80" />}
+                            {link.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-8 border-t border-border/50 bg-secondary/30">
+                      {currentUser ? (
+                        <div className="space-y-4">
+                          <Link to="/profile" onClick={() => setIsOpen(false)}>
+                            <div className="flex items-center gap-4 p-4 rounded-2xl hover:bg-background transition-colors border border-transparent hover:border-border/50">
+                              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                                <User className="h-6 w-6 text-primary" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-base font-bold truncate">{currentUser.username}</p>
+                                <p className="text-xs text-muted-foreground uppercase tracking-widest font-black">View Profile</p>
+                              </div>
+                            </div>
+                          </Link>
+                          <Button
+                            variant="outline"
+                            className="w-full h-12 justify-start gap-4 rounded-2xl border-border/50 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/20 font-bold"
+                            onClick={() => {
+                              handleLogoutClick();
+                              setIsOpen(false);
+                            }}
+                          >
+                            <LogOut className="h-5 w-5" />
+                            Sign Out
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                          <Link to="/login" onClick={() => setIsOpen(false)}>
+                            <Button variant="ghost" className="w-full h-12 rounded-2xl font-bold">Log in</Button>
+                          </Link>
+                          <Link to="/signup" onClick={() => setIsOpen(false)}>
+                            <Button className="w-full h-12 rounded-2xl font-bold shadow-lg shadow-primary/10">Sign up</Button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              <Link to="/" className="flex items-center group">
+                <div className="relative">
+                  <img
+                    src="/images/finallogo.jpeg"
+                    alt="Logo"
+                    className="h-12 w-12 rounded-2xl object-cover transition-all duration-700 group-hover:rotate-[12deg] group-hover:scale-110 shadow-md group-hover:shadow-primary/30"
+                  />
+                  <div className="absolute inset-0 rounded-2xl border border-primary/10 group-hover:border-primary/40 transition-colors" />
+                </div>
+              </Link>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? (
-                <X className="h-6 w-6" />
+            {/* Right: Actions */}
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="icon" className="rounded-full text-foreground/60 hover:text-primary hover:bg-primary/5 transition-all">
+                <Search className="h-5 w-5" />
+              </Button>
+              {currentUser ? (
+                <Link to="/profile">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center hover:scale-105 transition-all cursor-pointer shadow-sm">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                </Link>
               ) : (
-                <Menu className="h-6 w-6" />
+                <Link to="/signup">
+                  <Button size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary text-primary-foreground shadow-lg shadow-primary/20 btn-hover-effect">
+                    Join Community
+                  </Button>
+                </Link>
               )}
-            </button>
+            </div>
           </div>
-
-          {/* Mobile Navigation */}
-          {isOpen && (
-            <div className="md:hidden py-4 border-t border-border animate-fade-in">
-              <div className="flex flex-col gap-2">
-                {filteredNavLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                      location.pathname === link.href
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted",
-                    )}
-                  >
-                    {link.icon && <link.icon className="h-5 w-5" />}
-                    {link.name}
-                  </Link>
-                ))}
-                <div className="border-t border-border my-2" />
-                {currentUser ? (
-                  <>
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
-                    >
-                      <User className="h-5 w-5" />
-                      {currentUser.username}
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleLogoutClick();
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted text-left"
-                    >
-                      <LogOut className="h-5 w-5" />
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
-                    >
-                      <LogIn className="h-5 w-5" />
-                      Log in
-                    </Link>
-                    <Link to="/signup" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                        Sign up
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </nav>
 
       {/* Logout Confirmation Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-[1.5rem] border-border/50">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl font-bold">Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Are you sure you want to log out? You'll need to sign in again to
               access your account.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoggingOut}>
+            <AlertDialogCancel disabled={isLoggingOut} className="rounded-xl">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogoutConfirm}
               disabled={isLoggingOut}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             >
               {isLoggingOut ? (
                 <>
