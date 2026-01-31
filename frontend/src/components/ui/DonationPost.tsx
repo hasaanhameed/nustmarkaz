@@ -22,11 +22,11 @@ export function DonationPost({ donation }: DonationPostProps) {
       to={`/donations/${donation.id}`}
       className="no-underline hover:no-underline"
     >
-      <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-accent">
+      <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-primary">
         {/* Header with Creator Info */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center font-semibold text-accent">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-semibold text-primary">
               {donation.creator.username.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -40,7 +40,7 @@ export function DonationPost({ donation }: DonationPostProps) {
           </div>
           <Badge
             variant={isActive ? "default" : "secondary"}
-            className={isActive ? "bg-accent text-accent-foreground" : ""}
+            className={isActive ? "bg-primary text-primary-foreground" : ""}
           >
             {isActive ? `${daysLeft}d left` : "Ended"}
           </Badge>
@@ -48,7 +48,7 @@ export function DonationPost({ donation }: DonationPostProps) {
 
         {/* Title and Description */}
         <div className="mb-4">
-          <h3 className="font-bold text-lg mb-2 text-foreground hover:text-accent transition-colors">
+          <h3 className="font-bold text-lg mb-2 text-foreground hover:text-primary transition-colors">
             {donation.title}
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
@@ -66,7 +66,7 @@ export function DonationPost({ donation }: DonationPostProps) {
         <div className="flex items-baseline justify-between mb-4">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Goal Amount</p>
-            <p className="text-2xl font-bold text-accent">
+            <p className="text-2xl font-bold text-primary">
               Rs. {donation.goal_amount.toLocaleString()}
             </p>
           </div>
@@ -79,7 +79,7 @@ export function DonationPost({ donation }: DonationPostProps) {
         {/* Footer with Action */}
         <div className="flex items-center justify-between pt-4 border-t border-border">
           <p className="text-xs text-muted-foreground">Click to learn more</p>
-          <Share2 className="h-4 w-4 text-muted-foreground group-hover:text-accent" />
+          <Share2 className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
         </div>
       </Card>
     </Link>

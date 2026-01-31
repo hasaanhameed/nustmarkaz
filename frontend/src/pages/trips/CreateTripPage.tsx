@@ -189,7 +189,7 @@ export default function CreateTripPage() {
                     <button
                       type="button"
                       onClick={triggerFileInput}
-                      className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-accent flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-accent transition-colors"
+                      className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors"
                     >
                       <Upload className="h-8 w-8" />
                       <span>Upload Cover Image</span>
@@ -363,7 +363,7 @@ export default function CreateTripPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Creating..." : "Organize Trip"}

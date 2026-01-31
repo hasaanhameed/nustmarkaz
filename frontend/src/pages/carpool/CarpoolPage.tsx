@@ -86,22 +86,23 @@ export default function CarpoolPage() {
   return (
     <Layout>
       <div className="container-custom py-8 space-y-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Student Car Pooling
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Find a ride, share a commute, and save money.
-            </p>
+        {/* Header Hero Section */}
+        <div className="text-center max-w-3xl mx-auto mb-12 animate-entrance">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+            Student Car Pooling
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 text-balance">
+            Share your commute, save on travel costs, and meet fellow NUSTians. Find a ride or offer one to the community.
+          </p>
+          <div className="flex justify-center">
+            <OfferRideDialog
+              onRideCreated={fetchRides}
+              autoOpen={autoOpenDialog}
+              onOpenChange={(open) => {
+                if (!open) setAutoOpenDialog(false);
+              }}
+            />
           </div>
-          <OfferRideDialog 
-            onRideCreated={fetchRides} 
-            autoOpen={autoOpenDialog}
-            onOpenChange={(open) => {
-              if (!open) setAutoOpenDialog(false);
-            }}
-          />
         </div>
 
         {/* Filters */}
@@ -176,9 +177,9 @@ export default function CarpoolPage() {
         ) : filteredRides.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRides.map((ride) => (
-              <RideCard 
-                key={ride.id} 
-                ride={ride} 
+              <RideCard
+                key={ride.id}
+                ride={ride}
                 currentUserId={currentUserId}
                 onRideDeleted={fetchRides}
               />

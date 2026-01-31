@@ -49,28 +49,31 @@ export default function TripsPage() {
     <Layout>
       <div className="container-custom py-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Trips & Events</h1>
-            <p className="text-muted-foreground mt-1">
-              Explore adventures with fellow students
-            </p>
+        {/* Header Hero Section */}
+        <div className="text-center max-w-3xl mx-auto mb-12 animate-entrance">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+            Trips & Adventures
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 text-balance">
+            Explore exciting journeys organized by fellow students. Join a trip or organize your own adventure today.
+          </p>
+          <div className="flex justify-center">
+            {currentUser ? (
+              <Link to="/trips/create">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                  <Plus className="h-5 w-5" />
+                  Organize a Trip
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                  <Plus className="h-5 w-5" />
+                  Log in to Post
+                </Button>
+              </Link>
+            )}
           </div>
-          {currentUser ? (
-            <Link to="/trips/create">
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-                <Plus className="h-4 w-4" />
-                Organize Trip
-              </Button>
-            </Link>
-          ) : (
-            <Link to="/login">
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-                <Plus className="h-4 w-4" />
-                Log in to Post
-              </Button>
-            </Link>
-          )}
         </div>
 
         {/* Search */}
@@ -113,8 +116,6 @@ export default function TripsPage() {
             icon={MapPin}
             title="No trips found"
             description="Be the first to organize an adventure!"
-            actionLabel="Organize Trip"
-            actionHref="/trips/create"
           />
         )}
       </div>

@@ -170,9 +170,6 @@ export function Navbar() {
                 </SheetContent>
               </Sheet>
 
-              <Link to="/" className="flex items-center group">
-                <Logo size="sm" className="transition-transform duration-700 group-hover:scale-110" />
-              </Link>
             </div>
 
             {/* Center: Branding Pulse */}

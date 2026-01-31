@@ -46,7 +46,7 @@ export default function CreateEventsPage() {
 
     try {
       const datetime = `${formData.event_date}T${formData.event_time}:00`;
-      
+
       await createEvent({
         title: formData.title,
         description: formData.description,
@@ -107,7 +107,7 @@ export default function CreateEventsPage() {
                     </button>
                   </div>
                 ) : (
-                  <label className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-blue-600 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-blue-600 transition-colors cursor-pointer">
+                  <label className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
                     <Upload className="h-8 w-8" />
                     <span>Upload Event Image</span>
                     <input
@@ -201,18 +201,18 @@ export default function CreateEventsPage() {
               </div>
 
               <div className="flex gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="flex-1" 
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => navigate("/events")}
                   disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
+                <Button
+                  type="submit"
+                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Creating..." : "Create Event"}

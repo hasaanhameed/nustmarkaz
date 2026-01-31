@@ -9,17 +9,17 @@ interface LogoProps {
 
 export function Logo({ className, size = "md", showText = false, textColor }: LogoProps) {
     const heightClasses = {
-        sm: "h-6",
-        md: "h-10",
-        lg: "h-14",
-        xl: "h-20",
+        sm: "h-10",
+        md: "h-14",
+        lg: "h-20",
+        xl: "h-32",
     };
 
     return (
         <img
             src="/images/newlogo.jpg"
             alt="Logo"
-            className={cn("w-auto object-contain", heightClasses[size], className)}
+            className={cn("w-auto object-contain rounded-2xl", heightClasses[size], className)}
         />
     );
 }

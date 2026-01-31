@@ -21,8 +21,10 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const validateEmail = (email: string) => {
-    // Simple but effective regex for valid emails, specifically targeting standard NUST patterns
-    // Does not allow starting with numbers if it's a name, etc.
+    // Strict NUST-style email validation:
+    // 1. Must start with a letter (blocks random number IDs or "123@...")
+    // 2. Contains standard characters
+    // 3. Must have a domain with at least one dot
     const re = /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return re.test(email);
   };
@@ -31,8 +33,18 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
+    if (!email.trim()) {
+      setError("Email is required. Please enter your campus email.");
+      return;
+    }
+
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address (e.g. name@nust.edu.pk). Numbers-only or random strings are not allowed.");
+      setError("Invalid email format. Your email must start with a letter and follow the pattern: name@nust.edu.pk. No random strings or numbers-only IDs allowed.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
       return;
     }
 
@@ -43,7 +55,7 @@ export default function LoginPage() {
       localStorage.setItem("access_token", data.access_token);
       navigate("/dashboard");
     } catch (err) {
-      setError("Invalid credentials. Please check your email and password.");
+      setError("Authentication failed. Please verify your credentials and try again.");
     } finally {
       setIsLoading(false);
     }

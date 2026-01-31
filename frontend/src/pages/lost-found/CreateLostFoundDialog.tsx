@@ -32,6 +32,16 @@ import { cn } from "@/lib/utils";
 import { createLostFoundItem } from "@/api/lostFound";
 import { toast } from "sonner";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 interface CreateLostFoundDialogProps {
     type: "lost" | "found";
     onSuccess: () => void;
@@ -41,6 +51,7 @@ interface CreateLostFoundDialogProps {
 
 export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpenChange }: CreateLostFoundDialogProps) {
     const [open, setOpen] = useState(false);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [date, setDate] = useState<Date>();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
@@ -77,7 +88,7 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!formData.image) {
             toast.error("Please upload an image");
             return;
@@ -100,8 +111,12 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
 
             toast.success(`${type === "lost" ? "Lost" : "Found"} item posted successfully!`);
             handleOpenChange(false);
+
+            // Show the informational popup
+            setShowSuccessPopup(true);
+
             onSuccess();
-            
+
             // Reset form
             setFormData({
                 title: "",
@@ -122,164 +137,181 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
     };
 
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button className={type === "lost" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-success text-success-foreground hover:bg-success/90"}>
-                    {type === "lost" ? "Report Lost Item" : "Report Found Item"}
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle>{type === "lost" ? "Report a Lost Item" : "Report a Found Item"}</DialogTitle>
-                    <DialogDescription>
-                        Fill in the details to help us reunite items with their owners.
-                    </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="title">Item Name *</Label>
-                        <Input
-                            id="title"
-                            value={formData.title}
-                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            required
-                            placeholder="e.g., Blue Water Bottle"
-                        />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="category">Category *</Label>
-                        <Select onValueChange={(v) => setFormData({ ...formData, category: v })} required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Books">Books</SelectItem>
-                                <SelectItem value="Electronics">Electronics</SelectItem>
-                                <SelectItem value="ID Cards">ID Cards</SelectItem>
-                                <SelectItem value="Clothing">Clothing</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="location">Campus Location *</Label>
-                        <Select onValueChange={(v) => setFormData({ ...formData, location: v })} required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Where was it?" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {CAMPUS_LOCATIONS.map((loc) => (
-                                    <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label>Date *</Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    type="button"
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-full justify-start text-left font-normal",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="description">Description *</Label>
-                        <Textarea
-                            id="description"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            required
-                            placeholder="Unique features, color, brand, etc."
-                        />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label>Image *</Label>
-                        <div className="flex items-center gap-4">
-                            <Button type="button" variant="outline" className="w-full relative overflow-hidden">
-                                <Upload className="mr-2 h-4 w-4" />
-                                Upload Photo
-                                <input
-                                    type="file"
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    required
-                                />
-                            </Button>
-                            {formData.image && (
-                                <div className="h-10 w-10 shrink-0 rounded overflow-hidden border">
-                                    <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
-                                </div>
-                            )}
+        <>
+            <Dialog open={open} onOpenChange={handleOpenChange}>
+                <DialogTrigger asChild>
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        {type === "lost" ? "Report Lost Item" : "Report Found Item"}
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>{type === "lost" ? "Report a Lost Item" : "Report a Found Item"}</DialogTitle>
+                        <DialogDescription>
+                            Fill in the details to help us reunite items with their owners.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="title">Item Name *</Label>
+                            <Input
+                                id="title"
+                                value={formData.title}
+                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                required
+                                placeholder="e.g., Blue Water Bottle"
+                            />
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-3 gap-2">
-                        <div className="col-span-1">
-                            <Label>Method</Label>
-                            <Select
-                                defaultValue="phone"
-                                onValueChange={(v) => setFormData({ ...formData, contactMethod: v })}
-                            >
+                        <div className="grid gap-2">
+                            <Label htmlFor="category">Category *</Label>
+                            <Select onValueChange={(v) => setFormData({ ...formData, category: v })} required>
                                 <SelectTrigger>
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="phone">Phone</SelectItem>
-                                    <SelectItem value="email">Email</SelectItem>
-                                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                                    <SelectItem value="Books">Books</SelectItem>
+                                    <SelectItem value="Electronics">Electronics</SelectItem>
+                                    <SelectItem value="ID Cards">ID Cards</SelectItem>
+                                    <SelectItem value="Clothing">Clothing</SelectItem>
+                                    <SelectItem value="Other">Other</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="col-span-2">
-                            <Label htmlFor="contact">Contact Info *</Label>
-                            <Input
-                                id="contact"
-                                type={formData.contactMethod === "email" ? "email" : "text"}
-                                value={formData.contactInfo}
-                                onChange={(e) => setFormData({ ...formData, contactInfo: e.target.value })}
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="location">Campus Location *</Label>
+                            <Select onValueChange={(v) => setFormData({ ...formData, location: v })} required>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Where was it?" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {CAMPUS_LOCATIONS.map((loc) => (
+                                        <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>Date *</Label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={setDate}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="description">Description *</Label>
+                            <Textarea
+                                id="description"
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 required
-                                placeholder={
-                                    formData.contactMethod === "email" 
-                                        ? "your.email@example.com" 
-                                        : formData.contactMethod === "whatsapp"
-                                        ? "0300-XXXXXXX (WhatsApp)"
-                                        : "0300-XXXXXXX"
-                                }
+                                placeholder="Unique features, color, brand, etc."
                             />
                         </div>
-                    </div>
 
-                    <DialogFooter>
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? "Posting..." : "Post Item"}
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </DialogContent>
-        </Dialog>
+                        <div className="grid gap-2">
+                            <Label>Image *</Label>
+                            <div className="flex items-center gap-4">
+                                <Button type="button" variant="outline" className="w-full relative overflow-hidden">
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    Upload Photo
+                                    <input
+                                        type="file"
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        required
+                                    />
+                                </Button>
+                                {formData.image && (
+                                    <div className="h-10 w-10 shrink-0 rounded overflow-hidden border">
+                                        <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                            <div className="col-span-1">
+                                <Label>Method</Label>
+                                <Select
+                                    defaultValue="phone"
+                                    onValueChange={(v) => setFormData({ ...formData, contactMethod: v })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="phone">Phone</SelectItem>
+                                        <SelectItem value="email">Email</SelectItem>
+                                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="col-span-2">
+                                <Label htmlFor="contact">Contact Info *</Label>
+                                <Input
+                                    id="contact"
+                                    type={formData.contactMethod === "email" ? "email" : "text"}
+                                    value={formData.contactInfo}
+                                    onChange={(e) => setFormData({ ...formData, contactInfo: e.target.value })}
+                                    required
+                                    placeholder={
+                                        formData.contactMethod === "email"
+                                            ? "your.email@example.com"
+                                            : formData.contactMethod === "whatsapp"
+                                                ? "0300-XXXXXXX (WhatsApp)"
+                                                : "0300-XXXXXXX"
+                                    }
+                                />
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90" disabled={isSubmitting}>
+                                {isSubmitting ? "Posting..." : "Post Item"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            <AlertDialog open={showSuccessPopup} onOpenChange={setShowSuccessPopup}>
+                <AlertDialogContent className="rounded-2xl border-border/50">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-2xl font-black">Post Active!</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg font-medium">
+                            Your {type === "lost" ? "lost" : "found"} item report has been successfully posted.
+                            To keep the board relevant, please note that **your post will be automatically removed in 7 days**.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction className="h-12 px-8 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90">Got it!</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     );
 }

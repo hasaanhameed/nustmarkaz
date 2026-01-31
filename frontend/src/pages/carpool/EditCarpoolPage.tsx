@@ -14,7 +14,7 @@ export default function EditCarpoolPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [ride, setRide] = useState<Ride | null>(null);
   const [formData, setFormData] = useState({
     from_location: "",
@@ -63,13 +63,13 @@ export default function EditCarpoolPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!id || !ride) return;
 
-    if (!formData.from_location.trim() || !formData.to_location.trim() || 
-        !formData.ride_date || !formData.ride_time || !formData.vehicle_type.trim() ||
-        !formData.vehicle_model.trim() || !formData.vehicle_color.trim() || 
-        !formData.price || !formData.contact.trim()) {
+    if (!formData.from_location.trim() || !formData.to_location.trim() ||
+      !formData.ride_date || !formData.ride_time || !formData.vehicle_type.trim() ||
+      !formData.vehicle_model.trim() || !formData.vehicle_color.trim() ||
+      !formData.price || !formData.contact.trim()) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -254,7 +254,7 @@ export default function EditCarpoolPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={submitting}>
+                <Button type="submit" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" disabled={submitting}>
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />

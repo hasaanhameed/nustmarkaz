@@ -58,28 +58,31 @@ export default function DonationsPage() {
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
         <div className="container-custom py-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div>
-              <h1 className="text-4xl font-bold">Donation Drives</h1>
-              <p className="text-muted-foreground mt-2">
-                Support causes that matter to our community
-              </p>
+          {/* Header Hero Section */}
+          <div className="text-center max-w-2xl mx-auto mb-12 animate-entrance">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+              Donation Drives
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 text-balance">
+              Support causes that matter to our community. Connect with verified drives or start your own to make an impact.
+            </p>
+            <div className="flex justify-center">
+              {currentUser ? (
+                <Link to="/donations/create">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                    <Plus className="h-5 w-5" />
+                    Start a Drive
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                    <Plus className="h-5 w-5" />
+                    Log in to Post
+                  </Button>
+                </Link>
+              )}
             </div>
-            {currentUser ? (
-              <Link to="/donations/create">
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2 h-10 px-4">
-                  <Plus className="h-4 w-4" />
-                  Start Drive
-                </Button>
-              </Link>
-            ) : (
-              <Link to="/login">
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2 h-10 px-4">
-                  <Plus className="h-4 w-4" />
-                  Log in to Post
-                </Button>
-              </Link>
-            )}
           </div>
 
           {/* Main Content */}
@@ -123,8 +126,6 @@ export default function DonationsPage() {
                       ? "Try adjusting your search terms"
                       : "Start a donation drive to support a cause you care about."
                   }
-                  actionLabel={searchQuery ? undefined : "Start Drive"}
-                  actionHref={searchQuery ? undefined : "/donations/create"}
                 />
               )}
             </div>
@@ -135,13 +136,13 @@ export default function DonationsPage() {
                 {/* Stats Card */}
                 <div className="bg-muted/50 rounded-lg p-4 border">
                   <h3 className="font-semibold mb-3">Active Drives</h3>
-                  <p className="text-3xl font-bold text-accent mb-2">
+                  <p className="text-3xl font-bold text-primary mb-2">
                     {
                       donations.filter((d) => {
                         const daysLeft = Math.ceil(
                           (new Date(d.end_date).getTime() -
                             new Date().getTime()) /
-                            (1000 * 60 * 60 * 24),
+                          (1000 * 60 * 60 * 24),
                         );
                         return daysLeft > 0;
                       }).length

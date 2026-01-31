@@ -84,7 +84,7 @@ export function RideCard({ ride, currentUserId, onRideDeleted }: RideCardProps) 
             </div>
 
             <div className="relative">
-              <div className="absolute -left-6 mt-1 h-3 w-3 rounded-full border-2 border-accent bg-background ring-4 ring-background" />
+              <div className="absolute -left-6 mt-1 h-3 w-3 rounded-full border-2 border-primary bg-background ring-4 ring-background opacity-50" />
               <div className="space-y-1">
                 <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
                   To

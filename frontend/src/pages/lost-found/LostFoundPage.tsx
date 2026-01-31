@@ -42,7 +42,7 @@ export default function LostFoundPage() {
 
     useEffect(() => {
         fetchItems();
-        
+
         // Check URL parameters for auto-opening dialogs
         const action = searchParams.get("action");
         if (action === "lost") {
@@ -78,24 +78,25 @@ export default function LostFoundPage() {
     return (
         <Layout>
             <div className="container-custom py-8 space-y-8">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Lost & Found</h1>
-                        <p className="text-muted-foreground mt-1">
-                            Report lost items or help others find theirs.
-                        </p>
-                    </div>
-                    <div className="flex gap-2">
-                        <CreateLostFoundDialog 
-                            type="lost" 
+                {/* Header Hero Section */}
+                <div className="text-center max-w-3xl mx-auto mb-12 animate-entrance">
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+                        Lost & Found
+                    </h1>
+                    <p className="text-xl text-muted-foreground mb-8 text-balance">
+                        Connect with the community to recover your lost belongings or help others find theirs. Reporting is fast and verified.
+                    </p>
+                    <div className="flex justify-center gap-4">
+                        <CreateLostFoundDialog
+                            type="lost"
                             onSuccess={fetchItems}
                             autoOpen={autoOpenLost}
                             onOpenChange={(open) => {
                                 if (!open) setAutoOpenLost(false);
                             }}
                         />
-                        <CreateLostFoundDialog 
-                            type="found" 
+                        <CreateLostFoundDialog
+                            type="found"
                             onSuccess={fetchItems}
                             autoOpen={autoOpenFound}
                             onOpenChange={(open) => {

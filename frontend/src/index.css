@@ -134,7 +134,34 @@
   }
 
   .glass-panel {
-    @apply backdrop-blur-[var(--glass-blur)] bg-[var(--glass-bg)] border border-[var(--glass-border)] shadow-sm;
+    @apply backdrop-blur-[12px] md:backdrop-blur-[var(--glass-blur)] bg-[var(--glass-bg)] border border-[var(--glass-border)] shadow-sm;
+  }
+
+  /* Optimize backdrop filters for mobile and break circular dependencies */
+  .backdrop-blur-3xl {
+    --tw-backdrop-blur: blur(24px);
+    /* blur-xl */
+    backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  }
+
+  @media (min-width: 768px) {
+    .backdrop-blur-3xl {
+      --tw-backdrop-blur: blur(64px);
+      /* blur-3xl */
+    }
+  }
+
+  .backdrop-blur-2xl {
+    --tw-backdrop-blur: blur(16px);
+    /* blur-lg */
+    backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  }
+
+  @media (min-width: 768px) {
+    .backdrop-blur-2xl {
+      --tw-backdrop-blur: blur(40px);
+      /* blur-2xl */
+    }
   }
 
   .bg-grid-subtle {
@@ -144,7 +171,8 @@
   }
 
   .section-entrance {
-    opacity: 0;
+    opacity: 1;
+    /* Fallback for no-js or failed anim */
     animation: entrance-slide-up 0.8s var(--ease-human) forwards;
   }
 }
@@ -208,16 +236,30 @@
   }
 
   .animate-entrance {
-    opacity: 0;
-    animation: entrance-slide-up 0.8s var(--ease-human) forwards;
+    opacity: 1;
+
+    @media (prefers-reduced-motion: no-preference) {
+      opacity: 0;
+      animation: entrance-slide-up 0.8s var(--ease-human) forwards;
+    }
   }
 
   .animate-fade-in {
-    animation: entrance-fade-in 1s var(--ease-human) forwards;
+    opacity: 1;
+
+    @media (prefers-reduced-motion: no-preference) {
+      opacity: 0;
+      animation: entrance-fade-in 1s var(--ease-human) forwards;
+    }
   }
 
   .animate-spring {
-    animation: spring-in 0.6s var(--ease-human) forwards;
+    opacity: 1;
+
+    @media (prefers-reduced-motion: no-preference) {
+      opacity: 0;
+      animation: spring-in 0.6s var(--ease-human) forwards;
+    }
   }
 
   @keyframes pulse-subtle {

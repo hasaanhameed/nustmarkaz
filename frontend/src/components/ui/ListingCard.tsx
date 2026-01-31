@@ -27,9 +27,9 @@ export interface ListingCardProps {
 
 const typeConfig = {
   product: { label: "Product", color: "bg-blue-100 text-blue-700", iconColor: "text-blue-500", href: "/marketplace" },
-  trip: { label: "Trip", color: "bg-orange-100 text-orange-700", iconColor: "text-orange-500", href: "/trips" },
-  donation: { label: "Donation", color: "bg-rose-100 text-rose-700", iconColor: "text-rose-500", href: "/donations" },
-  giveaway: { label: "Giveaway", color: "bg-amber-100 text-amber-700", iconColor: "text-amber-500", href: "/giveaways" },
+  trip: { label: "Trip", color: "bg-blue-100 text-blue-700", iconColor: "text-primary", href: "/trips" },
+  donation: { label: "Donation", color: "bg-blue-100 text-blue-700", iconColor: "text-primary", href: "/donations" },
+  giveaway: { label: "Giveaway", color: "bg-blue-100 text-blue-700", iconColor: "text-primary", href: "/giveaways" },
   ride: { label: "Ride", color: "bg-sky-100 text-sky-700", iconColor: "text-sky-500", href: "/carpooling" },
   event: { label: "Event", color: "bg-indigo-100 text-indigo-700", iconColor: "text-indigo-500", href: "/events" },
   lost_found: { label: "Lost & Found", color: "bg-slate-100 text-slate-700", iconColor: "text-slate-500", href: "/lost-found" },

@@ -26,7 +26,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-    
+
   }, []);
 
   const filterPostsByType = (type?: DashboardCard["type"]) => {
@@ -126,7 +126,7 @@ export default function DashboardPage() {
           <Link to="/donations/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-warning hover:bg-warning/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-warning transition-colors">
-                Start Donation Drive 
+                Start Donation Drive
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Support a cause</p>
             </div>
@@ -237,7 +237,7 @@ export default function DashboardPage() {
               {/* Quick Stats Card */}
               <div className="rounded-lg border bg-card p-4">
                 <h3 className="font-semibold text-sm mb-3 text-muted-foreground">
-                  Latest Campus Activity - Last 20 Posts   
+                  Latest Campus Activity - Last 20 Posts
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">

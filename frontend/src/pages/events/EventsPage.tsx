@@ -49,8 +49,8 @@ export default function EventsPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
@@ -58,7 +58,7 @@ export default function EventsPage() {
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
+    return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true
@@ -88,28 +88,31 @@ export default function EventsPage() {
     <Layout>
       <div className="container-custom py-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Campus Events</h1>
-            <p className="text-muted-foreground mt-1">
-              Discover upcoming events and activities
-            </p>
+        {/* Header Hero Section */}
+        <div className="text-center max-w-3xl mx-auto mb-12 animate-entrance">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+            Campus Events
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 text-balance">
+            Discover upcoming activities, workshops, and society events across NUST. Stay connected with your campus community.
+          </p>
+          <div className="flex justify-center">
+            {currentUser ? (
+              <Link to="/events/create">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                  <Plus className="h-5 w-5" />
+                  Post an Event
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 h-12 px-8 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                  <Plus className="h-5 w-5" />
+                  Log in to Post
+                </Button>
+              </Link>
+            )}
           </div>
-          {currentUser ? (
-            <Link to="/events/create">
-              <Button className="bg-blue-600 text-white hover:bg-blue-700 gap-2">
-                <Plus className="h-4 w-4" />
-                Post Event
-              </Button>
-            </Link>
-          ) : (
-            <Link to="/login">
-              <Button className="bg-blue-600 text-white hover:bg-blue-700 gap-2">
-                <Plus className="h-4 w-4" />
-                Log in to Post
-              </Button>
-            </Link>
-          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -135,7 +138,7 @@ export default function EventsPage() {
                     to={`/events/${event.id}`}
                     className="block"
                   >
-                    <div className="border-l-4 border-blue-600 bg-card rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="border-l-4 border-primary bg-card rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="flex">
                         {/* Left side - Content */}
                         <div className="flex-1 p-6">
@@ -143,7 +146,7 @@ export default function EventsPage() {
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
                               <Avatar className="h-10 w-10">
-                                <AvatarFallback className="bg-blue-100 text-blue-600">
+                                <AvatarFallback className="bg-primary/10 text-primary">
                                   {getInitials(event.society)}
                                 </AvatarFallback>
                               </Avatar>
@@ -154,7 +157,7 @@ export default function EventsPage() {
                                 </p>
                               </div>
                             </div>
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+                            <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
                               Upcoming
                             </Badge>
                           </div>
@@ -185,7 +188,7 @@ export default function EventsPage() {
 
                           {/* Footer */}
                           <div className="flex items-center justify-between pt-4 border-t">
-                            <span className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                            <span className="text-sm text-primary hover:underline flex items-center gap-1">
                               Click to learn more
                             </span>
                             <Button
@@ -203,10 +206,10 @@ export default function EventsPage() {
 
                         {/* Right side - Image */}
                         <div className="w-48 flex-shrink-0">
-                          <div className="h-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+                          <div className="h-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
                             {event.images && event.images.length > 0 ? (
-                              <img 
-                                src={event.images[0].image_path} 
+                              <img
+                                src={event.images[0].image_path}
                                 alt={event.title}
                                 className="w-full h-full object-cover"
                               />
@@ -225,8 +228,6 @@ export default function EventsPage() {
                 icon={Calendar}
                 title="No events found"
                 description="Be the first to post an exciting campus event!"
-                actionLabel="Post Event"
-                actionHref="/events/create"
               />
             )}
           </div>
@@ -235,7 +236,7 @@ export default function EventsPage() {
           <div className="lg:col-span-1">
             <div className="bg-card rounded-lg p-6 border sticky top-8">
               <h3 className="font-semibold mb-2">Upcoming Events</h3>
-              <div className="text-4xl font-bold text-blue-600">
+              <div className="text-4xl font-bold text-primary">
                 {filteredEvents.length}
               </div>
               <p className="text-sm text-muted-foreground mt-1">

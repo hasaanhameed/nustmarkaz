@@ -219,11 +219,11 @@ export default function TripDetailPage() {
                 </div>
 
                 {/* Contact Information */}
-                <Card className="bg-accent/10">
+                <Card className="bg-primary/10 border-primary/20">
                   <CardContent className="p-4">
                     <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
                     <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-accent" />
+                      <Phone className="h-4 w-4 text-primary" />
                       <span className="font-medium">{trip.contact_number}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-2">

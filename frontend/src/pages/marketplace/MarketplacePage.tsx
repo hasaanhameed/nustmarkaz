@@ -91,30 +91,31 @@ export default function MarketplacePage() {
 
         <div className="container-custom py-12 relative z-10">
           {/* Marketplace Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-20 animate-entrance">
-            <div className="max-w-2xl text-left">
-              <h1 className="text-6xl md:text-8xl font-black text-foreground mb-6 tracking-tight leading-none">
-                Explore the <span className="text-primary italic">Market.</span>
-              </h1>
-              <p className="text-xl text-muted-foreground font-medium leading-relaxed">
-                Discover verified campus listings from your fellow NUSTians. Secure, sustainable, and student-powered.
-              </p>
+          {/* Marketplace Hero Section */}
+          <div className="text-center max-w-4xl mx-auto mb-16 animate-entrance">
+            <h1 className="text-5xl md:text-7xl font-black text-foreground mb-6 tracking-tight leading-none">
+              Explore the <span className="text-primary italic">Market.</span>
+            </h1>
+            <p className="text-xl text-muted-foreground font-medium mb-10 leading-relaxed text-balance">
+              Discover verified campus listings from your fellow NUSTians. Secure, sustainable, and student-powered.
+            </p>
+            <div className="flex justify-center">
+              {currentUser ? (
+                <Link to="/marketplace/create">
+                  <Button className="h-16 px-10 rounded-full gap-3 font-bold text-lg shadow-xl shadow-primary/20 btn-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Plus className="h-6 w-6" />
+                    List an Item
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <Button className="h-16 px-10 rounded-full gap-3 font-bold text-lg shadow-xl shadow-primary/20 btn-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Plus className="h-6 w-6" />
+                    Sign in to Post
+                  </Button>
+                </Link>
+              )}
             </div>
-            {currentUser ? (
-              <Link to="/marketplace/create" className="animate-entrance" style={{ animationDelay: '0.1s' }}>
-                <Button className="h-16 px-10 rounded-[1.5rem] gap-3 font-bold text-lg shadow-xl shadow-primary/20 btn-hover-effect">
-                  <Plus className="h-6 w-6" />
-                  List an Item
-                </Button>
-              </Link>
-            ) : (
-              <Link to="/login" className="animate-entrance" style={{ animationDelay: '0.1s' }}>
-                <Button className="h-16 px-10 rounded-[1.5rem] gap-3 font-bold text-lg shadow-xl shadow-primary/20 btn-hover-effect">
-                  <Plus className="h-6 w-6" />
-                  Sign in to Post
-                </Button>
-              </Link>
-            )}
           </div>
 
           <div className="flex flex-col gap-10">

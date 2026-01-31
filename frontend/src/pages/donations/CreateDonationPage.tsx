@@ -170,7 +170,7 @@ export default function CreateDonationPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                   disabled={loading}
                 >
                   {loading ? "Creating..." : "Start Drive"}
