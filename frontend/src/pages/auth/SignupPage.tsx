@@ -14,6 +14,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ModernBackground } from "@/components/ui/modern-background";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/logo";
 import { User, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { createUser } from "@/api/user";
 
@@ -138,11 +139,7 @@ export default function SignupPage() {
             <div className="relative z-10">
               <div className="flex justify-center mb-10">
                 <Link to="/" className="transition-transform hover:scale-110 duration-500">
-                  <img
-                    src="/images/finallogo.jpeg"
-                    alt="Logo"
-                    className="h-20 w-20 rounded-2xl object-cover shadow-xl border border-border/50"
-                  />
+                  <Logo size="lg" />
                 </Link>
               </div>
 

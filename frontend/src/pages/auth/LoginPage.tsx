@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ModernBackground } from "@/components/ui/modern-background";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/logo";
 import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { login } from "@/api/auth";
 
@@ -19,9 +20,22 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const validateEmail = (email: string) => {
+    // Simple but effective regex for valid emails, specifically targeting standard NUST patterns
+    // Does not allow starting with numbers if it's a name, etc.
+    const re = /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address (e.g. name@nust.edu.pk). Numbers-only or random strings are not allowed.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -29,7 +43,7 @@ export default function LoginPage() {
       localStorage.setItem("access_token", data.access_token);
       navigate("/dashboard");
     } catch (err) {
-      setError("Invalid credentials");
+      setError("Invalid credentials. Please check your email and password.");
     } finally {
       setIsLoading(false);
     }
@@ -47,11 +61,7 @@ export default function LoginPage() {
             <div className="relative z-10">
               <div className="flex justify-center mb-10">
                 <Link to="/" className="transition-transform hover:scale-110 duration-500">
-                  <img
-                    src="/images/finallogo.jpeg"
-                    alt="Logo"
-                    className="h-20 w-20 rounded-2xl object-cover shadow-xl border border-border/50"
-                  />
+                  <Logo size="lg" />
                 </Link>
               </div>
 

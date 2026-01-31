@@ -1,36 +1,33 @@
 import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 export function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground border-t border-white/5">
-      <div className="container-custom py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Minimal Brand Identifier */}
+      <div className="container-custom py-12">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          {/* Brand Identifier */}
           <Link to="/" className="group flex items-center gap-4 transition-transform hover:scale-105">
-            <img
-              src="/images/finallogo.jpeg"
-              alt="Logo"
-              className="h-10 w-10 rounded-xl object-cover shadow-lg border border-white/10"
-            />
+            <Logo size="md" />
           </Link>
 
-          {/* Grounded Contact & Meta */}
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 text-[10px] font-black uppercase tracking-[0.2em] text-primary-foreground/40">
+          {/* Contact & Meta */}
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-sm font-bold tracking-tight text-primary-foreground/60">
             <div className="flex items-center gap-3 transition-colors hover:text-accent">
-              <MapPin className="h-4 w-4" />
+              <MapPin className="h-5 w-5 opacity-70" />
               <span>H-12 Islamabad</span>
             </div>
             <div className="flex items-center gap-3 transition-colors hover:text-accent">
-              <span className="opacity-40">© {new Date().getFullYear()}</span>
-              <span className="text-primary-foreground/60 tracking-normal font-bold normal-case text-xs">Built for NUSTians</span>
+              <span className="opacity-40 font-medium">© {new Date().getFullYear()}</span>
+              <span className="text-primary-foreground font-black tracking-wide text-sm bg-white/10 px-3 py-1 rounded-full border border-white/10">Built for NUSTians</span>
             </div>
           </div>
 
-          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-primary-foreground/30">
-            <a href="#" className="hover:text-accent transition-colors">Privacy</a>
-            <a href="#" className="hover:text-accent transition-colors">Terms</a>
-            <a href="#" className="hover:text-accent transition-colors">Contact</a>
+          <div className="flex gap-10 text-sm font-black uppercase tracking-widest text-primary-foreground/40">
+            <a href="#" className="hover:text-accent transition-all hover:scale-110">Privacy</a>
+            <a href="#" className="hover:text-accent transition-all hover:scale-110">Terms</a>
+            <a href="#" className="hover:text-accent transition-all hover:scale-110">Contact</a>
           </div>
         </div>
       </div>

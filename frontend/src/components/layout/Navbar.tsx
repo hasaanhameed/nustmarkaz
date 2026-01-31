@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { getCurrentUser, User as UserType } from "@/api/user";
+import { Logo } from "@/components/ui/logo";
 
 const navLinks = [
   { name: "Home", href: "/", icon: Home, loggedOutOnly: true },
@@ -103,11 +104,7 @@ export function Navbar() {
                   <div className="flex flex-col h-full bg-background">
                     <SheetHeader className="p-10 border-b border-border/50 text-left">
                       <SheetTitle className="flex justify-center">
-                        <img
-                          src="/images/finallogo.jpeg"
-                          alt="Logo"
-                          className="h-20 w-20 rounded-2xl object-cover shadow-lg border border-border/50"
-                        />
+                        <Logo size="lg" />
                       </SheetTitle>
                     </SheetHeader>
 
@@ -125,7 +122,7 @@ export function Navbar() {
                                 : "text-foreground/60 hover:text-primary hover:bg-primary/5 hover:translate-x-2",
                             )}
                           >
-                            {link.icon && <link.icon className="h-6 w-6 opacity-80" />}
+                            {link.icon && <link.icon className="h-6 w-6 text-primary" />}
                             {link.name}
                           </Link>
                         ))}
@@ -174,22 +171,21 @@ export function Navbar() {
               </Sheet>
 
               <Link to="/" className="flex items-center group">
-                <div className="relative">
-                  <img
-                    src="/images/finallogo.jpeg"
-                    alt="Logo"
-                    className="h-12 w-12 rounded-2xl object-cover transition-all duration-700 group-hover:rotate-[12deg] group-hover:scale-110 shadow-md group-hover:shadow-primary/30"
-                  />
-                  <div className="absolute inset-0 rounded-2xl border border-primary/10 group-hover:border-primary/40 transition-colors" />
-                </div>
+                <Logo size="sm" className="transition-transform duration-700 group-hover:scale-110" />
               </Link>
+            </div>
+
+            {/* Center: Branding Pulse */}
+            <div className="hidden lg:flex items-center gap-3 px-6 py-2 rounded-full bg-primary/5 border border-primary/10 shadow-sm animate-pulse-subtle">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary/80">By NUSTians, For NUSTians</span>
             </div>
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="rounded-full text-foreground/60 hover:text-primary hover:bg-primary/5 transition-all">
-                <Search className="h-5 w-5" />
-              </Button>
               {currentUser ? (
                 <Link to="/profile">
                   <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center hover:scale-105 transition-all cursor-pointer shadow-sm">
