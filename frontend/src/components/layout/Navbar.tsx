@@ -88,9 +88,9 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <nav className="sticky top-0 z-40 w-full bg-blue-400 backdrop-blur-xl border-b border-white/20">
         <div className="container-custom">
-          <div className="flex h-20 items-center justify-between">
+          <div className="relative flex h-20 items-center justify-between">
             {/* Left: Hamburger Menu */}
             <div className="flex items-center -ml-2">
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -175,13 +175,27 @@ export function Navbar() {
               </Sheet>
             </div>
 
-            {/* Right: Actions */}
+
+
+            {/* Center: Logo */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <Link to="/">
+                <div className="relative h-12 w-56 flex items-center justify-center">
+                  <Logo className="absolute h-36 w-auto object-contain" />
+                </div>
+              </Link>
+            </div>
             <div className="flex items-center gap-3">
               {currentUser ? (
                 <Link to="/profile">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center hover:scale-105 transition-all cursor-pointer shadow-sm">
-                    <User className="h-5 w-5 text-primary" />
-                  </div>
+                  <Button
+                    className="h-12 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all duration-300 rounded-full pl-3 pr-6 gap-3 group border-none"
+                  >
+                    <div className="flex items-center justify-center h-8 w-8 rounded-full bg-white/20 text-white group-hover:scale-110 transition-transform">
+                      <User className="h-5 w-5" />
+                    </div>
+                    <span className="text-base font-bold text-white max-w-[150px] truncate">{currentUser.username}</span>
+                  </Button>
                 </Link>
               ) : (
                 <Link to="/signup">
@@ -225,7 +239,7 @@ export function Navbar() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog >
     </>
   );
 }

@@ -17,7 +17,7 @@ export function Logo({ className, size = "md", showText = false, textColor }: Lo
 
     return (
         <img
-            src="/images/newlogo.jpg"
+            src="/images/finallogo.png"
             alt="Logo"
             className={cn("w-auto object-contain rounded-2xl", heightClasses[size], className)}
         />

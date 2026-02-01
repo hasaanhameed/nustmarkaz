@@ -4,12 +4,12 @@ import { Logo } from "@/components/ui/logo";
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground border-t border-white/5">
+    <footer className="bg-blue-400 text-primary-foreground border-t border-white/5">
       <div className="container-custom py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
           {/* Brand Identifier */}
           <Link to="/" className="group flex items-center gap-4 transition-transform hover:scale-105">
-            <Logo size="md" />
+            <Logo className="h-36" />
           </Link>
 
           {/* Contact & Meta */}

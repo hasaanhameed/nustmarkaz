@@ -16,7 +16,6 @@ import {
   Globe,
   Zap,
 } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
 
 const features = [
   {
@@ -90,11 +89,6 @@ export default function LandingPage() {
         <section className="relative pt-24 pb-20 lg:pt-40 lg:pb-36">
           <div className="container-custom relative z-10">
             <div className="max-w-5xl mx-auto text-center animate-entrance">
-              {/* Cleanly Cut Logo Badge */}
-              <div className="inline-flex items-center mb-12 cursor-default group hover:scale-105 transition-transform duration-500">
-                <Logo size="lg" />
-              </div>
-
               <h1 className="text-5xl md:text-8xl lg:text-[11rem] font-black text-foreground mb-8 md:mb-16 leading-[0.85] tracking-[-0.06em] text-balance">
                 Your Campus. <br />
                 <span className="text-primary italic relative inline-block">
