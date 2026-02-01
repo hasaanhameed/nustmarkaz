@@ -91,13 +91,17 @@ export function Navbar() {
       <nav className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="container-custom">
           <div className="flex h-20 items-center justify-between">
-            {/* Left: Hamburger + Logo */}
-            <div className="flex items-center gap-6">
+            {/* Left: Hamburger Menu */}
+            <div className="flex items-center -ml-2">
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full h-12 w-12 hover:bg-secondary transition-colors">
-                    <Menu className="h-7 w-7 text-foreground/70" />
-                    <span className="sr-only">Toggle menu</span>
+                  <Button
+                    className="h-12 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all duration-300 rounded-full pl-3 pr-6 gap-3 group border-none"
+                  >
+                    <div className="flex items-center justify-center h-8 w-8 rounded-full bg-white/20 text-white group-hover:scale-110 transition-transform">
+                      <Menu className="h-5 w-5" />
+                    </div>
+                    <span className="text-base font-bold text-white">Menu</span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 border-r-border/30 shadow-2xl">
@@ -169,16 +173,6 @@ export function Navbar() {
                   </div>
                 </SheetContent>
               </Sheet>
-
-            </div>
-
-            {/* Center: Branding Pulse */}
-            <div className="hidden lg:flex items-center gap-3 px-6 py-2 rounded-full bg-primary/5 border border-primary/10 shadow-sm animate-pulse-subtle">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary/80">By NUSTians, For NUSTians</span>
             </div>
 
             {/* Right: Actions */}

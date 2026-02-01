@@ -1,38 +1,17 @@
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: nustmarkaz_db
-    environment:
-      POSTGRES_USER: nustmarkaz_user
-      POSTGRES_PASSWORD: nustmarkaz_password
-      POSTGRES_DB: nustmarkaz_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U nustmarkaz_user -d nustmarkaz_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - nustmarkaz_network
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: nustmarkaz_backend
     environment:
-      DATABASE_URL: postgresql://nustmarkaz_user:nustmarkaz_password@db:5432/nustmarkaz_db
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-this}
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
       ALGORITHM: HS256
-      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      ACCESS_TOKEN_EXPIRE_MINUTES: 10080
     ports:
       - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy
+
     volumes:
       - ./backend:/app
     networks:
@@ -54,8 +33,7 @@ services:
       - nustmarkaz_network
     restart: unless-stopped
 
-volumes:
-  postgres_data:
+
 
 networks:
   nustmarkaz_network:
