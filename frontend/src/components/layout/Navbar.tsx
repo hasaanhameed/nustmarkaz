@@ -106,7 +106,7 @@ export function Navbar() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 border-r-border/30 shadow-2xl">
                   <div className="flex flex-col h-full bg-background">
-                    <SheetHeader className="p-10 border-b border-border/50 text-left">
+                    <SheetHeader className="p-10 border-b border-white/20 text-left bg-blue-400">
                       <SheetTitle className="flex justify-center">
                         <Logo size="lg" />
                       </SheetTitle>

@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -84,7 +84,7 @@ const App = () => (
           <Route path="/giveaways" element={<EventsPage />} />
 
           {/* Carpooling - specific routes before dynamic ones */}
-          <Route path="/carpooling/create" element={<CarpoolPage />} />
+          <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />
           <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
           <Route path="/carpooling" element={<CarpoolPage />} />
 

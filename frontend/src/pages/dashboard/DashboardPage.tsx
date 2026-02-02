@@ -5,28 +5,28 @@ import { FeedPost } from "@/components/ui/FeedPost";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, TrendingUp } from "lucide-react";
 import { getLatestPosts, type DashboardCard } from "@/api/dashboard";
+import { OfferRideDialog } from "@/pages/carpool/OfferRideDialog";
 
 export default function DashboardPage() {
   const [allPosts, setAllPosts] = useState<DashboardCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const posts = await getLatestPosts(50);
+      setAllPosts(posts);
+    } catch (err) {
+      console.error("Failed to fetch dashboard data:", err);
+      setError("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const posts = await getLatestPosts(50);
-        setAllPosts(posts);
-      } catch (err) {
-        console.error("Failed to fetch dashboard data:", err);
-        setError("Failed to load dashboard data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
-
   }, []);
 
   const filterPostsByType = (type?: DashboardCard["type"]) => {
@@ -114,14 +114,14 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <Link to="/carpooling/create">
+          <OfferRideDialog onRideCreated={fetchData}>
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-sky hover:bg-sky/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-sky transition-colors">
                 Offer Ride
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Share a ride</p>
             </div>
-          </Link>
+          </OfferRideDialog>
 
           <Link to="/donations/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-warning hover:bg-warning/5 transition-all duration-200 cursor-pointer h-full">

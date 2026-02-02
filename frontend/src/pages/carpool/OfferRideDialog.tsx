@@ -45,9 +45,15 @@ interface OfferRideDialogProps {
   onRideCreated: () => void;
   autoOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 
-export function OfferRideDialog({ onRideCreated, autoOpen = false, onOpenChange }: OfferRideDialogProps) {
+export function OfferRideDialog({
+  onRideCreated,
+  autoOpen = false,
+  onOpenChange,
+  children
+}: OfferRideDialogProps) {
   const [open, setOpen] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -136,9 +142,11 @@ export function OfferRideDialog({ onRideCreated, autoOpen = false, onOpenChange 
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button className="bg-primary text-primary-foreground">
-            Offer a Ride
-          </Button>
+          {children || (
+            <Button className="bg-primary text-primary-foreground">
+              Offer a Ride
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
