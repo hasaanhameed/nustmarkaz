@@ -14,7 +14,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ModernBackground } from "@/components/ui/modern-background";
 import { cn } from "@/lib/utils";
-import { Logo } from "@/components/ui/logo";
 import { User, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { createUser } from "@/api/user";
 
@@ -137,12 +136,6 @@ export default function SignupPage() {
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
             <div className="relative z-10">
-              <div className="flex justify-center mb-10">
-                <Link to="/" className="transition-transform hover:scale-110 duration-500">
-                  <Logo size="lg" />
-                </Link>
-              </div>
-
               <div className="text-center mb-12">
                 <h1 className="text-5xl font-black text-foreground mb-4 tracking-[-0.04em]">Join the Hub.</h1>
                 <p className="text-muted-foreground font-bold text-lg opacity-70">Connect with your campus community.</p>

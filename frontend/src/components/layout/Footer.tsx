@@ -5,7 +5,7 @@ import { Logo } from "@/components/ui/logo";
 export function Footer() {
   return (
     <footer className="bg-blue-400 text-primary-foreground border-t border-white/10">
-      <div className="container-custom py-4">
+      <div className="container-custom py-2">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
 
           {/* Brand */}
@@ -14,7 +14,10 @@ export function Footer() {
             className="flex items-center gap-4"
             aria-label="Nustmarkaz Home"
           >
-            <Logo className="h-36" />
+            <div className="h-24 flex items-center">
+              <Logo className="h-full w-auto" />
+            </div>
+
           </Link>
 
           {/* Meta */}
