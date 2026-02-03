@@ -6,7 +6,7 @@ from typing import List
 from models.cafe import Cafe, Review
 from schemas.cafe import CafeCreate, CafeRead, CafeWithReviews, ReviewCreate, ReviewRead
 from database import get_db
-from authorization.oauth2 import get_current_user  # Adjust import as needed
+from authorization.oauth2 import get_current_user  
 
 router = APIRouter(prefix="/cafes", tags=["cafes"])
 

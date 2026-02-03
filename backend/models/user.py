@@ -28,3 +28,6 @@ class User(Base):
     
     # Ride relationships
     created_rides = relationship("Ride", back_populates="creator")
+
+    # Review relationships
+    reviews = relationship("Review", back_populates="creator")

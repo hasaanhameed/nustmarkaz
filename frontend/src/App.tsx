@@ -29,6 +29,8 @@ import CreateEventsPage from "./pages/events/CreateEventsPage";
 import EditEventPage from "./pages/events/EditEventPage";
 import EventsPage from "@/pages/events/EventsPage";
 
+import CafesPage from "./pages/cafe/CafesPage";
+import CafeDetailsPage from "./pages/cafe/CafeDetailsPage";
 
 import ProfilePage from "./pages/profile/ProfilePage";
 
@@ -82,6 +84,10 @@ const App = () => (
           <Route path="/giveaways/create" element={<CreateEventsPage />} />
           <Route path="/giveaways/:id" element={<EventsDetailPage />} />
           <Route path="/giveaways" element={<EventsPage />} />
+
+          {/* Cafes - specific routes before dynamic ones */}
+          <Route path="/cafes/:id" element={<CafeDetailsPage />} />
+          <Route path="/cafes" element={<CafesPage />} />
 
           {/* Carpooling - specific routes before dynamic ones */}
           <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />

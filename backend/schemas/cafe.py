@@ -14,13 +14,12 @@ class ReviewRead(ReviewBase):
     cafe_id: int
 
     class Config:
-        from_attributes = True  # For Pydantic v2+
+        from_attributes = True
 
 class CafeBase(BaseModel):
     name: str
-    location: Optional[str] = None
-    description: Optional[str] = None
-    image_url: Optional[str] = None  # Added for storing cafe images
+    image_url: Optional[str] = None
+    rating: Optional[float] = None
 
 class CafeCreate(CafeBase):
     pass
@@ -29,10 +28,10 @@ class CafeRead(CafeBase):
     id: int
 
     class Config:
-        from_attributes = True  # For Pydantic v2+
+        from_attributes = True
 
 class CafeWithReviews(CafeRead):
     reviews: List[ReviewRead] = []
 
     class Config:
-        from_attributes = True  
+        from_attributes = True

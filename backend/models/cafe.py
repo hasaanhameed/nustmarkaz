@@ -7,11 +7,9 @@ class Cafe(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    location = Column(String, nullable=True)
-    description = Column(Text)
-    image_url = Column(String, nullable=True)  # Added for storing cafe images
+    image_url = Column(String, nullable=True)  
+    rating = Column(Float, nullable=True)
 
-    # Relationship to reviews
     reviews = relationship("Review", back_populates="cafe", cascade="all, delete-orphan")
 
 class Review(Base):
@@ -23,6 +21,5 @@ class Review(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     cafe_id = Column(Integer, ForeignKey("cafes.id"), nullable=False)
 
-    # Relationships
-    user = relationship("User")
+    creator = relationship("User")
     cafe = relationship("Cafe", back_populates="reviews")
