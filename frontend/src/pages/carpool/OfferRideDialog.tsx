@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CAMPUS_LOCATIONS, CITY_LOCATIONS } from "@/data/mockCarpool";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -80,6 +79,21 @@ export function OfferRideDialog({
     onOpenChange?.(newOpen);
   };
 
+  const validateTextInput = (value: string, fieldName: string): boolean => {
+    if (!value.trim()) {
+      toast.error(`${fieldName} cannot be empty`);
+      return false;
+    }
+
+    // Check if input contains only numbers
+    if (/^\d+$/.test(value.trim())) {
+      toast.error(`${fieldName} cannot contain only numbers`);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,16 +102,15 @@ export function OfferRideDialog({
       return;
     }
 
-    if (!formData.from_location || !formData.to_location) {
-      toast.error("Please select both origin and destination");
-      return;
-    }
+    // Validate locations
+    if (!validateTextInput(formData.from_location, "Origin location")) return;
+    if (!validateTextInput(formData.to_location, "Destination location")) return;
 
     setIsLoading(true);
     try {
       const rideData: RideCreateRequest = {
-        from_location: formData.from_location,
-        to_location: formData.to_location,
+        from_location: formData.from_location.trim(),
+        to_location: formData.to_location.trim(),
         ride_date: format(date, "yyyy-MM-dd"),
         ride_time: formData.ride_time,
         vehicle_type: formData.vehicle_type,
@@ -136,8 +149,6 @@ export function OfferRideDialog({
     }
   };
 
-  const allLocations = [...CAMPUS_LOCATIONS, ...CITY_LOCATIONS].sort();
-
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -159,43 +170,27 @@ export function OfferRideDialog({
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="from">From</Label>
-                <Select
+                <Input
+                  id="from"
+                  placeholder="e.g., F-7, Bahria Town"
                   value={formData.from_location}
-                  onValueChange={(v) =>
-                    setFormData({ ...formData, from_location: v })
+                  onChange={(e) =>
+                    setFormData({ ...formData, from_location: e.target.value })
                   }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Origin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {allLocations.map((loc) => (
-                      <SelectItem key={`from-${loc}`} value={loc}>
-                        {loc}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  required
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="to">To</Label>
-                <Select
+                <Input
+                  id="to"
+                  placeholder="e.g., NUST H-12, Blue Area"
                   value={formData.to_location}
-                  onValueChange={(v) =>
-                    setFormData({ ...formData, to_location: v })
+                  onChange={(e) =>
+                    setFormData({ ...formData, to_location: e.target.value })
                   }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Destination" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {allLocations.map((loc) => (
-                      <SelectItem key={`to-${loc}`} value={loc}>
-                        {loc}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  required
+                />
               </div>
             </div>
 

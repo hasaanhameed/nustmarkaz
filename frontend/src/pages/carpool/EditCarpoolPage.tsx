@@ -61,6 +61,21 @@ export default function EditCarpoolPage() {
     fetchRide();
   }, [id, navigate]);
 
+  const validateTextInput = (value: string, fieldName: string): boolean => {
+    if (!value.trim()) {
+      toast.error(`${fieldName} cannot be empty`);
+      return false;
+    }
+
+    // Check if input contains only numbers
+    if (/^\d+$/.test(value.trim())) {
+      toast.error(`${fieldName} cannot contain only numbers`);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -74,6 +89,10 @@ export default function EditCarpoolPage() {
       return;
     }
 
+    // Validate locations
+    if (!validateTextInput(formData.from_location, "Origin location")) return;
+    if (!validateTextInput(formData.to_location, "Destination location")) return;
+
     const price = parseFloat(formData.price);
     if (isNaN(price) || price < 0) {
       toast.error("Please enter a valid price");
@@ -83,8 +102,8 @@ export default function EditCarpoolPage() {
     try {
       setSubmitting(true);
       await updateRide(parseInt(id), {
-        from_location: formData.from_location,
-        to_location: formData.to_location,
+        from_location: formData.from_location.trim(),
+        to_location: formData.to_location.trim(),
         ride_date: formData.ride_date,
         ride_time: formData.ride_time,
         vehicle_type: formData.vehicle_type,
@@ -142,7 +161,7 @@ export default function EditCarpoolPage() {
                     id="from_location"
                     value={formData.from_location}
                     onChange={(e) => setFormData({ ...formData, from_location: e.target.value })}
-                    placeholder="Starting location"
+                    placeholder="e.g., F-7, Bahria Town"
                     required
                   />
                 </div>
@@ -153,7 +172,7 @@ export default function EditCarpoolPage() {
                     id="to_location"
                     value={formData.to_location}
                     onChange={(e) => setFormData({ ...formData, to_location: e.target.value })}
-                    placeholder="Destination"
+                    placeholder="e.g., NUST H-12, Blue Area"
                     required
                   />
                 </div>
