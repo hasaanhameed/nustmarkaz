@@ -44,14 +44,23 @@ def create_review(
     if not cafe:
         raise HTTPException(status_code=404, detail="Cafe not found")
     
+    # Check if user already reviewed this cafe
+    existing_review = db.query(Review).filter(
+        Review.cafe_id == cafe_id,
+        Review.user_id == current_user.id
+    ).first()
+    if existing_review:
+        raise HTTPException(status_code=400, detail="You can only submit one review per cafe")
+    
     db_review = Review(**review.dict(), user_id=current_user.id, cafe_id=cafe_id)
     db.add(db_review)
     db.commit()
     db.refresh(db_review)
     return db_review
 
-@router.delete("/reviews/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{cafe_id}/reviews/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_review(
+    cafe_id: int,
     review_id: int,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)

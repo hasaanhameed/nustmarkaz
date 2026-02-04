@@ -141,6 +141,6 @@ export const createReview = async (
 };
 
 // Delete a review
-export const deleteReview = async (reviewId: number): Promise<void> => {
-    await api.delete(`/reviews/${reviewId}`);
+export const deleteReview = async (cafeId: number, reviewId: number): Promise<void> => {
+    await api.delete(`/cafes/${cafeId}/reviews/${reviewId}`);
 };

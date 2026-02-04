@@ -43,6 +43,10 @@ import RideDetailPage from "./pages/carpool/RideDetailPage";
 import NotFound from "./pages/NotFound";
 
 
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -106,6 +110,11 @@ const App = () => (
 
           {/* Lost & Found */}
           <Route path="/lost-found" element={<LostFoundPage />} />
+
+
+          {/* Legal */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

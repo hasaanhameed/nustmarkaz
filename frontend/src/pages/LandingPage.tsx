@@ -21,7 +21,7 @@ const features = [
   {
     icon: ShoppingBasket,
     title: "Market",
-    description: "Secure campus-wide exchange for students to trade essentials and gadgets.",
+    description: "Secure campus-wide exchange for students to buy and sell essentials and gadgets.",
     path: "/marketplace"
   },
   {

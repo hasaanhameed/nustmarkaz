@@ -111,7 +111,14 @@ export function Navbar() {
                 <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 border-r-border/30 shadow-2xl">
                   <div className="flex flex-col h-full bg-background">
                     <SheetHeader className="p-10 border-b border-white/20 text-left bg-blue-400">
-                      <SheetTitle className="flex justify-center">
+                      <SheetTitle className="flex justify-center cursor-pointer" onClick={() => {
+                        setIsOpen(false);
+                        if (currentUser || localStorage.getItem("access_token")) {
+                          navigate("/dashboard");
+                        } else {
+                          navigate("/");
+                        }
+                      }}>
                         <Logo size="lg" />
                       </SheetTitle>
                     </SheetHeader>
@@ -182,12 +189,16 @@ export function Navbar() {
 
 
             {/* Center: Logo */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <Link to="/">
-                <div className="relative h-12 w-56 flex items-center justify-center">
-                  <Logo className="absolute h-36 w-auto object-contain" />
-                </div>
-              </Link>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hidden lg:block" onClick={() => {
+              if (currentUser || localStorage.getItem("access_token")) {
+                navigate("/dashboard");
+              } else {
+                navigate("/");
+              }
+            }}>
+              <div className="relative h-12 w-56 flex items-center justify-center">
+                <Logo className="absolute h-36 w-auto object-contain" />
+              </div>
             </div>
             <div className="flex items-center gap-3">
               {currentUser ? (
