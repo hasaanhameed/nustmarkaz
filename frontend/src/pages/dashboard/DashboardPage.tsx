@@ -95,7 +95,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 md:gap-3 mb-6">
+        <div className="hidden lg:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 md:gap-3 mb-6">
           <Link to="/marketplace/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-accent hover:bg-accent/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-accent transition-colors">

@@ -8,17 +8,7 @@ export function Footer() {
       <div className="container-custom py-2">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
 
-          {/* Brand */}
-          <Link
-            to="/"
-            className="flex items-center gap-4"
-            aria-label="Nustmarkaz Home"
-          >
-            <div className="h-24 flex items-center">
-              <Logo className="h-full w-auto" />
-            </div>
 
-          </Link>
 
           {/* Meta */}
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-primary-foreground/80">
@@ -36,24 +26,18 @@ export function Footer() {
 
           {/* Links */}
           <nav className="flex gap-8 text-base font-medium text-primary-foreground/90">
-            <a
-              href="#"
+            <Link
+              to="/privacy"
               className="hover:text-white transition-colors"
             >
-              Privacy
-            </a>
-            <a
-              href="#"
+              Privacy Policy
+            </Link>
+            <Link
+              to="/terms"
               className="hover:text-white transition-colors"
             >
-              Terms
-            </a>
-            <a
-              href="#"
-              className="hover:text-white transition-colors"
-            >
-              Contact
-            </a>
+              Terms of Service
+            </Link>
           </nav>
 
         </div>

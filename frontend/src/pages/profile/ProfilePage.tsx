@@ -18,8 +18,10 @@ import {
   Loader2,
   Search,
   Zap,
-  ArrowRight
+  ArrowRight,
+  ShoppingBag
 } from "lucide-react";
+import { ListingCard } from "@/components/ui/ListingCard";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -77,7 +79,7 @@ export default function ProfilePage() {
   return (
     <Layout>
       <div className="container-custom py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Profile Sidebar */}
           <div className="lg:col-span-1">
             <Card>
@@ -112,95 +114,237 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {/* Stats Card */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="text-lg">Activity Stats</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
-                    <Package className="h-5 w-5 mx-auto mb-1 text-accent" />
-                    <div className="text-xl font-bold">{products.length}</div>
-                    <div className="text-xs text-muted-foreground">Products</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
-                    <MapPin className="h-5 w-5 mx-auto mb-1 text-success" />
-                    <div className="text-xl font-bold">{trips.length}</div>
-                    <div className="text-xs text-muted-foreground">Trips</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
-                    <Car className="h-5 w-5 mx-auto mb-1 text-blue-600" />
-                    <div className="text-xl font-bold">{rides.length}</div>
-                    <div className="text-xs text-muted-foreground">CarPool</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
-                    <Heart className="h-5 w-5 mx-auto mb-1 text-warning" />
-                    <div className="text-xl font-bold">{donations.length}</div>
-                    <div className="text-xs text-muted-foreground">Donations</div>
-                  </div>
 
-
-
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
-                    <Gift className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <div className="text-xl font-bold">{events.length}</div>
-                    <div className="text-xs text-muted-foreground">Events</div>
-                  </div>
-                  <div className="text-center p-3 rounded-lg bg-muted/50">
-                    <Package className="h-5 w-5 mx-auto mb-1 text-purple-600" />
-                    <div className="text-xl font-bold">{lost_found_items.length}</div>
-                    <div className="text-xs text-muted-foreground">Lost&Found</div>
-                  </div>
-
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Main Content - Listings */}
           {/* Main Content - Personal Dashboard */}
           <div className="lg:col-span-2">
             <div className="mb-8">
-              <h2 className="text-3xl font-black text-foreground mb-2">Personal Dashboard</h2>
+              <h2 className="text-3xl font-black text-foreground mb-2">My Listings</h2>
               <p className="text-muted-foreground font-medium">Manage your campus activity and listings in one place.</p>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
-              {[
-                { title: "My Products", count: products.length, icon: Package, color: "text-accent", href: "/marketplace", description: "Items you're selling" },
-                { title: "Current Trips", count: trips.length, icon: MapPin, color: "text-success", href: "/trips", description: "Journeys you've organized" },
-                { title: "Carpool Offers", count: rides.length, icon: Car, color: "text-blue-500", href: "/carpooling", description: "Shared commutes" },
-                { title: "Donation Drives", count: donations.length, icon: Heart, color: "text-warning", href: "/donations", description: "Causes you're supporting" },
-                { title: "Hosted Events", count: events.length, icon: Gift, color: "text-primary", href: "/events", description: "Events you've created" },
-                { title: "Lost & Found", count: lost_found_items.length, icon: Search, color: "text-purple-500", href: "/lost-found", description: "Reports you've made" },
-              ].map((item, i) => (
-                <Link key={i} to={item.href} className="group">
-                  <Card className="h-full border-border/40 bg-background/50 backdrop-blur-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 rounded-[2rem] overflow-hidden">
-                    <CardContent className="p-8">
-                      <div className="flex justify-between items-start mb-6">
-                        <div className={cn("p-4 rounded-2xl bg-muted/50 transition-colors group-hover:bg-primary/5", item.color)}>
-                          <item.icon className="h-8 w-8" />
-                        </div>
-                        <div className="text-4xl font-black text-foreground/20 group-hover:text-primary/20 transition-colors">
-                          {String(item.count).padStart(2, '0')}
-                        </div>
-                      </div>
-                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-6 line-clamp-1">{item.description}</p>
+            <Tabs defaultValue="products" className="w-full space-y-6 md:space-y-8">
+              <TabsList className="w-full overflow-x-auto flex justify-start h-auto p-1 bg-transparent gap-2 no-scrollbar pb-4 md:pb-0">
+                <TabsTrigger
+                  value="products"
+                  className="rounded-full px-4 py-2 md:px-6 md:py-3 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-transparent data-[state=active]:shadow-lg active:scale-95 transition-all font-bold text-sm md:text-base"
+                >
+                  Products ({products.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="trips"
+                  className="rounded-full px-4 py-2 md:px-6 md:py-3 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-transparent data-[state=active]:shadow-lg active:scale-95 transition-all font-bold text-sm md:text-base"
+                >
+                  Trips ({trips.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="carpool"
+                  className="rounded-full px-4 py-2 md:px-6 md:py-3 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-transparent data-[state=active]:shadow-lg active:scale-95 transition-all font-bold text-sm md:text-base"
+                >
+                  Carpool ({rides.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="donations"
+                  className="rounded-full px-4 py-2 md:px-6 md:py-3 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-transparent data-[state=active]:shadow-lg active:scale-95 transition-all font-bold text-sm md:text-base"
+                >
+                  Donations ({donations.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="events"
+                  className="rounded-full px-4 py-2 md:px-6 md:py-3 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-transparent data-[state=active]:shadow-lg active:scale-95 transition-all font-bold text-sm md:text-base"
+                >
+                  Events ({events.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="lostfound"
+                  className="rounded-full px-4 py-2 md:px-6 md:py-3 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-transparent data-[state=active]:shadow-lg active:scale-95 transition-all font-bold text-sm md:text-base"
+                >
+                  Lost & Found ({lost_found_items.length})
+                </TabsTrigger>
+              </TabsList>
 
-                      <div className="flex items-center text-primary font-bold text-xs uppercase tracking-widest gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        Manage Listings <ArrowRight className="h-4 w-4" />
+              <TabsContent value="products" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {products.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {products.map((item: any) => (
+                      <div key={item.id} className="h-full">
+                        <ListingCard
+                          id={item.id.toString()}
+                          title={item.title}
+                          description={item.description}
+                          image={item.images?.[0]?.image_path || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400"}
+                          type="product"
+                          price={item.price}
+                          location={item.pickup_location}
+                          author={{ name: user.username }}
+                        />
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={ShoppingBag}
+                    title="No products listed"
+                    description="You haven't listed any items for sale yet."
+                    actionLabel="List an Item"
+                    actionHref="/marketplace/create"
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="trips" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {trips.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {trips.map((item: any) => (
+                      <div key={item.id} className="h-full">
+                        <ListingCard
+                          id={item.id.toString()}
+                          title={item.title}
+                          description={item.description}
+                          image={item.images?.[0]?.image_path || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400"}
+                          type="trip"
+                          price={item.cost_per_person}
+                          date={new Date(item.start_date).toLocaleDateString()}
+                          location={item.destination}
+                          author={{ name: user.username }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={MapPin}
+                    title="No trips planned"
+                    description="You haven't organized any trips yet."
+                    actionLabel="Plan a Trip"
+                    actionHref="/trips/create"
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="carpool" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {rides.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {rides.map((item: any) => (
+                      <div key={item.id} className="h-full">
+                        <ListingCard
+                          id={item.id.toString()}
+                          title={`${item.from_location} to ${item.to_location}`}
+                          description={`Vehicle: ${item.vehicle_color} ${item.vehicle_model}`}
+                          image={"https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400"}
+                          type="ride"
+                          price={item.price}
+                          date={`${item.ride_date} at ${item.ride_time}`}
+                          author={{ name: user.username }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={Car}
+                    title="No rides offered"
+                    description="You currently have no active carpool offers."
+                    actionLabel="Offer a Ride"
+                    actionHref="/carpooling/create"
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="donations" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {donations.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {donations.map((item: any) => (
+                      <div key={item.id} className="h-full">
+                        <ListingCard
+                          id={item.id.toString()}
+                          title={item.title}
+                          description={item.description}
+                          image={"https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=400"}
+                          type="donation"
+                          goal={item.goal_amount}
+                          raised={0} // API doesn't return this yet
+                          endsIn={new Date(item.end_date).toLocaleDateString()}
+                          author={{ name: user.username }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={Heart}
+                    title="No donation drives"
+                    description="You haven't started any donation campaigns."
+                    actionLabel="Start a Campaign"
+                    actionHref="/donations/create"
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="events" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {events.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {events.map((item: any) => (
+                      <div key={item.id} className="h-full">
+                        <ListingCard
+                          id={item.id.toString()}
+                          title={item.title}
+                          description={item.description}
+                          image={item.images?.[0]?.image_path || "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400"}
+                          type="event"
+                          location={item.location}
+                          date={new Date(item.event_date).toLocaleDateString()}
+                          author={{ name: user.username }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={Gift}
+                    title="No events hosted"
+                    description="You haven't created any events."
+                    actionLabel="Host an Event"
+                    actionHref="/events/create"
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="lostfound" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {lost_found_items.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {lost_found_items.map((item: any) => (
+                      <div key={item.id} className="h-full">
+                        <ListingCard
+                          id={item.id.toString()}
+                          title={item.title}
+                          description={item.description}
+                          image={item.image_path || "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=400"}
+                          type="lost_found"
+                          location={item.location}
+                          date={new Date(item.date).toLocaleDateString()}
+                          author={{ name: user.username }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    icon={Search}
+                    title="No reports"
+                    description="You haven't reported any lost or found items."
+                    actionLabel="Report Item"
+                    actionHref="/lost-found/create"
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
 
             {/* Quick Actions / Integration Tip */}
             <Card className="mt-8 border-dashed border-primary/20 bg-primary/5 rounded-[2.5rem]">
-              <CardContent className="p-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+              <CardContent className="p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
                 <div className="h-20 w-20 rounded-full bg-white flex items-center justify-center shadow-xl">
                   <Zap className="h-10 w-10 text-primary" />
                 </div>
@@ -208,11 +352,7 @@ export default function ProfilePage() {
                   <h4 className="text-xl font-bold mb-2">Want to list something new?</h4>
                   <p className="text-muted-foreground font-medium">Head over to the respective sections to create new listings. Your dashboard will update instantly.</p>
                 </div>
-                <Link to="/marketplace">
-                  <Button className="h-14 px-8 rounded-2xl font-bold shadow-lg shadow-primary/20">
-                    Go to Marketplace
-                  </Button>
-                </Link>
+
               </CardContent>
             </Card>
           </div>
