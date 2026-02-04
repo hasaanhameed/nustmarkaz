@@ -222,7 +222,7 @@ export default function SocietyDetailsPage() {
                                 )}
 
                                 {/* Rating Display */}
-                                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                                <div className="flex items-center gap-4">
                                     <div className="flex flex-col items-center">
                                         <div className="text-5xl font-bold text-primary mb-2">
                                             {averageRating}
@@ -233,16 +233,6 @@ export default function SocietyDetailsPage() {
                                             {society.reviews.length === 1 ? "review" : "reviews"}
                                         </span>
                                     </div>
-                                </div>
-
-                                {/* About Section */}
-                                <div className="mb-6">
-                                    <h3 className="font-semibold text-primary mb-2">About</h3>
-                                    <p className="text-muted-foreground leading-relaxed">
-                                        Join and connect with fellow students who share similar
-                                        interests. Read reviews from members to learn about their
-                                        experiences.
-                                    </p>
                                 </div>
                             </Card>
                         </div>
@@ -289,7 +279,6 @@ export default function SocietyDetailsPage() {
                                                     </span>
                                                 </div>
                                             </div>
-
                                         </div>
                                         <p className="text-muted-foreground leading-relaxed">
                                             {review.comment}
