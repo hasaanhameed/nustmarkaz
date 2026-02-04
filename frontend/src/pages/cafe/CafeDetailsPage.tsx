@@ -3,7 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Card } from "@/components/ui/card";
 import { Star, MapPin, User, Loader2, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
-import { getCafeById, createReview } from "@/api/cafe";
+import { getCafeById, createReview, deleteReview } from "@/api/cafe";
 import type { CafeWithReviews } from "@/api/cafe";
 
 export default function CafeDetailsPage() {
@@ -262,7 +262,7 @@ export default function CafeDetailsPage() {
                     <User className="w-6 h-6 text-primary" />
                   </div>
 
-                  {/* Review Content */}
+                                   {/* Review Content */}
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div>
@@ -276,6 +276,25 @@ export default function CafeDetailsPage() {
                           </span>
                         </div>
                       </div>
+                      <button
+                        onClick={async () => {
+                          if (window.confirm("Are you sure you want to delete this review?")) {
+                            try {
+                              await deleteReview(cafe.id, review.id);
+                              setCafe({
+                                ...cafe,
+                                reviews: cafe.reviews.filter(r => r.id !== review.id)
+                              });
+                              alert("Review deleted successfully!");
+                            } catch (err: any) {
+                              alert("Failed to delete review: " + (err.response?.data?.detail || err.message));
+                            }
+                          }
+                        }}
+                        className="text-destructive hover:text-destructive/80 text-sm font-semibold transition-colors"
+                      >
+                        Delete
+                      </button>
                     </div>
                     {review.comment && (
                       <p className="text-muted-foreground leading-relaxed">
