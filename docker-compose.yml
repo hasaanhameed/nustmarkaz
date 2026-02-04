@@ -5,13 +5,16 @@ services:
       dockerfile: Dockerfile
     container_name: nustmarkaz_backend
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DB_USER: ${user}
+      DB_PASSWORD: ${password}
+      DB_HOST: ${host}
+      DB_PORT: ${port}
+      DB_NAME: ${dbname}
       SECRET_KEY: ${SECRET_KEY}
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 10080
     ports:
       - "8000:8000"
-
     volumes:
       - ./backend:/app
     networks:
@@ -32,8 +35,6 @@ services:
     networks:
       - nustmarkaz_network
     restart: unless-stopped
-
-
 
 networks:
   nustmarkaz_network:

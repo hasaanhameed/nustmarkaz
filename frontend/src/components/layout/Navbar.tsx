@@ -16,6 +16,7 @@ import {
   Home,
   Compass,
   Coffee,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +47,7 @@ const navLinks = [
   { name: "Trips", href: "/trips", icon: MapPin },
   { name: "Donations", href: "/donations", icon: Heart },
   { name: "Events", href: "/events", icon: CalendarDays },
+  { name: "Societies", href: "/societies", icon: Users },
   { name: "Cafes", href: "/cafes", icon: Coffee },
   { name: "Lost & Found", href: "/lost-found", icon: Search },
   { name: "Car Pooling", href: "/carpooling", icon: Car },

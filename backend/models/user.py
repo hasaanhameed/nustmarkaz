@@ -31,3 +31,6 @@ class User(Base):
 
     # Review relationships
     reviews = relationship("Review", back_populates="creator")
+    
+    # Society review relationships
+    society_reviews = relationship("SocietyReview", back_populates="creator")

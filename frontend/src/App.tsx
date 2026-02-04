@@ -32,6 +32,9 @@ import EventsPage from "@/pages/events/EventsPage";
 import CafesPage from "./pages/cafe/CafesPage";
 import CafeDetailsPage from "./pages/cafe/CafeDetailsPage";
 
+import SocietiesPage from "./pages/societies/SocietiesPage";
+import SocietyDetailsPage from "./pages/societies/SocietyDetailsPage";
+
 import ProfilePage from "./pages/profile/ProfilePage";
 
 import LostFoundPage from "./pages/lost-found/LostFoundPage";
@@ -88,6 +91,10 @@ const App = () => (
           {/* Cafes - specific routes before dynamic ones */}
           <Route path="/cafes/:id" element={<CafeDetailsPage />} />
           <Route path="/cafes" element={<CafesPage />} />
+
+          {/* Societies - specific routes before dynamic ones */}
+          <Route path="/societies/:id" element={<SocietyDetailsPage />} />
+          <Route path="/societies" element={<SocietiesPage />} />
 
           {/* Carpooling - specific routes before dynamic ones */}
           <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />
