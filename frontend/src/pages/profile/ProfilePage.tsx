@@ -348,11 +348,6 @@ export default function ProfilePage() {
                 <div className="h-20 w-20 rounded-full bg-white flex items-center justify-center shadow-xl">
                   <Zap className="h-10 w-10 text-primary" />
                 </div>
-                <div className="flex-1">
-                  <h4 className="text-xl font-bold mb-2">Want to list something new?</h4>
-                  <p className="text-muted-foreground font-medium">Head over to the respective sections to create new listings. Your dashboard will update instantly.</p>
-                </div>
-
               </CardContent>
             </Card>
           </div>
