@@ -125,36 +125,16 @@ export const getSocietiesWithRatings = async (): Promise<SocietyCardData[]> => {
 
 // Alternative: Get societies with ratings by fetching each society's details
 export const getSocietiesWithRatingsDetailed = async (): Promise<SocietyCardData[]> => {
-    const societies = await getSocieties();
-
-    // Fetch full details (including reviews) for all societies in parallel
-    const societiesWithRatings = await Promise.all(
-        societies.map(async (society) => {
-            try {
-                const fullSociety = await getSocietyById(society.id);
-                const reviews = fullSociety.reviews;
-                const reviewCount = reviews.length;
-                const averageRating = reviewCount > 0
-                    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount
-                    : 0;
-
-                return {
-                    ...society,
-                    average_rating: averageRating,
-                    review_count: reviewCount,
-                };
-            } catch (error) {
-                console.error(`Failed to fetch details for society ${society.id}:`, error);
-                return {
-                    ...society,
-                    average_rating: 0,
-                    review_count: 0,
-                };
-            }
-        })
-    );
-
-    return societiesWithRatings;
+    const response = await api.get<any[]>('/societies/with-reviews');
+    
+    return response.data.map(society => ({
+        id: society.id,
+        name: society.name,
+        instagram_url: society.instagram_url,
+        image_url: society.image_url,
+        average_rating: society.average_rating,
+        review_count: society.review_count
+    }));
 };
 
 // Create a new society (authenticated users)

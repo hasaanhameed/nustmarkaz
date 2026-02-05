@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
+from sqlalchemy import func
 from models.society import Society, SocietyReview
 from models.user import User
 from schemas.society import (
@@ -33,6 +34,87 @@ def create_society(society: SocietyCreate, db: Session = Depends(get_db), curren
 def get_societies(db: Session = Depends(get_db)):
     return db.query(Society).all()
 
+# OPTIMIZED: Get societies with ratings using only 2 queries
+@router.get("/with-reviews", response_model=List[dict])
+def get_societies_with_reviews(db: Session = Depends(get_db)):
+    """Get all societies with reviews and average ratings - OPTIMIZED VERSION"""
+    
+    # Query 1: Get all societies
+    societies = db.query(Society).all()
+    
+    # Query 2: Get all ratings aggregated by society_id in a single query
+    ratings_query = (
+        db.query(
+            SocietyReview.society_id,
+            func.avg(SocietyReview.rating).label('avg_rating'),
+            func.count(SocietyReview.id).label('review_count')
+        )
+        .group_by(SocietyReview.society_id)
+        .all()
+    )
+    
+    # Create a lookup dictionary for O(1) access
+    ratings_dict = {
+        rating.society_id: {
+            'average_rating': round(float(rating.avg_rating), 2),
+            'review_count': rating.review_count
+        }
+        for rating in ratings_query
+    }
+    
+    # Build the result with ratings
+    result = []
+    for society in societies:
+        ratings_data = ratings_dict.get(society.id, {'average_rating': 0.0, 'review_count': 0})
+        
+        result.append({
+            "id": society.id,
+            "name": society.name,
+            "instagram_url": society.instagram_url,
+            "image_url": society.image_url,
+            "average_rating": ratings_data['average_rating'],
+            "review_count": ratings_data['review_count']
+        })
+    
+    return result
+
+
+# ALTERNATIVE: Even more optimized with a single query using LEFT JOIN
+@router.get("/with-reviews-single-query", response_model=List[dict])
+def get_societies_with_reviews_single_query(db: Session = Depends(get_db)):
+    """Get all societies with ratings using a single optimized query"""
+    
+    # Single query with LEFT JOIN and aggregation
+    query = (
+        db.query(
+            Society.id,
+            Society.name,
+            Society.instagram_url,
+            Society.image_url,
+            func.coalesce(func.avg(SocietyReview.rating), 0).label('avg_rating'),
+            func.count(SocietyReview.id).label('review_count')
+        )
+        .outerjoin(SocietyReview, Society.id == SocietyReview.society_id)
+        .group_by(Society.id, Society.name, Society.instagram_url, Society.image_url)
+        .all()
+    )
+    
+    result = [
+        {
+            "id": row.id,
+            "name": row.name,
+            "instagram_url": row.instagram_url,
+            "image_url": row.image_url,
+            "average_rating": round(float(row.avg_rating), 2),
+            "review_count": row.review_count
+        }
+        for row in query
+    ]
+    
+    return result
+
+
+# Generic routes AFTER specific routes
 @router.get("/{id}", response_model=SocietyResponse)
 def get_society(id: int, db: Session = Depends(get_db)):
     society = db.query(Society).filter(Society.id == id).first()
