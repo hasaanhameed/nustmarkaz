@@ -341,15 +341,6 @@ export default function ProfilePage() {
                 )}
               </TabsContent>
             </Tabs>
-
-            {/* Quick Actions / Integration Tip */}
-            <Card className="mt-8 border-dashed border-primary/20 bg-primary/5 rounded-[2.5rem]">
-              <CardContent className="p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-                <div className="h-20 w-20 rounded-full bg-white flex items-center justify-center shadow-xl">
-                  <Zap className="h-10 w-10 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

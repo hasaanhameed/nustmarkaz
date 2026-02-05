@@ -15,6 +15,10 @@ import {
   ShieldCheck,
   Globe,
   Zap,
+  Heart,
+  Coffee,
+  Star,
+  Sparkles,
 } from "lucide-react";
 
 const features = [
@@ -47,6 +51,24 @@ const features = [
     title: "Car Pooling",
     description: "Safe and sustainable commute sharing with fellow NUSTians.",
     path: "/carpooling"
+  },
+  {
+    icon: Heart,
+    title: "Donation Drives",
+    description: "Start or contribute to charitable initiatives that make a real difference on campus.",
+    path: "/donations"
+  },
+  {
+    icon: Coffee,
+    title: "Cafe Reviews",
+    description: "Rate and review campus cafes to help students discover the best spots to eat.",
+    path: "/cafes"
+  },
+  {
+    icon: Star,
+    title: "Society Reviews",
+    description: "Share your experiences and find the perfect societies to join this semester.",
+    path: "/societies"
   }
 ];
 
@@ -57,18 +79,18 @@ const pillars = [
     icon: CheckCircle,
   },
   {
-    label: "Safe & Secure",
-    description: "Built-in trust for peer-to-peer exchanges.",
-    icon: ShieldCheck,
+    label: "All-in-One Hub",
+    description: "Everything you need in a single platform.",
+    icon: Sparkles,
   },
   {
-    label: "Campus Wide",
-    description: "One hub for every society and department.",
+    label: "Share Your Voice",
+    description: "Rate, review, and shape campus experiences.",
     icon: Globe,
   },
   {
     label: "Student Driven",
-    description: "Designed by NUSTians, for NUSTians.",
+    description: "Built from real student experiences and feedback.",
     icon: Zap,
   },
 ];
@@ -176,7 +198,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {features.map((feature, i) => (
                 <div
                   key={i}
@@ -224,4 +246,3 @@ export default function LandingPage() {
     </Layout>
   );
 }
-
