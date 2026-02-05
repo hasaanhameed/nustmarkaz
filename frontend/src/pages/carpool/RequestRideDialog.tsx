@@ -11,13 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -40,19 +33,19 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface OfferRideDialogProps {
+interface RequestRideDialogProps {
   onRideCreated: () => void;
   autoOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   children?: React.ReactNode;
 }
 
-export function OfferRideDialog({
+export function RequestRideDialog({
   onRideCreated,
   autoOpen = false,
   onOpenChange,
   children
-}: OfferRideDialogProps) {
+}: RequestRideDialogProps) {
   const [open, setOpen] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,10 +54,6 @@ export function OfferRideDialog({
     from_location: "",
     to_location: "",
     ride_time: "",
-    vehicle_type: "Car",
-    vehicle_model: "",
-    vehicle_color: "",
-    price: "",
     contact: "",
   });
 
@@ -103,7 +92,7 @@ export function OfferRideDialog({
     }
 
     // Validate locations
-    if (!validateTextInput(formData.from_location, "Origin location")) return;
+    if (!validateTextInput(formData.from_location, "Pickup location")) return;
     if (!validateTextInput(formData.to_location, "Destination location")) return;
 
     setIsLoading(true);
@@ -113,25 +102,17 @@ export function OfferRideDialog({
         to_location: formData.to_location.trim(),
         ride_date: format(date, "yyyy-MM-dd"),
         ride_time: formData.ride_time,
-        vehicle_type: formData.vehicle_type,
-        vehicle_model: formData.vehicle_model,
-        vehicle_color: formData.vehicle_color,
-        price: parseFloat(formData.price),
         contact: formData.contact,
       };
 
       await createRide(rideData);
-      toast.success("Ride posted successfully!");
+      toast.success("Ride request posted successfully!");
 
       // Reset form
       setFormData({
         from_location: "",
         to_location: "",
         ride_time: "",
-        vehicle_type: "Car",
-        vehicle_model: "",
-        vehicle_color: "",
-        price: "",
         contact: "",
       });
       setDate(undefined);
@@ -142,7 +123,7 @@ export function OfferRideDialog({
 
       onRideCreated();
     } catch (error) {
-      toast.error("Failed to create ride. Please try again.");
+      toast.error("Failed to create ride request. Please try again.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -155,21 +136,21 @@ export function OfferRideDialog({
         <DialogTrigger asChild>
           {children || (
             <Button className="bg-primary text-primary-foreground">
-              Offer a Ride
+              Request a Ride
             </Button>
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Offer a Ride</DialogTitle>
+            <DialogTitle>Request a Ride</DialogTitle>
             <DialogDescription>
-              Share your commute and split the cost with other students.
+              Looking for a ride? Post your travel details and connect with drivers.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="from">From</Label>
+                <Label htmlFor="from">Pickup Location</Label>
                 <Input
                   id="from"
                   placeholder="e.g., F-7, Bahria Town"
@@ -181,7 +162,7 @@ export function OfferRideDialog({
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="to">To</Label>
+                <Label htmlFor="to">Destination</Label>
                 <Input
                   id="to"
                   placeholder="e.g., NUST H-12, Blue Area"
@@ -234,67 +215,6 @@ export function OfferRideDialog({
               </div>
             </div>
 
-            <div className="border-t my-2" />
-            <h4 className="font-medium text-sm text-muted-foreground">
-              Vehicle Details
-            </h4>
-
-            <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-1">
-                <Label>Type</Label>
-                <Select
-                  value={formData.vehicle_type}
-                  onValueChange={(v) =>
-                    setFormData({ ...formData, vehicle_type: v })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Car">Car</SelectItem>
-                    <SelectItem value="Bike">Bike</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-1">
-                <Label>Model</Label>
-                <Input
-                  placeholder="Civic, Alto..."
-                  value={formData.vehicle_model}
-                  onChange={(e) =>
-                    setFormData({ ...formData, vehicle_model: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div className="col-span-1">
-                <Label>Color</Label>
-                <Input
-                  placeholder="White, Black..."
-                  value={formData.vehicle_color}
-                  onChange={(e) =>
-                    setFormData({ ...formData, vehicle_color: e.target.value })
-                  }
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="price">Price (Rs.)</Label>
-              <Input
-                id="price"
-                type="number"
-                placeholder="200"
-                value={formData.price}
-                onChange={(e) =>
-                  setFormData({ ...formData, price: e.target.value })
-                }
-                required
-              />
-            </div>
-
             <div className="grid gap-2">
               <Label htmlFor="contact">Contact Number</Label>
               <Input
@@ -310,7 +230,7 @@ export function OfferRideDialog({
 
             <DialogFooter>
               <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isLoading}>
-                {isLoading ? "Posting..." : "Post Ride"}
+                {isLoading ? "Posting..." : "Post Request"}
               </Button>
             </DialogFooter>
           </form>
@@ -320,9 +240,9 @@ export function OfferRideDialog({
       <AlertDialog open={showSuccessPopup} onOpenChange={setShowSuccessPopup}>
         <AlertDialogContent className="rounded-2xl border-border/50">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black italic text-primary">Ride Live!</AlertDialogTitle>
+            <AlertDialogTitle className="text-2xl font-black italic text-primary">Request Posted!</AlertDialogTitle>
             <AlertDialogDescription className="text-lg font-medium">
-              Your ride offer has been successfully posted.
+              Your ride request has been successfully posted.
               To keep the carpool listings fresh and accurate, please note that **your post will be automatically taken down in 1 hour**.
             </AlertDialogDescription>
           </AlertDialogHeader>

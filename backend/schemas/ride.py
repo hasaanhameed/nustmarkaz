@@ -7,10 +7,6 @@ class RideCreate(BaseModel):
     to_location: str
     ride_date: str
     ride_time: str
-    vehicle_type: str
-    vehicle_model: str
-    vehicle_color: str
-    price: float
     contact: str
 
     class Config:
@@ -22,20 +18,24 @@ class RideUpdate(BaseModel):
     to_location: Optional[str] = None
     ride_date: Optional[str] = None
     ride_time: Optional[str] = None
-    vehicle_type: Optional[str] = None
-    vehicle_model: Optional[str] = None
-    vehicle_color: Optional[str] = None
-    price: Optional[float] = None
     contact: Optional[str] = None
 
 
-class RideResponse(RideCreate):
+class RequesterResponse(BaseModel):
     id: int
-    driver_id: int
-    created_at: datetime
-    updated_at: datetime
+    username: str
+    email: str
 
     class Config:
         from_attributes = True
 
 
+class RideResponse(RideCreate):
+    id: int
+    requester_id: int
+    created_at: datetime
+    updated_at: datetime
+    requester: Optional[RequesterResponse] = None
+
+    class Config:
+        from_attributes = True

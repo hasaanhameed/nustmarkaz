@@ -170,7 +170,7 @@ export default function SignupPage() {
                       <Input
                         id="email"
                         type="email"
-                        placeholder="your.id@nust.edu.pk"
+                        placeholder="Your NUST Email"
                         value={formData.email}
                         onChange={(e) => handleChange("email", e.target.value)}
                         className={cn(

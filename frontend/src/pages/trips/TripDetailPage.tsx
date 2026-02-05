@@ -26,14 +26,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getTripById, deleteTrip, Trip } from "@/api/trip";
-import { getCurrentUser } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
+
 import { toast } from "sonner";
 
 export default function TripDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<Trip | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { user: currentUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -45,12 +46,8 @@ export default function TripDetailPage() {
 
   const fetchData = async (tripId: string) => {
     try {
-      const [tripData, userData] = await Promise.all([
-        getTripById(tripId),
-        getCurrentUser(),
-      ]);
+      const tripData = await getTripById(tripId);
       setTrip(tripData);
-      setCurrentUserId(userData?.id || null);
     } catch (error) {
       console.error("Error fetching trip:", error);
     } finally {
@@ -104,7 +101,7 @@ export default function TripDetailPage() {
   };
 
   const creatorInitial = trip.creator.username.charAt(0).toUpperCase();
-  const isCreator = currentUserId === trip.creator_id;
+  const isCreator = currentUser?.id === trip.creator_id;
 
   return (
     <Layout>

@@ -55,6 +55,22 @@ export const getAllDonations = async (
   }
 };
 
+// Get current user's donations
+export const getMyDonations = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<Donation[]> => {
+  try {
+    const response = await api.get<Donation[]>("/donations/me", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch my donations:", error);
+    throw error;
+  }
+};
+
 // Get a single donation by ID
 export const getDonationById = async (
   donationId: string,

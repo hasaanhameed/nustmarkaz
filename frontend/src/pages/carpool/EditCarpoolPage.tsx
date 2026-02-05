@@ -21,10 +21,6 @@ export default function EditCarpoolPage() {
     to_location: "",
     ride_date: "",
     ride_time: "",
-    vehicle_type: "",
-    vehicle_model: "",
-    vehicle_color: "",
-    price: "",
     contact: "",
   });
 
@@ -43,15 +39,11 @@ export default function EditCarpoolPage() {
           to_location: data.to_location,
           ride_date: data.ride_date.split('T')[0],
           ride_time: data.ride_time,
-          vehicle_type: data.vehicle_type,
-          vehicle_model: data.vehicle_model,
-          vehicle_color: data.vehicle_color,
-          price: data.price.toString(),
           contact: data.contact,
         });
       } catch (error) {
-        console.error("Failed to fetch ride:", error);
-        toast.error("Failed to load ride");
+        console.error("Failed to fetch ride request:", error);
+        toast.error("Failed to load ride request");
         navigate("/carpooling");
       } finally {
         setLoading(false);
@@ -82,22 +74,14 @@ export default function EditCarpoolPage() {
     if (!id || !ride) return;
 
     if (!formData.from_location.trim() || !formData.to_location.trim() ||
-      !formData.ride_date || !formData.ride_time || !formData.vehicle_type.trim() ||
-      !formData.vehicle_model.trim() || !formData.vehicle_color.trim() ||
-      !formData.price || !formData.contact.trim()) {
+      !formData.ride_date || !formData.ride_time || !formData.contact.trim()) {
       toast.error("Please fill in all fields");
       return;
     }
 
     // Validate locations
-    if (!validateTextInput(formData.from_location, "Origin location")) return;
+    if (!validateTextInput(formData.from_location, "Pickup location")) return;
     if (!validateTextInput(formData.to_location, "Destination location")) return;
-
-    const price = parseFloat(formData.price);
-    if (isNaN(price) || price < 0) {
-      toast.error("Please enter a valid price");
-      return;
-    }
 
     try {
       setSubmitting(true);
@@ -106,17 +90,13 @@ export default function EditCarpoolPage() {
         to_location: formData.to_location.trim(),
         ride_date: formData.ride_date,
         ride_time: formData.ride_time,
-        vehicle_type: formData.vehicle_type,
-        vehicle_model: formData.vehicle_model,
-        vehicle_color: formData.vehicle_color,
-        price: price,
         contact: formData.contact,
       });
-      toast.success("Ride updated successfully!");
+      toast.success("Ride request updated successfully!");
       navigate(`/carpooling`);
     } catch (error: any) {
-      console.error("Failed to update ride:", error);
-      toast.error(error.response?.data?.detail || "Failed to update ride");
+      console.error("Failed to update ride request:", error);
+      toast.error(error.response?.data?.detail || "Failed to update ride request");
     } finally {
       setSubmitting(false);
     }
@@ -145,18 +125,18 @@ export default function EditCarpoolPage() {
           className="mb-6"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Ride
+          Back to Ride Request
         </Button>
 
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
-            <CardTitle>Edit Carpool Ride</CardTitle>
+            <CardTitle>Edit Ride Request</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="from_location">From *</Label>
+                  <Label htmlFor="from_location">Pickup Location *</Label>
                   <Input
                     id="from_location"
                     value={formData.from_location}
@@ -167,7 +147,7 @@ export default function EditCarpoolPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="to_location">To *</Label>
+                  <Label htmlFor="to_location">Destination *</Label>
                   <Input
                     id="to_location"
                     value={formData.to_location}
@@ -202,65 +182,15 @@ export default function EditCarpoolPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="vehicle_type">Vehicle Type *</Label>
-                  <Input
-                    id="vehicle_type"
-                    value={formData.vehicle_type}
-                    onChange={(e) => setFormData({ ...formData, vehicle_type: e.target.value })}
-                    placeholder="e.g., Sedan, SUV"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="vehicle_model">Model *</Label>
-                  <Input
-                    id="vehicle_model"
-                    value={formData.vehicle_model}
-                    onChange={(e) => setFormData({ ...formData, vehicle_model: e.target.value })}
-                    placeholder="e.g., Honda Civic"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="vehicle_color">Color *</Label>
-                  <Input
-                    id="vehicle_color"
-                    value={formData.vehicle_color}
-                    onChange={(e) => setFormData({ ...formData, vehicle_color: e.target.value })}
-                    placeholder="e.g., White"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price (Rs.) *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    placeholder="0.00"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contact">Contact *</Label>
-                  <Input
-                    id="contact"
-                    value={formData.contact}
-                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder="Your contact number"
-                    required
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="contact">Contact Number *</Label>
+                <Input
+                  id="contact"
+                  value={formData.contact}
+                  onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                  placeholder="03XX-XXXXXXX"
+                  required
+                />
               </div>
 
               <div className="flex gap-4">
@@ -280,7 +210,7 @@ export default function EditCarpoolPage() {
                       Updating...
                     </>
                   ) : (
-                    "Update Ride"
+                    "Update Request"
                   )}
                 </Button>
               </div>

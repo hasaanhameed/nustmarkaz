@@ -7,17 +7,16 @@ import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Search, Plus, MapPin } from "lucide-react";
 import { getAllTrips, Trip } from "@/api/trip";
-import { getCurrentUser, User } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 
 export default function TripsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user: currentUser } = useUser();
 
   useEffect(() => {
     fetchTrips();
-    fetchCurrentUser();
   }, []);
 
   const fetchTrips = async () => {
@@ -28,16 +27,6 @@ export default function TripsPage() {
       console.error("Error fetching trips:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCurrentUser = async () => {
-    try {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-      setCurrentUser(null);
     }
   };
 

@@ -45,6 +45,22 @@ export const getAllLostFoundItems = async (): Promise<LostFoundItem[]> => {
   return response.data;
 };
 
+// Get current user's lost and found items
+export const getMyLostFoundItems = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<LostFoundItem[]> => {
+  try {
+    const response = await api.get<LostFoundItem[]>("/lost-found/me", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch my lost and found items:", error);
+    throw error;
+  }
+};
+
 export const getLostFoundItemById = async (id: number): Promise<LostFoundItem> => {
   const response = await api.get(`/lost-found/${id}`);
   return response.data;

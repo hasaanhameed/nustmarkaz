@@ -9,13 +9,12 @@ import {
   MapPin,
   Calendar,
   Clock,
-  DollarSign,
-  Car,
   Phone,
   Mail,
   AlertCircle,
-  CheckCircle2,
+  User,
   Navigation,
+  MessageCircle,
 } from "lucide-react";
 import { Ride, getRideById } from "@/api/ride";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -26,7 +25,6 @@ export default function RideDetailPage() {
   const navigate = useNavigate();
   const [ride, setRide] = useState<Ride | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isJoining, setIsJoining] = useState(false);
 
   useEffect(() => {
     fetchRideDetails();
@@ -34,29 +32,16 @@ export default function RideDetailPage() {
 
   const fetchRideDetails = async () => {
     if (!id) return;
-    
+
     setIsLoading(true);
     try {
       const data = await getRideById(Number(id));
       setRide(data);
     } catch (error) {
-      toast.error("Failed to load ride details");
+      toast.error("Failed to load ride request details");
       console.error(error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleJoinRide = async () => {
-    setIsJoining(true);
-    try {
-      // Add your join ride API call here
-      toast.success("Successfully joined the ride!");
-    } catch (error) {
-      toast.error("Failed to join ride");
-      console.error(error);
-    } finally {
-      setIsJoining(false);
     }
   };
 
@@ -76,9 +61,9 @@ export default function RideDetailPage() {
         <div className="container-custom py-8">
           <div className="text-center py-12">
             <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Ride Not Found</h2>
+            <h2 className="text-xl font-semibold mb-2">Ride Request Not Found</h2>
             <p className="text-muted-foreground mb-6">
-              The ride you're looking for doesn't exist or has been removed.
+              The ride request you're looking for doesn't exist or has been removed.
             </p>
             <Button onClick={() => navigate("/carpooling")}>
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -90,8 +75,6 @@ export default function RideDetailPage() {
     );
   }
 
-  const isFullyBooked = false; // No seat tracking in current API
-
   return (
     <Layout>
       <div className="container-custom py-6 md:py-8">
@@ -102,7 +85,7 @@ export default function RideDetailPage() {
           className="mb-6 -ml-2"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Rides
+          Back to Requests
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -114,18 +97,18 @@ export default function RideDetailPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="h-12 w-12 rounded-full bg-gradient-to-br from-sky/20 to-blue-500/20 flex items-center justify-center border">
-                      <Car className="h-6 w-6 text-sky" />
+                      <User className="h-6 w-6 text-sky" />
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold">Carpool Ride</h1>
+                      <h1 className="text-2xl font-bold">Ride Request</h1>
                       <p className="text-sm text-muted-foreground">
-                        Posted by {ride.driver?.username || "Driver"}
+                        Posted by {ride.requester?.username || "Requester"}
                       </p>
                     </div>
                   </div>
                 </div>
                 <Badge variant="default" className="text-xs">
-                  Available
+                  Looking for Ride
                 </Badge>
               </div>
 
@@ -157,7 +140,7 @@ export default function RideDetailPage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-muted-foreground font-medium mb-1">
-                      DROP-OFF LOCATION
+                      DESTINATION
                     </p>
                     <p className="font-semibold text-lg">{ride.to_location}</p>
                   </div>
@@ -169,9 +152,9 @@ export default function RideDetailPage() {
             <div className="bg-card border rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                Trip Details
+                Travel Details
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
                   <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
@@ -191,56 +174,29 @@ export default function RideDetailPage() {
                   <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="text-xs text-muted-foreground font-medium mb-1">
-                      Departure Time
+                      Preferred Time
                     </p>
                     <p className="font-semibold">
                       {ride.ride_time || "Time not specified"}
                     </p>
                   </div>
                 </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
-                  <Car className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">
-                      Vehicle
-                    </p>
-                    <p className="font-semibold">
-                      {ride.vehicle_model || "Vehicle not specified"}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {ride.vehicle_type} • {ride.vehicle_color}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
-                  <DollarSign className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">
-                      Price
-                    </p>
-                    <p className="font-semibold text-lg">
-                      Rs. {ride.price?.toLocaleString() || 0}
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
 
-            {/* Driver & Contact Information */}
+            {/* Requester & Contact Information */}
             <div className="bg-card border rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Driver & Contact Information</h2>
-              
+              <h2 className="text-lg font-semibold mb-4">Requester Contact Information</h2>
+
               <div className="flex items-start gap-4">
                 <div className="h-16 w-16 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center text-xl font-bold border-2">
-                  {ride.driver?.username?.charAt(0).toUpperCase() || "D"}
+                  {ride.requester?.username?.charAt(0).toUpperCase() || "R"}
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg mb-1">
-                    {ride.driver?.username || "Driver"}
+                    {ride.requester?.username || "Requester"}
                   </h3>
-                  
+
                   <div className="space-y-2 mt-3">
                     {ride.contact && (
                       <div className="flex items-center gap-2 text-sm">
@@ -254,16 +210,16 @@ export default function RideDetailPage() {
                         </a>
                       </div>
                     )}
-                    
-                    {ride.driver?.email && (
+
+                    {ride.requester?.email && (
                       <div className="flex items-center gap-2 text-sm">
                         <Mail className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">Email:</span>
                         <a
-                          href={`mailto:${ride.driver.email}`}
+                          href={`mailto:${ride.requester.email}`}
                           className="font-medium hover:text-primary transition-colors"
                         >
-                          {ride.driver.email}
+                          {ride.requester.email}
                         </a>
                       </div>
                     )}
@@ -279,42 +235,25 @@ export default function RideDetailPage() {
               {/* Action Card */}
               <div className="bg-card border rounded-lg p-6">
                 <div className="mb-4">
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-3xl font-bold">
-                      Rs. {ride.price?.toLocaleString() || 0}
-                    </span>
-                  </div>
+                  <h3 className="text-lg font-semibold mb-2">Offer a Ride</h3>
                   <p className="text-sm text-muted-foreground">
-                    Total ride price
+                    Contact the requester to offer them a ride
                   </p>
                 </div>
 
                 <Button
                   className="w-full mb-3"
                   size="lg"
-                  disabled={isJoining}
-                  onClick={handleJoinRide}
+                  onClick={() => window.location.href = `tel:${ride.contact}`}
                 >
-                  {isJoining ? (
-                    <>
-                      <LoadingSpinner className="mr-2 h-4 w-4" />
-                      Joining...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Contact Driver
-                    </>
-                  )}
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Contact Requester
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  Reach out to arrange pickup details
+                  Discuss details and pricing directly
                 </p>
               </div>
-
-             
-              
 
               {/* Safety Tips */}
               <div className="bg-warning/5 border border-warning/20 rounded-lg p-4">
@@ -323,15 +262,16 @@ export default function RideDetailPage() {
                   <h3 className="font-semibold text-sm">Safety Tips</h3>
                 </div>
                 <ul className="space-y-1 text-xs text-muted-foreground ml-6">
-                  <li>• Meet in a public place</li>
+                  <li>• Verify identity before pickup</li>
                   <li>• Share trip details with friends</li>
-                  <li>• Verify driver identity</li>
+                  <li>• Meet in a public place</li>
+                  <li>• Agree on pricing beforehand</li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </Layout>
+      </div >
+    </Layout >
   );
 }

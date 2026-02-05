@@ -58,6 +58,22 @@ export const getAllTrips = async (
   }
 };
 
+// Get current user's trips
+export const getMyTrips = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<Trip[]> => {
+  try {
+    const response = await api.get<Trip[]>("/trips/me", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch my trips:", error);
+    throw error;
+  }
+};
+
 // Get a single trip by ID
 export const getTripById = async (tripId: string): Promise<Trip> => {
   try {

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { CAMPUS_LOCATIONS, CITY_LOCATIONS } from "@/data/mockCarpool";
 import { RideCard } from "@/components/ui/RideCard";
-import { OfferRideDialog } from "./OfferRideDialog";
+import { RequestRideDialog } from "./RequestRideDialog";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,12 +24,12 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllRides, Ride } from "@/api/ride";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { getCurrentUser } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 
 export default function CarpoolPage() {
   const [searchParams] = useSearchParams();
   const [rides, setRides] = useState<Ride[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { user: currentUser } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [fromFilter, setFromFilter] = useState("All");
   const [toFilter, setToFilter] = useState("All");
@@ -48,14 +48,10 @@ export default function CarpoolPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [ridesData, userData] = await Promise.all([
-        getAllRides(0, 50),
-        getCurrentUser(),
-      ]);
+      const ridesData = await getAllRides(0, 50);
       setRides(ridesData);
-      setCurrentUserId(userData?.id || null);
     } catch (error) {
-      toast.error("Failed to load rides");
+      toast.error("Failed to load ride requests");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -67,7 +63,7 @@ export default function CarpoolPage() {
       const data = await getAllRides(0, 50);
       setRides(data);
     } catch (error) {
-      toast.error("Failed to load rides");
+      toast.error("Failed to load ride requests");
       console.error(error);
     }
   };
@@ -89,13 +85,13 @@ export default function CarpoolPage() {
         {/* Header Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-12 animate-entrance">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-            Student Car Pooling
+            Student Carpooling
           </h1>
           <p className="text-xl text-muted-foreground mb-8 text-balance">
-            Share your commute, save on travel costs, and meet fellow NUSTians. Find a ride or offer one to the community.
+            Looking for a ride? Post your travel details and connect with fellow NUSTians heading your way.
           </p>
           <div className="flex justify-center">
-            <OfferRideDialog
+            <RequestRideDialog
               onRideCreated={fetchRides}
               autoOpen={autoOpenDialog}
               onOpenChange={(open) => {
@@ -112,7 +108,7 @@ export default function CarpoolPage() {
               <SelectValue placeholder="From Location" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="All">Any Origin</SelectItem>
+              <SelectItem value="All">Any Pickup Point</SelectItem>
               {allLocations.map((loc) => (
                 <SelectItem key={`filter-from-${loc}`} value={loc}>
                   {loc}
@@ -180,7 +176,7 @@ export default function CarpoolPage() {
               <RideCard
                 key={ride.id}
                 ride={ride}
-                currentUserId={currentUserId}
+                currentUserId={currentUser?.id}
                 onRideDeleted={fetchRides}
               />
             ))}
@@ -188,7 +184,7 @@ export default function CarpoolPage() {
         ) : (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              No rides available matching your criteria.
+              No ride requests available matching your criteria.
             </p>
             <Button
               variant="link"

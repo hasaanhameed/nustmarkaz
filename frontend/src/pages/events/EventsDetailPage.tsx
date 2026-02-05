@@ -17,15 +17,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getEventById, deleteEvent, Event } from "@/api/event";
-import { getCurrentUser } from "@/api/user";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { useUser } from "@/contexts/UserContext";
 
 export default function EventsDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Event | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { user: currentUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -36,12 +36,8 @@ export default function EventsDetailPage() {
   const fetchData = async () => {
     try {
       if (id) {
-        const [eventData, userData] = await Promise.all([
-          getEventById(parseInt(id)),
-          getCurrentUser(),
-        ]);
+        const eventData = await getEventById(parseInt(id));
         setEvent(eventData);
-        setCurrentUserId(userData?.id || null);
       }
     } catch (err) {
       console.error("Error fetching event:", err);
@@ -68,9 +64,9 @@ export default function EventsDetailPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('en-US', {
       weekday: 'long',
-      month: 'long', 
+      month: 'long',
       day: 'numeric',
       year: 'numeric'
     });
@@ -78,7 +74,7 @@ export default function EventsDetailPage() {
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
+    return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true
@@ -125,7 +121,7 @@ export default function EventsDetailPage() {
     );
   }
 
-  const isCreator = currentUserId === event.creator_id;
+  const isCreator = currentUser?.id === event.creator_id;
 
   return (
     <Layout>
@@ -144,8 +140,8 @@ export default function EventsDetailPage() {
             {/* Event Image */}
             <div className="aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 mb-6 flex items-center justify-center">
               {event.images?.[0]?.image_path ? (
-                <img 
-                  src={event.images[0].image_path} 
+                <img
+                  src={event.images[0].image_path}
                   alt={event.title}
                   className="w-full h-full object-cover"
                 />
@@ -246,12 +242,12 @@ export default function EventsDetailPage() {
                 {isCreator ? (
                   <div className="space-y-3">
                     <Button
-  onClick={() => navigate(`/events/edit/${event.id}`)}
-  className="w-full gap-2"
->
-  <Pencil className="h-4 w-4" />
-  Edit Event
-</Button>
+                      onClick={() => navigate(`/events/edit/${event.id}`)}
+                      className="w-full gap-2"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Edit Event
+                    </Button>
 
                     <AlertDialog>
                       <AlertDialogTrigger asChild>

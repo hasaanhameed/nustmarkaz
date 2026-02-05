@@ -53,36 +53,30 @@ export const getCurrentUser = async (): Promise<User | null> => {
 
 // Add at the end of the file:
 
-export interface UserProfile {
+export interface UserProfileResponse {
   user: User;
-  products: any[];
-  trips: any[];
-  rides: any[];
-  donations: any[];
-  events: any[];
-  lost_found_items: any[];
-}
-export const getUserProfile = async (): Promise<UserProfile> => {
-  const user = await getCurrentUser();
-  if (!user) throw new Error("Not authenticated");
-
-  // Fetch all user's listings in parallel with error handling
-  const [products, trips, rides, donations, events, lostFoundItems] = await Promise.all([
-    api.get(`/products/`).then(res => res.data.filter((p: any) => p.creator_id === user.id)).catch(() => []),
-    api.get(`/trips/`).then(res => res.data.filter((t: any) => t.creator_id === user.id)).catch(() => []),
-    api.get(`/rides/`).then(res => res.data.filter((r: any) => r.driver_id === user.id)).catch(() => []),
-    api.get(`/donations/`).then(res => res.data.filter((d: any) => d.creator_id === user.id)).catch(() => []),
-    api.get(`/events/`).then(res => res.data.filter((e: any) => e.creator_id === user.id)).catch(() => []),
-    api.get(`/lost-found/`).then(res => res.data.filter((lf: any) => lf.creator_id === user.id)).catch(() => []),
-  ]);
-
-  return {
-    user,
-    products,
-    trips,
-    rides,
-    donations,
-    events,
-    lost_found_items: lostFoundItems,
+  stats: {
+    product_count: number;
+    trip_count: number;
+    ride_count: number;
+    donation_count: number;
+    event_count: number;
+    lost_found_count: number;
   };
+  recent_products: any[];
+  recent_trips: any[];
+  recent_rides: any[];
+  recent_donations: any[];
+  recent_events: any[];
+  recent_lost_found: any[];
+}
+
+export const getUserProfile = async (): Promise<UserProfileResponse> => {
+  try {
+    const response = await api.get<UserProfileResponse>("/users/me/profile/");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user profile", error);
+    throw error;
+  }
 };

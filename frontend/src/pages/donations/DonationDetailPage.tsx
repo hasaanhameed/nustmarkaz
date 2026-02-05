@@ -22,11 +22,13 @@ import {
 import { format } from "date-fns";
 import { toast } from "sonner";
 
+import { useUser } from "@/contexts/UserContext";
+
 export default function DonationDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [donation, setDonation] = useState<Donation | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { user: currentUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -40,12 +42,8 @@ export default function DonationDetailPage() {
     try {
       setLoading(true);
       setError(null);
-      const [donationData, userData] = await Promise.all([
-        getDonationById(id),
-        getCurrentUser(),
-      ]);
+      const donationData = await getDonationById(id);
       setDonation(donationData);
-      setCurrentUserId(userData?.id || null);
     } catch (err) {
       console.error("Error fetching donation:", err);
       setError("Failed to load donation details");
@@ -109,7 +107,7 @@ export default function DonationDetailPage() {
     (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
   );
 
-  const isCreator = currentUserId === donation.creator_id;
+  const isCreator = currentUser?.id === donation.creator_id;
 
   return (
     <Layout>

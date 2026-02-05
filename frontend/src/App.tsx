@@ -52,89 +52,100 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 
 
-const queryClient = new QueryClient();
+import { UserProvider } from "./contexts/UserContext";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/join" element={<JoinPage />} />
-          <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-          <Route path="/signup" element={<Navigate to="/auth/google" replace />} />
+    <UserProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/join" element={<JoinPage />} />
+            <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+            <Route path="/signup" element={<Navigate to="/auth/google" replace />} />
 
-          {/* Auth Routes */}
-          <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/auth/google" element={<GoogleLoginPage />} />
-          <Route path="/auth/callback" element={<AuthCallbackPage />} />
-          <Route path="/auth/complete-profile" element={<CompleteProfilePage />} />
-          <Route path="/auth/success" element={<SuccessPage />} />
+            {/* Auth Routes */}
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route path="/auth/google" element={<GoogleLoginPage />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
+            <Route path="/auth/complete-profile" element={<CompleteProfilePage />} />
+            <Route path="/auth/success" element={<SuccessPage />} />
 
-          {/* Dashboard */}
-          <Route path="/dashboard" element={<DashboardPage />} />
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* Marketplace - specific routes before dynamic ones */}
-          <Route path="/marketplace/create" element={<CreateProductPage />} />
-          <Route path="/marketplace/edit/:id" element={<EditProductPage />} />
-          <Route path="/marketplace/:id" element={<ProductDetailPage />} />
-          <Route path="/marketplace" element={<MarketplacePage />} />
+            {/* Marketplace - specific routes before dynamic ones */}
+            <Route path="/marketplace/create" element={<CreateProductPage />} />
+            <Route path="/marketplace/edit/:id" element={<EditProductPage />} />
+            <Route path="/marketplace/:id" element={<ProductDetailPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
 
-          {/* Trips - specific routes before dynamic ones */}
-          <Route path="/trips/create" element={<CreateTripPage />} />
-          <Route path="/trips/edit/:id" element={<EditTripPage />} />
-          <Route path="/trips/:id" element={<TripDetailPage />} />
-          <Route path="/trips" element={<TripsPage />} />
+            {/* Trips - specific routes before dynamic ones */}
+            <Route path="/trips/create" element={<CreateTripPage />} />
+            <Route path="/trips/edit/:id" element={<EditTripPage />} />
+            <Route path="/trips/:id" element={<TripDetailPage />} />
+            <Route path="/trips" element={<TripsPage />} />
 
-          {/* Donations - specific routes before dynamic ones */}
-          <Route path="/donations/create" element={<CreateDonationPage />} />
-          <Route path="/donations/:id" element={<DonationDetailPage />} />
-          <Route path="/donations" element={<DonationsPage />} />
-          <Route path="/donations/edit/:id" element={<EditDonationPage />} />
+            {/* Donations - specific routes before dynamic ones */}
+            <Route path="/donations/create" element={<CreateDonationPage />} />
+            <Route path="/donations/:id" element={<DonationDetailPage />} />
+            <Route path="/donations" element={<DonationsPage />} />
+            <Route path="/donations/edit/:id" element={<EditDonationPage />} />
 
+            {/* Events/Giveaways - specific routes before dynamic ones */}
+            <Route path="/events/create" element={<CreateEventsPage />} />
+            <Route path="/events/edit/:id" element={<EditEventPage />} />
+            <Route path="/events/:id" element={<EventsDetailPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            {/* Alias routes for giveaways */}
+            <Route path="/giveaways/create" element={<CreateEventsPage />} />
+            <Route path="/giveaways/:id" element={<EventsDetailPage />} />
+            <Route path="/giveaways" element={<EventsPage />} />
 
-          {/* Events/Giveaways - specific routes before dynamic ones */}
-          <Route path="/events/create" element={<CreateEventsPage />} />
-          <Route path="/events/edit/:id" element={<EditEventPage />} />
-          <Route path="/events/:id" element={<EventsDetailPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          {/* Alias routes for giveaways */}
-          <Route path="/giveaways/create" element={<CreateEventsPage />} />
-          <Route path="/giveaways/:id" element={<EventsDetailPage />} />
-          <Route path="/giveaways" element={<EventsPage />} />
+            {/* Cafes - specific routes before dynamic ones */}
+            <Route path="/cafes/:id" element={<CafeDetailsPage />} />
+            <Route path="/cafes" element={<CafesPage />} />
 
-          {/* Cafes - specific routes before dynamic ones */}
-          <Route path="/cafes/:id" element={<CafeDetailsPage />} />
-          <Route path="/cafes" element={<CafesPage />} />
+            {/* Societies - specific routes before dynamic ones */}
+            <Route path="/societies/:id" element={<SocietyDetailsPage />} />
+            <Route path="/societies" element={<SocietiesPage />} />
 
-          {/* Societies - specific routes before dynamic ones */}
-          <Route path="/societies/:id" element={<SocietyDetailsPage />} />
-          <Route path="/societies" element={<SocietiesPage />} />
+            {/* Carpooling - specific routes before dynamic ones */}
+            <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />
+            <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
+            <Route path="/carpooling" element={<CarpoolPage />} />
 
-          {/* Carpooling - specific routes before dynamic ones */}
-          <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />
-          <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
-          <Route path="/carpooling" element={<CarpoolPage />} />
+            {/* Profile */}
+            <Route path="/profile" element={<ProfilePage />} />
 
-          {/* Profile */}
-          <Route path="/profile" element={<ProfilePage />} />
+            {/* Lost & Found */}
+            <Route path="/lost-found" element={<LostFoundPage />} />
 
-          {/* Lost & Found */}
-          <Route path="/lost-found" element={<LostFoundPage />} />
+            {/* Legal */}
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
 
-
-          {/* Legal */}
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-
-          {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </UserProvider>
   </QueryClientProvider>
 );
 

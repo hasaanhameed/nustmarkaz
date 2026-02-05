@@ -58,6 +58,17 @@ def get_all_trips(
     trips = db.query(Trip).offset(skip).limit(limit).all()
     return trips
 
+# Get current user's trips
+@router.get("/me", response_model=List[TripResponse])
+def get_my_trips(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    trips = db.query(Trip).filter(Trip.creator_id == current_user.id).offset(skip).limit(limit).all()
+    return trips
+
 # Get a single trip by ID
 @router.get("/{trip_id}", response_model=TripResponse)
 def get_trip(trip_id: int, db: Session = Depends(get_db)):

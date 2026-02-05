@@ -5,7 +5,7 @@ import { FeedPost } from "@/components/ui/FeedPost";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, TrendingUp } from "lucide-react";
 import { getLatestPosts, type DashboardCard } from "@/api/dashboard";
-import { OfferRideDialog } from "@/pages/carpool/OfferRideDialog";
+import { RequestRideDialog } from "@/pages/carpool/RequestRideDialog";
 
 export default function DashboardPage() {
   const [allPosts, setAllPosts] = useState<DashboardCard[]>([]);
@@ -97,8 +97,8 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="hidden lg:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 md:gap-3 mb-6">
           <Link to="/marketplace/create">
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-accent hover:bg-accent/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-accent transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Sell Product
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">List an item</p>
@@ -106,8 +106,8 @@ export default function DashboardPage() {
           </Link>
 
           <Link to="/trips/create">
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-success hover:bg-success/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-success transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Organize Trip
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Plan adventure</p>
@@ -115,8 +115,8 @@ export default function DashboardPage() {
           </Link>
 
           <OfferRideDialog onRideCreated={fetchData}>
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-sky hover:bg-sky/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-sky transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Offer Ride
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Share a ride</p>
@@ -124,11 +124,11 @@ export default function DashboardPage() {
           </OfferRideDialog>
 
           <Link to="/donations/create">
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-warning hover:bg-warning/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-warning transition-colors">
-                Start Donation Drive
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
+                Support Cause
               </p>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Support a cause</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Start donation</p>
             </div>
           </Link>
 
@@ -142,8 +142,8 @@ export default function DashboardPage() {
           </Link>
 
           <Link to="/lost-found?action=lost">
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-destructive hover:bg-destructive/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-destructive transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Report Lost
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Lost an item</p>
@@ -151,8 +151,8 @@ export default function DashboardPage() {
           </Link>
 
           <Link to="/lost-found?action=found">
-            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-success hover:bg-success/5 transition-all duration-200 cursor-pointer h-full">
-              <p className="font-semibold text-xs md:text-sm group-hover:text-success transition-colors">
+            <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
+              <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Report Found
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Found an item</p>

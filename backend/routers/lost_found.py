@@ -44,6 +44,17 @@ def get_all_items(db: Session = Depends(get_db)):
     items = db.query(LostFoundItem).all()
     return items
 
+# Get current user's lost and found items
+@router.get("/me", response_model=List[LostFoundItemResponse])
+def get_my_items(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    items = db.query(LostFoundItem).filter(LostFoundItem.creator_id == current_user.id).offset(skip).limit(limit).all()
+    return items
+
 
 @router.get("/{item_id}", response_model=LostFoundItemResponse)
 def get_item(item_id: int, db: Session = Depends(get_db)):
