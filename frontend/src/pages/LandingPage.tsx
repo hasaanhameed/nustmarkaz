@@ -126,7 +126,7 @@ export default function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-8">
-                <Link to="/signup" className="w-full sm:w-auto">
+                <Link to="/join" className="w-full sm:w-auto">
                   <Button size="lg" className="w-full h-16 md:h-24 px-10 md:px-16 text-xl md:text-3xl font-black rounded-[1.5rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(var(--primary),0.3)] transition-all hover:scale-105 active:scale-95 group">
                     Join Today
                     <ArrowRight className="ml-3 md:ml-4 h-6 w-6 md:h-9 md:w-9 group-hover:translate-x-2 transition-transform" />
@@ -232,7 +232,7 @@ export default function LandingPage() {
               <div className="relative z-10 max-w-5xl mx-auto text-primary-foreground">
                 <h2 className="text-4xl md:text-7xl lg:text-[10rem] font-black mb-12 md:mb-16 tracking-[-0.06em] leading-none text-balance animate-entrance">Ready To <br /><span className="italic opacity-80">Connect?</span></h2>
                 <div className="flex flex-col sm:flex-row justify-center gap-6 md:gap-10">
-                  <Link to="/signup" className="w-full sm:w-auto">
+                  <Link to="/join" className="w-full sm:w-auto">
                     <Button size="lg" className="w-full h-16 md:h-24 px-12 md:px-20 bg-white text-primary hover:bg-black hover:text-white transition-all duration-700 text-xl md:text-3xl font-black rounded-2xl md:rounded-3xl shadow-2xl hover:scale-110 active:scale-95 border-none">
                       Join Today
                     </Button>

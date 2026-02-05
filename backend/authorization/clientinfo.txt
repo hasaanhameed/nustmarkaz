@@ -1,0 +1,2 @@
+ID = 282465277838-14gjviu6qdm0kcv2ecgud768pece3c5p.apps.googleusercontent.com
+SECRET = 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

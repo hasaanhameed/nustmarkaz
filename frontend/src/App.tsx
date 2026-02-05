@@ -3,6 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import GoogleLoginPage from './pages/auth/GoogleLoginPage';
+import AuthCallbackPage from './pages/auth/AuthCallbackPage';
+import JoinPage from './pages/auth/JoinPage';
+import SuccessPage from './pages/auth/SuccessPage';
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -36,6 +40,7 @@ import SocietiesPage from "./pages/societies/SocietiesPage";
 import SocietyDetailsPage from "./pages/societies/SocietyDetailsPage";
 
 import ProfilePage from "./pages/profile/ProfilePage";
+import CompleteProfilePage from "./pages/auth/CompleteProfilePage";
 
 import LostFoundPage from "./pages/lost-found/LostFoundPage";
 import CarpoolPage from "./pages/carpool/CarpoolPage";
@@ -58,8 +63,16 @@ const App = () => (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/join" element={<JoinPage />} />
+          <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+          <Route path="/signup" element={<Navigate to="/auth/google" replace />} />
+
+          {/* Auth Routes */}
+          <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/google" element={<GoogleLoginPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
+          <Route path="/auth/complete-profile" element={<CompleteProfilePage />} />
+          <Route path="/auth/success" element={<SuccessPage />} />
 
           {/* Dashboard */}
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -81,6 +94,7 @@ const App = () => (
           <Route path="/donations/:id" element={<DonationDetailPage />} />
           <Route path="/donations" element={<DonationsPage />} />
           <Route path="/donations/edit/:id" element={<EditDonationPage />} />
+
 
           {/* Events/Giveaways - specific routes before dynamic ones */}
           <Route path="/events/create" element={<CreateEventsPage />} />

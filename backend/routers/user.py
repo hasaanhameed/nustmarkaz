@@ -5,6 +5,8 @@ from schemas.user import UserCreate, UserResponse, UserUpdate
 from database import get_db
 from hashing import Hash
 from authorization.oauth2 import get_current_user
+from authorization.auth_token import create_access_token
+from datetime import timedelta
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -22,7 +24,18 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    
+    # Generate JWT token
+    access_token = create_access_token(data={"sub": db_user.email})
+    
+    return {
+        "id": db_user.id,
+        "username": db_user.username,
+        "email": db_user.email,
+        "department": db_user.department,
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 
 @router.get("/me", response_model=UserResponse)

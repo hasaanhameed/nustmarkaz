@@ -212,8 +212,8 @@ export function Navbar() {
                     <span className="text-base font-bold text-white max-w-[150px] truncate">{currentUser.username}</span>
                   </Button>
                 </Link>
-              ) : (
-                <Link to="/signup">
+                            ) : (
+                <Link to="/auth/google">
                   <Button size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary text-primary-foreground shadow-lg shadow-primary/20 btn-hover-effect">
                     Join Community
                   </Button>
