@@ -114,14 +114,14 @@ export default function DashboardPage() {
             </div>
           </Link>
 
-          <OfferRideDialog onRideCreated={fetchData}>
+          <RequestRideDialog onRideCreated={fetchData}>
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">
               <p className="font-semibold text-xs md:text-sm group-hover:text-primary transition-colors">
                 Offer Ride
               </p>
               <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Share a ride</p>
             </div>
-          </OfferRideDialog>
+          </RequestRideDialog>
 
           <Link to="/donations/create">
             <div className="group p-3 md:p-4 rounded-lg border-2 border-border bg-card hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer h-full">

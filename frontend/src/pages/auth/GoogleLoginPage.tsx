@@ -14,9 +14,16 @@ export default function GoogleLoginPage() {
         // Check if user is already logged in
         const checkUser = async () => {
             const { data } = await supabase.auth.getSession();
-            if (data.session) {
+            const backendToken = localStorage.getItem('access_token');
+            
+            if (data.session && backendToken) {
+                // Both Supabase AND backend auth exist - go to dashboard
                 navigate('/dashboard');
+            } else if (data.session && !backendToken) {
+                // Has Supabase session but no backend token - complete profile
+                navigate('/auth/complete-profile');
             }
+            // Otherwise stay on this page to show login button
         };
         checkUser();
     }, [navigate]);

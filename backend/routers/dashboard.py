@@ -56,10 +56,10 @@ def ride_to_card(r: Ride) -> DashboardCard:
         id=r.id,
         type="ride",
         title=f"{r.from_location} to {r.to_location}",
-        subtitle=r.vehicle_model,
-        price=r.price,
+        subtitle=f"{r.ride_date} at {r.ride_time}",
+        price=None,
         image=None,
-        creator_username=r.creator.username,
+        creator_username=r.requester.username,
         created_at=r.created_at
     )
 
