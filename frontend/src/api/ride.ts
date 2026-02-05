@@ -1,6 +1,6 @@
 import api from "./api";
 
-export interface Driver {
+export interface Requester {
   id: number;
   username: string;
   email: string;
@@ -12,15 +12,11 @@ export interface Ride {
   to_location: string;
   ride_date: string;
   ride_time: string;
-  vehicle_type: string;
-  vehicle_model: string;
-  vehicle_color: string;
-  price: number;
   contact: string;
-  driver_id: number;
+  requester_id: number;
   created_at: string;
   updated_at: string;
-  driver?: Driver;
+  requester?: Requester;
 }
 
 export interface RideCreateRequest {
@@ -28,14 +24,10 @@ export interface RideCreateRequest {
   to_location: string;
   ride_date: string;
   ride_time: string;
-  vehicle_type: string;
-  vehicle_model: string;
-  vehicle_color: string;
-  price: number;
   contact: string;
 }
 
-// Get all rides with pagination
+// Get all ride requests with pagination
 export const getAllRides = async (
   skip: number = 0,
   limit: number = 100,
@@ -46,12 +38,12 @@ export const getAllRides = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch rides:", error);
+    console.error("Failed to fetch ride requests:", error);
     throw error;
   }
 };
 
-// Get current user's rides
+// Get current user's ride requests
 export const getMyRides = async (
   skip: number = 0,
   limit: number = 10,
@@ -62,23 +54,23 @@ export const getMyRides = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch my rides:", error);
+    console.error("Failed to fetch my ride requests:", error);
     throw error;
   }
 };
 
-// Get a single ride by ID
+// Get a single ride request by ID
 export const getRideById = async (rideId: number): Promise<Ride> => {
   try {
     const response = await api.get<Ride>(`/rides/${rideId}`);
     return response.data;
   } catch (error) {
-    console.error(`Failed to fetch ride ${rideId}:`, error);
+    console.error(`Failed to fetch ride request ${rideId}:`, error);
     throw error;
   }
 };
 
-// Create a new ride
+// Create a new ride request
 export const createRide = async (
   rideData: RideCreateRequest,
 ): Promise<Ride> => {
@@ -86,12 +78,12 @@ export const createRide = async (
     const response = await api.post<Ride>("/rides/", rideData);
     return response.data;
   } catch (error) {
-    console.error("Failed to create ride:", error);
+    console.error("Failed to create ride request:", error);
     throw error;
   }
 };
 
-// Update a ride
+// Update a ride request
 export const updateRide = async (
   rideId: number,
   rideData: Partial<RideCreateRequest>,
@@ -100,17 +92,17 @@ export const updateRide = async (
     const response = await api.put<Ride>(`/rides/${rideId}`, rideData);
     return response.data;
   } catch (error) {
-    console.error(`Failed to update ride ${rideId}:`, error);
+    console.error(`Failed to update ride request ${rideId}:`, error);
     throw error;
   }
 };
 
-// Delete a ride
+// Delete a ride request
 export const deleteRide = async (rideId: number): Promise<void> => {
   try {
     await api.delete(`/rides/${rideId}`);
   } catch (error) {
-    console.error(`Failed to delete ride ${rideId}:`, error);
+    console.error(`Failed to delete ride request ${rideId}:`, error);
     throw error;
   }
 };

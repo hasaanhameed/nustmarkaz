@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Car, Phone, Pencil, Trash2 } from "lucide-react";
+import { Calendar, Clock, Phone, Pencil, Trash2, User } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,17 +30,17 @@ export function RideCard({ ride, currentUserId, onRideDeleted }: RideCardProps) 
     try {
       setIsDeleting(true);
       await deleteRide(ride.id);
-      toast.success("Ride deleted successfully");
+      toast.success("Ride request deleted successfully");
       onRideDeleted?.();
     } catch (error) {
-      console.error("Error deleting ride:", error);
-      toast.error("Failed to delete ride");
+      console.error("Error deleting ride request:", error);
+      toast.error("Failed to delete ride request");
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const isDriver = currentUserId === ride.driver_id;
+  const isRequester = currentUserId === ride.requester_id;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col cursor-pointer group">
@@ -49,21 +49,15 @@ export function RideCard({ ride, currentUserId, onRideDeleted }: RideCardProps) 
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                {ride.driver?.username?.charAt(0).toUpperCase() || "D"}
+                {ride.requester?.username?.charAt(0).toUpperCase() || "R"}
               </div>
               <div>
                 <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                  {ride.driver?.username || `Driver #${ride.driver_id}`}
+                  {ride.requester?.username || `Requester #${ride.requester_id}`}
                 </h3>
                 <div className="flex items-center text-xs text-muted-foreground gap-1">
-                  {ride.vehicle_type === "Car" ? (
-                    <Car className="h-3 w-3" />
-                  ) : (
-                    <div className="font-bold text-[10px]">BIKE</div>
-                  )}
-                  <span>
-                    {ride.vehicle_model} ({ride.vehicle_color})
-                  </span>
+                  <User className="h-3 w-3" />
+                  <span>Looking for a ride</span>
                 </div>
               </div>
             </div>
@@ -109,14 +103,13 @@ export function RideCard({ ride, currentUserId, onRideDeleted }: RideCardProps) 
 
       <CardFooter className="p-4 border-t bg-muted/5 flex flex-col gap-3">
         <div className="flex items-center justify-between w-full">
-          <div className="font-bold text-lg">Rs. {ride.price}</div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Phone className="h-4 w-4" />
             {ride.contact}
           </div>
         </div>
 
-        {isDriver && (
+        {isRequester && (
           <div className="flex gap-2 w-full">
             <Button
               variant="outline"
@@ -138,9 +131,9 @@ export function RideCard({ ride, currentUserId, onRideDeleted }: RideCardProps) 
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Ride</AlertDialogTitle>
+                  <AlertDialogTitle>Delete Ride Request</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete this ride? This action cannot be undone.
+                    Are you sure you want to delete this ride request? This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

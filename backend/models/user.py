@@ -27,7 +27,7 @@ class User(Base):
     lost_found_items = relationship("LostFoundItem", back_populates="creator")
     
     # Ride relationships
-    created_rides = relationship("Ride", back_populates="creator")
+    created_rides = relationship("Ride", back_populates="requester")
 
     # Review relationships
     reviews = relationship("Review", back_populates="creator")
