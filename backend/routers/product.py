@@ -56,6 +56,17 @@ def get_all_products(
     products = db.query(Product).offset(skip).limit(limit).all()
     return products
 
+# Get current user's products
+@router.get("/me", response_model=List[ProductResponse])
+def get_my_products(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    products = db.query(Product).filter(Product.creator_id == current_user.id).offset(skip).limit(limit).all()
+    return products
+
 # Get a single product by ID
 @router.get("/{product_id}", response_model=ProductResponse)
 def get_product(product_id: int, db: Session = Depends(get_db)):

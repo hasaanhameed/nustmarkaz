@@ -8,29 +8,18 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getAllDonations, Donation } from "@/api/donation";
 import { Search, Plus, Heart } from "lucide-react";
-import { getCurrentUser, User } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 
 export default function DonationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user: currentUser } = useUser();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCurrentUser();
     fetchDonations();
   }, []);
-
-  const fetchCurrentUser = async () => {
-    try {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-      setCurrentUser(null);
-    }
-  };
 
   const fetchDonations = async () => {
     try {

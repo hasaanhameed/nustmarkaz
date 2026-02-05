@@ -5,31 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Search, Plus, Calendar, MapPin, Users, Share2 } from "lucide-react";
-import { getCurrentUser, User } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 import { getAllEvents, Event } from "@/api/event";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user: currentUser } = useUser();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCurrentUser();
     fetchEvents();
   }, []);
-
-  const fetchCurrentUser = async () => {
-    try {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-      setCurrentUser(null);
-    }
-  };
 
   const fetchEvents = async () => {
     try {

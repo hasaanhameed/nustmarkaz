@@ -28,14 +28,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getProductById, deleteProduct, Product } from "@/api/product";
-import { getCurrentUser } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { user: currentUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -52,12 +52,8 @@ export default function ProductDetailPage() {
       try {
         setLoading(true);
         setError(null);
-        const [productData, userData] = await Promise.all([
-          getProductById(parseInt(id)),
-          getCurrentUser(),
-        ]);
+        const productData = await getProductById(parseInt(id));
         setProduct(productData);
-        setCurrentUserId(userData?.id || null);
       } catch (err) {
         console.error("Error fetching product:", err);
         setError("Failed to load product details. Please try again later.");
@@ -124,7 +120,7 @@ export default function ProductDetailPage() {
       : ["https://images.unsplash.com/photo-1516826957135-700dedea698c?w=500"];
 
   const currentImage = images[currentImageIndex];
-  const isCreator = currentUserId === product.creator_id;
+  const isCreator = currentUser?.id === product.creator_id;
 
   const goToPrevious = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -191,11 +187,10 @@ export default function ProductDetailPage() {
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex
-                        ? "border-accent"
-                        : "border-border hover:border-muted-foreground"
-                    }`}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${index === currentImageIndex
+                      ? "border-accent"
+                      : "border-border hover:border-muted-foreground"
+                      }`}
                   >
                     <img
                       src={img}

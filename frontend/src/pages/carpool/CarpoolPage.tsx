@@ -24,12 +24,12 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllRides, Ride } from "@/api/ride";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { getCurrentUser } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 
 export default function CarpoolPage() {
   const [searchParams] = useSearchParams();
   const [rides, setRides] = useState<Ride[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { user: currentUser } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [fromFilter, setFromFilter] = useState("All");
   const [toFilter, setToFilter] = useState("All");
@@ -48,12 +48,8 @@ export default function CarpoolPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [ridesData, userData] = await Promise.all([
-        getAllRides(0, 50),
-        getCurrentUser(),
-      ]);
+      const ridesData = await getAllRides(0, 50);
       setRides(ridesData);
-      setCurrentUserId(userData?.id || null);
     } catch (error) {
       toast.error("Failed to load rides");
       console.error(error);
@@ -180,7 +176,7 @@ export default function CarpoolPage() {
               <RideCard
                 key={ride.id}
                 ride={ride}
-                currentUserId={currentUserId}
+                currentUserId={currentUser?.id}
                 onRideDeleted={fetchRides}
               />
             ))}

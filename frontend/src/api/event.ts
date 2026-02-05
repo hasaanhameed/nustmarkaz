@@ -60,6 +60,22 @@ export const getAllEvents = async (): Promise<Event[]> => {
   return response.data;
 };
 
+// Get current user's events
+export const getMyEvents = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<Event[]> => {
+  try {
+    const response = await api.get<Event[]>("/events/me", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch my events:", error);
+    throw error;
+  }
+};
+
 export const getEventById = async (id: number): Promise<Event> => {
   const response = await api.get(`/events/${id}`);
   return response.data;

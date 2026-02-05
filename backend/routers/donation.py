@@ -42,6 +42,17 @@ def get_all_donations(
     donations = db.query(Donation).offset(skip).limit(limit).all()
     return donations
 
+# Get current user's donations
+@router.get("/me", response_model=List[DonationResponse])
+def get_my_donations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    donations = db.query(Donation).filter(Donation.creator_id == current_user.id).offset(skip).limit(limit).all()
+    return donations
+
 # Get a single donation by ID
 @router.get("/{donation_id}", response_model=DonationResponse)
 def get_donation(donation_id: int, db: Session = Depends(get_db)):

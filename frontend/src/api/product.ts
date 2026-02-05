@@ -54,6 +54,22 @@ export const getAllProducts = async (
   }
 };
 
+// Get current user's products
+export const getMyProducts = async (
+  skip: number = 0,
+  limit: number = 10,
+): Promise<Product[]> => {
+  try {
+    const response = await api.get<Product[]>("/products/me", {
+      params: { skip, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch my products:", error);
+    throw error;
+  }
+};
+
 // Get a single product by ID
 export const getProductById = async (productId: number): Promise<Product> => {
   try {

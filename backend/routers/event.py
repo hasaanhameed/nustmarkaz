@@ -55,6 +55,17 @@ def get_all_events(
     events = db.query(Event).offset(skip).limit(limit).all()
     return events
 
+# Get current user's events
+@router.get("/me", response_model=List[EventResponse])
+def get_my_events(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    events = db.query(Event).filter(Event.creator_id == current_user.id).offset(skip).limit(limit).all()
+    return events
+
 # Get a single event by ID
 @router.get("/{event_id}", response_model=EventResponse)
 def get_event(event_id: int, db: Session = Depends(get_db)):

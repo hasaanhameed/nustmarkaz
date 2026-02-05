@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getAllProducts, Product } from "@/api/product";
-import { getCurrentUser, User } from "@/api/user";
+import { useUser } from "@/contexts/UserContext";
 
 const categories = [
   "All",
@@ -34,11 +34,10 @@ export default function MarketplacePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user: currentUser } = useUser();
 
   useEffect(() => {
     fetchProducts();
-    fetchCurrentUser();
   }, []);
 
   const fetchProducts = async () => {
@@ -52,16 +51,6 @@ export default function MarketplacePage() {
       setError("Failed to load products. Please try again later.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCurrentUser = async () => {
-    try {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-      setCurrentUser(null);
     }
   };
 

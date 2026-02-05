@@ -47,6 +47,17 @@ def get_all_rides(
     rides = db.query(Ride).offset(skip).limit(limit).all()
     return rides
 
+# Get current user's rides
+@router.get("/me", response_model=List[RideResponse])
+def get_my_rides(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    rides = db.query(Ride).filter(Ride.driver_id == current_user.id).offset(skip).limit(limit).all()
+    return rides
+
 
 # Get a single ride by ID
 @router.get("/{ride_id}", response_model=RideResponse)
