@@ -195,15 +195,15 @@ export function Navbar() {
               {currentUser ? (
                 <Link to="/profile">
                   <Button
-                    className="h-10 w-10 md:h-12 md:w-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all duration-300 rounded-full p-0 md:pl-3 md:pr-6 md:gap-3 group border-none"
+                    className="h-10 md:h-12 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all duration-300 rounded-full p-0 md:pl-3 md:pr-6 md:gap-3 group border-none"
                   >
-                    <div className="flex items-center justify-center h-10 w-10 md:h-8 md:w-8 rounded-full bg-white/20 text-white group-hover:scale-110 transition-transform">
+                    <div className="flex items-center justify-center h-10 w-10 md:h-8 md:w-8 rounded-full bg-white/20 text-white group-hover:scale-110 transition-transform shrink-0">
                       <User className="h-5 w-5" />
                     </div>
-                    <span className="hidden md:inline text-base font-bold text-white max-w-[150px] truncate">{currentUser.username}</span>
+                    <span className="hidden md:inline text-base font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">{currentUser.username}</span>
                   </Button>
                 </Link>
-                            ) : (
+              ) : (
                 <Link to="/auth/google">
                   <Button size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary text-primary-foreground shadow-lg shadow-primary/20 btn-hover-effect">
                     Join Community

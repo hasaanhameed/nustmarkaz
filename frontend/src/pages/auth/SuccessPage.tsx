@@ -16,13 +16,6 @@ export default function SuccessPage() {
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
             <div className="relative z-10 text-center">
-              {/* Success Icon */}
-              <div className="mb-8 flex justify-center">
-                <div className="w-24 h-24 rounded-full bg-green-500/10 flex items-center justify-center animate-scale-in">
-                  <CheckCircle2 className="w-16 h-16 text-green-500" />
-                </div>
-              </div>
-
               {/* Success Message */}
               <h1 className="text-5xl font-black text-foreground mb-4 tracking-[-0.04em]">
                 Account Created!

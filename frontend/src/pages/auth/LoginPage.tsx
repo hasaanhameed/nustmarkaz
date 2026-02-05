@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { ModernBackground } from "@/components/ui/modern-background";
 import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { login } from "@/api/auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const validateEmail = (email: string) => {
     // Strict NUST-style email validation:
@@ -50,6 +52,10 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
       localStorage.setItem("access_token", data.access_token);
+      
+      // Invalidate and refetch user query to update the UI
+      await queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
+      
       navigate("/dashboard");
     } catch (err) {
       setError("Authentication failed. Please verify your credentials and try again.");
