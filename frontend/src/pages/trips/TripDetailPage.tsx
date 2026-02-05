@@ -61,11 +61,11 @@ export default function TripDetailPage() {
     try {
       setIsDeleting(true);
       await deleteTrip(trip.id);
-      toast.success("Trip deleted successfully");
+      toast.success("Trip deleted successfully.");
       navigate("/trips");
     } catch (error) {
       console.error("Error deleting trip:", error);
-      toast.error("Failed to delete trip");
+      toast.error("Failed to delete trip.");
     } finally {
       setIsDeleting(false);
     }

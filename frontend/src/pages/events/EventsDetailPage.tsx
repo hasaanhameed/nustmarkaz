@@ -52,11 +52,11 @@ export default function EventsDetailPage() {
     try {
       setIsDeleting(true);
       await deleteEvent(event.id);
-      toast.success("Event deleted successfully");
+      toast.success("Event deleted successfully.");
       navigate("/events");
     } catch (error) {
       console.error("Error deleting event:", error);
-      toast.error("Failed to delete event");
+      toast.error("Failed to delete event.");
     } finally {
       setIsDeleting(false);
     }

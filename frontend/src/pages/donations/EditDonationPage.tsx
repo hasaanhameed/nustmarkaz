@@ -40,7 +40,7 @@ export default function EditDonationPage() {
           end_date: data.end_date.split('T')[0],
         });
       } catch (error) {
-        toast.error("Failed to load donation");
+        toast.error("Failed to load donation.");
         navigate("/donations");
       } finally {
         setLoading(false);
@@ -56,13 +56,13 @@ export default function EditDonationPage() {
     if (!id || !donation) return;
 
     if (!formData.title.trim() || !formData.description.trim() || !formData.goal_amount || !formData.end_date) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields.");
       return;
     }
 
     const goalAmount = parseFloat(formData.goal_amount);
     if (isNaN(goalAmount) || goalAmount <= 0) {
-      toast.error("Please enter a valid goal amount");
+      toast.error("Please enter a valid goal amount.");
       return;
     }
 
@@ -74,10 +74,10 @@ export default function EditDonationPage() {
         goal_amount: goalAmount,
         end_date: formData.end_date,
       });
-      toast.success("Donation updated successfully!");
+      toast.success("Donation updated successfully.");
       navigate(`/donations`);
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to update donation");
+      toast.error(error.response?.data?.detail || "Failed to update donation.");
     } finally {
       setSubmitting(false);
     }

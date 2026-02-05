@@ -43,7 +43,7 @@ export default function EditCarpoolPage() {
         });
       } catch (error) {
         console.error("Failed to fetch ride request:", error);
-        toast.error("Failed to load ride request");
+        toast.error("Failed to load ride request.");
         navigate("/carpooling");
       } finally {
         setLoading(false);
@@ -55,13 +55,13 @@ export default function EditCarpoolPage() {
 
   const validateTextInput = (value: string, fieldName: string): boolean => {
     if (!value.trim()) {
-      toast.error(`${fieldName} cannot be empty`);
+      toast.error(`${fieldName} cannot be empty.`);
       return false;
     }
 
     // Check if input contains only numbers
     if (/^\d+$/.test(value.trim())) {
-      toast.error(`${fieldName} cannot contain only numbers`);
+      toast.error(`${fieldName} cannot contain only numbers.`);
       return false;
     }
 
@@ -75,7 +75,7 @@ export default function EditCarpoolPage() {
 
     if (!formData.from_location.trim() || !formData.to_location.trim() ||
       !formData.ride_date || !formData.ride_time || !formData.contact.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -92,11 +92,11 @@ export default function EditCarpoolPage() {
         ride_time: formData.ride_time,
         contact: formData.contact,
       });
-      toast.success("Ride request updated successfully!");
+      toast.success("Ride request updated successfully.");
       navigate(`/carpooling`);
     } catch (error: any) {
       console.error("Failed to update ride request:", error);
-      toast.error(error.response?.data?.detail || "Failed to update ride request");
+      toast.error(error.response?.data?.detail || "Failed to update ride request.");
     } finally {
       setSubmitting(false);
     }

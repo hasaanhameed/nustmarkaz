@@ -85,7 +85,7 @@ export default function SocietyDetailsPage() {
             setNewComment("");
 
             // Show success message (optional)
-            alert("Review submitted successfully!");
+            alert("Review submitted successfully.");
         } catch (err: any) {
             console.error("Failed to submit review:", err);
 

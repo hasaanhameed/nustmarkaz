@@ -19,7 +19,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { CAMPUS_LOCATIONS } from "@/data/mockLostFound";
 import { CalendarIcon, Upload } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -90,7 +89,7 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
         e.preventDefault();
 
         if (!formData.image) {
-            toast.error("Please upload an image");
+            toast.error("Please upload an image.");
             return;
         }
 
@@ -109,7 +108,7 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
                 type,
             });
 
-            toast.success(`${type === "lost" ? "Lost" : "Found"} item posted successfully!`);
+            toast.success(`${type === "lost" ? "Lost" : "Found"} item posted successfully.`);
             handleOpenChange(false);
 
             // Show the informational popup
@@ -181,16 +180,13 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
 
                         <div className="grid gap-2">
                             <Label htmlFor="location">Campus Location *</Label>
-                            <Select onValueChange={(v) => setFormData({ ...formData, location: v })} required>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Where was it?" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {CAMPUS_LOCATIONS.map((loc) => (
-                                        <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Input
+                                id="location"
+                                placeholder="e.g., SEECS, C1 Hostel, Library"
+                                value={formData.location}
+                                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                required
+                            />
                         </div>
 
                         <div className="grid gap-2">
@@ -301,14 +297,13 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
             <AlertDialog open={showSuccessPopup} onOpenChange={setShowSuccessPopup}>
                 <AlertDialogContent className="rounded-2xl border-border/50">
                     <AlertDialogHeader>
-                        <AlertDialogTitle className="text-2xl font-black">Post Active!</AlertDialogTitle>
+                        <AlertDialogTitle className="text-2xl font-black">Post Active</AlertDialogTitle>
                         <AlertDialogDescription className="text-lg font-medium">
-                            Your {type === "lost" ? "lost" : "found"} item report has been successfully posted.
-                            To keep the board relevant, please note that **your post will be automatically removed in 7 days**.
+                            Your {type === "lost" ? "lost" : "found"} item report has been successfully posted. To keep the board relevant, please note that your post will be automatically removed in 7 days.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogAction className="h-12 px-8 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90">Got it!</AlertDialogAction>
+                        <AlertDialogAction className="h-12 px-8 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90">Got It</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

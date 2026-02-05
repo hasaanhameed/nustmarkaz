@@ -5,6 +5,18 @@ import { Star, MapPin, User, Loader2, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getCafeById, createReview, deleteReview } from "@/api/cafe";
 import type { CafeWithReviews } from "@/api/cafe";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function CafeDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +30,7 @@ export default function CafeDetailsPage() {
 
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
+  const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null);
 
   // Fetch cafe data
   useEffect(() => {
@@ -84,7 +97,7 @@ export default function CafeDetailsPage() {
       setNewComment("");
 
       // Show success message (optional)
-      alert("Review submitted successfully!");
+      toast.success("Review submitted successfully.");
     } catch (err: any) {
       console.error("Failed to submit review:", err);
 
@@ -100,6 +113,26 @@ export default function CafeDetailsPage() {
     }
   };
 
+  // Handle review deletion
+  const handleDeleteReview = async (reviewId: number) => {
+    if (!cafe) return;
+    
+    setDeletingReviewId(reviewId);
+    try {
+      await deleteReview(cafe.id, reviewId);
+      setCafe({
+        ...cafe,
+        reviews: cafe.reviews.filter(r => r.id !== reviewId)
+      });
+      toast.success("Review deleted successfully.");
+    } catch (err: any) {
+      toast.error(`Failed to delete review. ${err.response?.data?.detail || err.message}`);
+    } finally {
+      setDeletingReviewId(null);
+    }
+  };
+
+  // 
   // Calculate average rating
   const averageRating =
     cafe && cafe.reviews.length > 0
@@ -262,7 +295,7 @@ export default function CafeDetailsPage() {
                     <User className="w-6 h-6 text-primary" />
                   </div>
 
-                                   {/* Review Content */}
+                  {/* Review Content */}
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div>
@@ -276,25 +309,31 @@ export default function CafeDetailsPage() {
                           </span>
                         </div>
                       </div>
-                      <button
-                        onClick={async () => {
-                          if (window.confirm("Are you sure you want to delete this review?")) {
-                            try {
-                              await deleteReview(cafe.id, review.id);
-                              setCafe({
-                                ...cafe,
-                                reviews: cafe.reviews.filter(r => r.id !== review.id)
-                              });
-                              alert("Review deleted successfully!");
-                            } catch (err: any) {
-                              alert("Failed to delete review: " + (err.response?.data?.detail || err.message));
-                            }
-                          }
-                        }}
-                        className="text-destructive hover:text-destructive/80 text-sm font-semibold transition-colors"
-                      >
-                        Delete
-                      </button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button className="text-destructive hover:text-destructive/80 text-sm font-semibold transition-colors">
+                            Delete
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Review</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this review? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteReview(review.id)}
+                              disabled={deletingReviewId === review.id}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              {deletingReviewId === review.id ? "Deleting..." : "Delete"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                     {review.comment && (
                       <p className="text-muted-foreground leading-relaxed">

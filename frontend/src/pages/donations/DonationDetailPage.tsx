@@ -58,11 +58,11 @@ export default function DonationDetailPage() {
     try {
       setIsDeleting(true);
       await deleteDonation(donation.id);
-      toast.success("Donation drive deleted successfully");
+      toast.success("Donation drive deleted successfully.");
       navigate("/donations");
     } catch (error) {
       console.error("Error deleting donation:", error);
-      toast.error("Failed to delete donation drive");
+      toast.error("Failed to delete donation drive.");
     } finally {
       setIsDeleting(false);
     }

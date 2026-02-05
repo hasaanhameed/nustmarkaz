@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CAMPUS_LOCATIONS, CITY_LOCATIONS } from "@/data/mockCarpool";
+import { Input } from "@/components/ui/input";
 import { RideCard } from "@/components/ui/RideCard";
 import { RequestRideDialog } from "./RequestRideDialog";
 import { toast } from "sonner";
@@ -31,8 +24,8 @@ export default function CarpoolPage() {
   const [rides, setRides] = useState<Ride[]>([]);
   const { user: currentUser } = useUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [fromFilter, setFromFilter] = useState("All");
-  const [toFilter, setToFilter] = useState("All");
+  const [fromFilter, setFromFilter] = useState("");
+  const [toFilter, setToFilter] = useState("");
   const [dateFilter, setDateFilter] = useState<Date>();
   const [autoOpenDialog, setAutoOpenDialog] = useState(false);
 
@@ -51,7 +44,7 @@ export default function CarpoolPage() {
       const ridesData = await getAllRides(0, 50);
       setRides(ridesData);
     } catch (error) {
-      toast.error("Failed to load ride requests");
+      toast.error("Failed to load ride requests.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -63,21 +56,20 @@ export default function CarpoolPage() {
       const data = await getAllRides(0, 50);
       setRides(data);
     } catch (error) {
-      toast.error("Failed to load ride requests");
+      toast.error("Failed to load ride requests.");
       console.error(error);
     }
   };
 
   const filteredRides = rides.filter((ride) => {
     const matchesFrom =
-      fromFilter === "All" || ride.from_location === fromFilter;
-    const matchesTo = toFilter === "All" || ride.to_location === toFilter;
+      !fromFilter || ride.from_location.toLowerCase().includes(fromFilter.toLowerCase());
+    const matchesTo = 
+      !toFilter || ride.to_location.toLowerCase().includes(toFilter.toLowerCase());
     const matchesDate =
       !dateFilter || ride.ride_date === format(dateFilter, "yyyy-MM-dd");
     return matchesFrom && matchesTo && matchesDate;
   });
-
-  const allLocations = [...CAMPUS_LOCATIONS, ...CITY_LOCATIONS].sort();
 
   return (
     <Layout>
@@ -103,33 +95,19 @@ export default function CarpoolPage() {
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-lg border">
-          <Select value={fromFilter} onValueChange={setFromFilter}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="From Location" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">Any Pickup Point</SelectItem>
-              {allLocations.map((loc) => (
-                <SelectItem key={`filter-from-${loc}`} value={loc}>
-                  {loc}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            placeholder="From Location"
+            className="bg-background"
+            value={fromFilter}
+            onChange={(e) => setFromFilter(e.target.value)}
+          />
 
-          <Select value={toFilter} onValueChange={setToFilter}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="To Location" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">Any Destination</SelectItem>
-              {allLocations.map((loc) => (
-                <SelectItem key={`filter-to-${loc}`} value={loc}>
-                  {loc}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            placeholder="To Location"
+            className="bg-background"
+            value={toFilter}
+            onChange={(e) => setToFilter(e.target.value)}
+          />
 
           <Popover>
             <PopoverTrigger asChild>
@@ -157,8 +135,8 @@ export default function CarpoolPage() {
           <Button
             variant="ghost"
             onClick={() => {
-              setFromFilter("All");
-              setToFilter("All");
+              setFromFilter("");
+              setToFilter("");
               setDateFilter(undefined);
             }}
           >
@@ -189,8 +167,8 @@ export default function CarpoolPage() {
             <Button
               variant="link"
               onClick={() => {
-                setFromFilter("All");
-                setToFilter("All");
+                setFromFilter("");
+                setToFilter("");
                 setDateFilter(undefined);
               }}
             >

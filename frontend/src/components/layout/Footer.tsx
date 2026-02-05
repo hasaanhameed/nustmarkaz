@@ -36,20 +36,20 @@ export function Footer() {
 
           {/* Links */}
           <nav className="flex gap-4 md:gap-8 text-sm md:text-base font-medium text-primary-foreground/90">
-            <a
-              href="#"
+            <Link
+              to="/privacy"
               className="hover:text-white transition-colors"
             >
               Privacy
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/terms"
               className="hover:text-white transition-colors"
             >
               Terms
-            </a>
+            </Link>
             <a
-              href="#"
+              href="mailto:contact@nustmarkaz.com"
               className="hover:text-white transition-colors"
             >
               Contact

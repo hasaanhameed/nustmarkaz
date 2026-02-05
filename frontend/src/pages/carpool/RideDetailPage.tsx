@@ -38,7 +38,7 @@ export default function RideDetailPage() {
       const data = await getRideById(Number(id));
       setRide(data);
     } catch (error) {
-      toast.error("Failed to load ride request details");
+      toast.error("Failed to load ride request details.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -232,29 +232,6 @@ export default function RideDetailPage() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-4 space-y-4">
-              {/* Action Card */}
-              <div className="bg-card border rounded-lg p-6">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">Offer a Ride</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Contact the requester to offer them a ride
-                  </p>
-                </div>
-
-                <Button
-                  className="w-full mb-3"
-                  size="lg"
-                  onClick={() => window.location.href = `tel:${ride.contact}`}
-                >
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Contact Requester
-                </Button>
-
-                <p className="text-xs text-center text-muted-foreground">
-                  Discuss details and pricing directly
-                </p>
-              </div>
-
               {/* Safety Tips */}
               <div className="bg-warning/5 border border-warning/20 rounded-lg p-4">
                 <div className="flex items-start gap-2 mb-2">

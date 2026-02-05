@@ -42,7 +42,7 @@ const data = await getEventById(parseInt(id));
           max_attendees: data.max_attendees?.toString() || "",
         });
       } catch (error) {
-        toast.error("Failed to load event");
+        toast.error("Failed to load event.");
         navigate("/events");
       } finally {
         setLoading(false);
@@ -58,7 +58,7 @@ const data = await getEventById(parseInt(id));
     if (!id || !event) return;
 
     if (!formData.title.trim() || !formData.description.trim() || !formData.event_date || !formData.location.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -73,10 +73,10 @@ const data = await getEventById(parseInt(id));
         location: formData.location,
         max_attendees: maxAttendees,
       });
-      toast.success("Event updated successfully!");
+      toast.success("Event updated successfully.");
       navigate(`/events`);
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to update event");
+      toast.error(error.response?.data?.detail || "Failed to update event.");
     } finally {
       setSubmitting(false);
     }

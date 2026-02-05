@@ -70,13 +70,13 @@ export function RequestRideDialog({
 
   const validateTextInput = (value: string, fieldName: string): boolean => {
     if (!value.trim()) {
-      toast.error(`${fieldName} cannot be empty`);
+      toast.error(`${fieldName} cannot be empty.`);
       return false;
     }
 
     // Check if input contains only numbers
     if (/^\d+$/.test(value.trim())) {
-      toast.error(`${fieldName} cannot contain only numbers`);
+      toast.error(`${fieldName} cannot contain only numbers.`);
       return false;
     }
 
@@ -87,7 +87,7 @@ export function RequestRideDialog({
     e.preventDefault();
 
     if (!date) {
-      toast.error("Please select a date");
+      toast.error("Please select a date.");
       return;
     }
 
@@ -106,7 +106,7 @@ export function RequestRideDialog({
       };
 
       await createRide(rideData);
-      toast.success("Ride request posted successfully!");
+      toast.success("Ride request posted successfully.");
 
       // Reset form
       setFormData({

@@ -71,11 +71,11 @@ export default function ProductDetailPage() {
     try {
       setIsDeleting(true);
       await deleteProduct(product.id);
-      toast.success("Product deleted successfully");
+      toast.success("Product deleted successfully.");
       navigate("/marketplace");
     } catch (error) {
       console.error("Error deleting product:", error);
-      toast.error("Failed to delete product");
+      toast.error("Failed to delete product.");
     } finally {
       setIsDeleting(false);
     }

@@ -43,7 +43,7 @@ export default function EditProductPage() {
         });
       } catch (error) {
         console.error("Failed to fetch product:", error);
-        toast.error("Failed to load product");
+        toast.error("Failed to load product.");
         navigate("/marketplace");
       } finally {
         setLoading(false);
@@ -59,13 +59,13 @@ export default function EditProductPage() {
     if (!id || !product) return;
 
     if (!formData.description.trim() || !formData.price || !formData.condition) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields.");
       return;
     }
 
     const price = parseFloat(formData.price);
     if (isNaN(price) || price <= 0) {
-      toast.error("Please enter a valid price");
+      toast.error("Please enter a valid price.");
       return;
     }
 
@@ -76,11 +76,11 @@ export default function EditProductPage() {
         price: price,
         condition: formData.condition,
       });
-      toast.success("Product updated successfully!");
+      toast.success("Product updated successfully.");
       navigate(`/marketplace/${id}`);
     } catch (error: any) {
       console.error("Failed to update product:", error);
-      toast.error(error.response?.data?.detail || "Failed to update product");
+      toast.error(error.response?.data?.detail || "Failed to update product.");
     } finally {
       setSubmitting(false);
     }

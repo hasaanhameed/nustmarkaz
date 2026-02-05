@@ -82,3 +82,56 @@ def claim_item(
     db.refresh(item)
     
     return item
+
+
+@router.put("/{item_id}", response_model=LostFoundItemResponse)
+def update_item(
+    item_id: int,
+    item_update: LostFoundItemCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    item = db.query(LostFoundItem).filter(LostFoundItem.id == item_id).first()
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    
+    if item.creator_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this item")
+    
+    # Update fields
+    item.title = item_update.title
+    item.category = item_update.category
+    item.location = item_update.location
+    item.date = item_update.date
+    item.description = item_update.description
+    item.image_path = item_update.image_path
+    item.contact_method = item_update.contact_method
+    item.contact_info = item_update.contact_info
+    item.type = item_update.type
+    item.status = ItemStatus.LOST if item_update.type == "lost" else ItemStatus.FOUND
+    
+    db.commit()
+    db.refresh(item)
+    
+    return item
+
+
+@router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_item(
+    item_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    item = db.query(LostFoundItem).filter(LostFoundItem.id == item_id).first()
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    
+    if item.creator_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this item")
+    
+    db.delete(item)
+    db.commit()
+    
+    return None

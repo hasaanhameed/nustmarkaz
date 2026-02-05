@@ -1,29 +1,16 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Tag, Phone, Mail, MessageCircle } from "lucide-react";
 import { LostFoundItem } from "@/api/lostFound";
 import { cn } from "@/lib/utils";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
 interface LostFoundCardProps {
     item: LostFoundItem;
-    onClaim: (id: number) => void;
 }
 
-export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
-    const isLost = item.type === "lost";
+export function LostFoundCard({ item }: LostFoundCardProps) {
 
     const statusColors = {
         LOST: "bg-destructive text-destructive-foreground",
@@ -41,7 +28,8 @@ export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
     const formattedDate = format(new Date(item.date), "PPP");
 
     return (
-        <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow">
+        <Link to={`/lost-found/${item.id}`}>
+        <Card className="overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
             <div className="relative aspect-video overflow-hidden bg-muted">
                 {item.image_path ? (
                     <img
@@ -83,36 +71,7 @@ export function LostFoundCard({ item, onClaim }: LostFoundCardProps) {
                     </div>
                 </div>
             </CardContent>
-
-            <CardFooter className="p-4 border-t bg-muted/5">
-                {item.status !== "CLAIMED" ? (
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button className="w-full" variant={isLost ? "default" : "secondary"}>
-                                {isLost ? "I Found This!" : "This is Mine!"}
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Confirm Claim</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    Are you sure you want to mark this item as CLAIMED? This action cannot be undone.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => onClaim(item.id)}>
-                                    Yes, Claim Item
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                ) : (
-                    <Button disabled variant="outline" className="w-full opacity-50">
-                        Claimed
-                    </Button>
-                )}
-            </CardFooter>
         </Card>
+        </Link>
     );
 }

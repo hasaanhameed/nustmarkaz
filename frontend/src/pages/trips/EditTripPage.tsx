@@ -52,7 +52,7 @@ export default function EditTripPage() {
         });
       } catch (error) {
         console.error("Failed to fetch trip:", error);
-        toast.error("Failed to load trip");
+        toast.error("Failed to load trip.");
         navigate("/trips");
       } finally {
         setLoading(false);
@@ -71,7 +71,7 @@ export default function EditTripPage() {
         !formData.destination.trim() || !formData.start_date || !formData.end_date ||
         !formData.departure_location.trim() || !formData.max_participants || 
         !formData.cost_per_person || !formData.contact_number.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields.");
       return;
     }
 
@@ -79,17 +79,17 @@ export default function EditTripPage() {
     const costPerPerson = parseFloat(formData.cost_per_person);
     
     if (isNaN(maxParticipants) || maxParticipants <= 0) {
-      toast.error("Please enter a valid number of participants");
+      toast.error("Please enter a valid number of participants.");
       return;
     }
 
     if (isNaN(costPerPerson) || costPerPerson < 0) {
-      toast.error("Please enter a valid cost");
+      toast.error("Please enter a valid cost.");
       return;
     }
 
     if (new Date(formData.start_date) >= new Date(formData.end_date)) {
-      toast.error("End date must be after start date");
+      toast.error("End date must be after start date.");
       return;
     }
 
@@ -106,11 +106,11 @@ export default function EditTripPage() {
         cost_per_person: costPerPerson,
         contact_number: formData.contact_number,
       });
-      toast.success("Trip updated successfully!");
+      toast.success("Trip updated successfully.");
       navigate(`/trips/${id}`);
     } catch (error: any) {
       console.error("Failed to update trip:", error);
-      toast.error(error.response?.data?.detail || "Failed to update trip");
+      toast.error(error.response?.data?.detail || "Failed to update trip.");
     } finally {
       setSubmitting(false);
     }

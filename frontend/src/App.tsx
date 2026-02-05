@@ -18,6 +18,8 @@ import ProductDetailPage from "./pages/marketplace/ProductDetailPage";
 import CreateProductPage from "./pages/marketplace/CreateProductPage";
 import EditProductPage from "./pages/marketplace/EditProductPage";
 import TripsPage from "./pages/trips/TripsPage";
+import EditCarpoolPage from "./pages/carpool/EditCarpoolPage";
+
 
 import EditTripPage from "./pages/trips/EditTripPage";
 import TripDetailPage from "./pages/trips/TripDetailPage";
@@ -43,6 +45,8 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import CompleteProfilePage from "./pages/auth/CompleteProfilePage";
 
 import LostFoundPage from "./pages/lost-found/LostFoundPage";
+import LostFoundDetailPage from "./pages/lost-found/LostFoundDetailPage";
+import EditLostFoundPage from "./pages/lost-found/EditLostFoundPage";
 import CarpoolPage from "./pages/carpool/CarpoolPage";
 import RideDetailPage from "./pages/carpool/RideDetailPage";
 import NotFound from "./pages/NotFound";
@@ -126,15 +130,18 @@ const App = () => (
             <Route path="/societies/:id" element={<SocietyDetailsPage />} />
             <Route path="/societies" element={<SocietiesPage />} />
 
-            {/* Carpooling - specific routes before dynamic ones */}
+              {/* Carpooling - specific routes before dynamic ones */}
             <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />
+            <Route path="/carpooling/edit/:id" element={<EditCarpoolPage />} />
             <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
             <Route path="/carpooling" element={<CarpoolPage />} />
 
             {/* Profile */}
             <Route path="/profile" element={<ProfilePage />} />
 
-            {/* Lost & Found */}
+            {/* Lost & Found - specific routes before dynamic ones */}
+            <Route path="/lost-found/edit/:id" element={<EditLostFoundPage />} />
+            <Route path="/lost-found/:id" element={<LostFoundDetailPage />} />
             <Route path="/lost-found" element={<LostFoundPage />} />
 
             {/* Legal */}

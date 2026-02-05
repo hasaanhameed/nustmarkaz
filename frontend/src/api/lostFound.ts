@@ -66,6 +66,15 @@ export const getLostFoundItemById = async (id: number): Promise<LostFoundItem> =
   return response.data;
 };
 
+export const updateLostFoundItem = async (id: number, itemData: LostFoundItemCreate): Promise<LostFoundItem> => {
+  const response = await api.put(`/lost-found/${id}`, itemData);
+  return response.data;
+};
+
+export const deleteLostFoundItem = async (id: number): Promise<void> => {
+  await api.delete(`/lost-found/${id}`);
+};
+
 export const claimItem = async (id: number): Promise<LostFoundItem> => {
   const response = await api.patch(`/lost-found/${id}/claim`);
   return response.data;

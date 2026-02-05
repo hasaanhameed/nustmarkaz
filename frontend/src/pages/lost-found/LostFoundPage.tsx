@@ -11,18 +11,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { CAMPUS_LOCATIONS } from "@/data/mockLostFound";
 import { LostFoundCard } from "@/components/ui/LostFoundCard";
 import { CreateLostFoundDialog } from "./CreateLostFoundDialog";
 import { toast } from "sonner";
-import { getAllLostFoundItems, claimItem, LostFoundItem } from "@/api/lostFound";
+import { getAllLostFoundItems, LostFoundItem } from "@/api/lostFound";
 
 export default function LostFoundPage() {
     const [searchParams] = useSearchParams();
     const [items, setItems] = useState<LostFoundItem[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All");
-    const [locationFilter, setLocationFilter] = useState("All");
+    const [locationFilter, setLocationFilter] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [autoOpenLost, setAutoOpenLost] = useState(false);
     const [autoOpenFound, setAutoOpenFound] = useState(false);
@@ -34,7 +33,7 @@ export default function LostFoundPage() {
             setItems(data);
         } catch (error) {
             console.error("Error fetching items:", error);
-            toast.error("Failed to load items");
+            toast.error("Failed to load items.");
         } finally {
             setIsLoading(false);
         }
@@ -57,23 +56,12 @@ export default function LostFoundPage() {
             item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = categoryFilter === "All" || item.category === categoryFilter;
-        const matchesLocation = locationFilter === "All" || item.location === locationFilter;
+        const matchesLocation = !locationFilter || item.location.toLowerCase().includes(locationFilter.toLowerCase());
         return matchesSearch && matchesCategory && matchesLocation;
     });
 
     const lostItems = filteredItems.filter((item) => item.type === "lost");
     const foundItems = filteredItems.filter((item) => item.type === "found");
-
-    const handleClaimItem = async (id: number) => {
-        try {
-            await claimItem(id);
-            toast.success("Item marked as claimed!");
-            await fetchItems(); // Refresh the list
-        } catch (error) {
-            console.error("Error claiming item:", error);
-            toast.error("Failed to claim item");
-        }
-    };
 
     return (
         <Layout>
@@ -130,17 +118,12 @@ export default function LostFoundPage() {
                             <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Select value={locationFilter} onValueChange={setLocationFilter}>
-                        <SelectTrigger className="bg-background">
-                            <SelectValue placeholder="Location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="All">All Locations</SelectItem>
-                            {CAMPUS_LOCATIONS.map((loc) => (
-                                <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <Input
+                        placeholder="Location"
+                        className="bg-background"
+                        value={locationFilter}
+                        onChange={(e) => setLocationFilter(e.target.value)}
+                    />
                 </div>
 
                 {isLoading ? (
@@ -158,7 +141,7 @@ export default function LostFoundPage() {
                             {lostItems.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                     {lostItems.map((item) => (
-                                        <LostFoundCard key={item.id} item={item} onClaim={handleClaimItem} />
+                                        <LostFoundCard key={item.id} item={item} />
                                     ))}
                                 </div>
                             ) : (
@@ -172,7 +155,7 @@ export default function LostFoundPage() {
                             {foundItems.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                                     {foundItems.map((item) => (
-                                        <LostFoundCard key={item.id} item={item} onClaim={handleClaimItem} />
+                                        <LostFoundCard key={item.id} item={item} />
                                     ))}
                                 </div>
                             ) : (
