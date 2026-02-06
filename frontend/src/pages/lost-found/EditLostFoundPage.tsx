@@ -27,7 +27,7 @@ export default function EditLostFoundPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [item, setItem] = useState<LostFoundItem | null>(null);
   const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
@@ -87,7 +87,7 @@ export default function EditLostFoundPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!id || !item) return;
 
     if (!formData.title.trim() || !formData.category || !formData.description.trim() || !formData.location.trim() || !formData.contactInfo.trim()) {
@@ -204,7 +204,7 @@ export default function EditLostFoundPage() {
                   id="location"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="e.g., SEECS, C1 Hostel, Library"
+                  placeholder="e.g., SEECS, C1, Library"
                   required
                 />
               </div>

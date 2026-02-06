@@ -48,12 +48,6 @@ export function Footer() {
             >
               Terms
             </Link>
-            <a
-              href="mailto:contact@nustmarkaz.com"
-              className="hover:text-white transition-colors"
-            >
-              Contact
-            </a>
           </nav>
 
         </div>

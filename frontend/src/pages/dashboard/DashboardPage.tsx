@@ -257,9 +257,27 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Rides</span>
+                    <span className="font-semibold">
+                      {filterPostsByType("ride").length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Donations</span>
+                    <span className="font-semibold">
+                      {filterPostsByType("donation").length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Events</span>
                     <span className="font-semibold">
                       {filterPostsByType("event").length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Lost/Found</span>
+                    <span className="font-semibold">
+                      {filterPostsByType("lost_found").length}
                     </span>
                   </div>
                 </div>

@@ -182,7 +182,7 @@ export function CreateLostFoundDialog({ type, onSuccess, autoOpen = false, onOpe
                             <Label htmlFor="location">Campus Location *</Label>
                             <Input
                                 id="location"
-                                placeholder="e.g., SEECS, C1 Hostel, Library"
+                                placeholder="e.g., SEECS, C1, Library"
                                 value={formData.location}
                                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                                 required
