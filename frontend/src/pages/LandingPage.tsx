@@ -132,7 +132,7 @@ export default function LandingPage() {
                     <ArrowRight className="ml-3 md:ml-4 h-6 w-6 md:h-9 md:w-9 group-hover:translate-x-2 transition-transform" />
                   </Button>
                 </Link>
-                <Link to="/marketplace" className="w-full sm:w-auto">
+                <Link to="/dashboard" className="w-full sm:w-auto">
                   <Button size="lg" variant="outline" className="w-full h-16 md:h-24 px-10 md:px-16 border-primary/20 text-xl md:text-3xl font-black rounded-[1.5rem] md:rounded-[2.5rem] bg-white/20 backdrop-blur-2xl transition-all hover:bg-white/40 hover:scale-105 hover:border-primary/40">
                     Explore
                   </Button>
