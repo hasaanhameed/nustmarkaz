@@ -21,7 +21,7 @@ class EventCreate(BaseModel):
     society: str
     location: str
     event_date: datetime
-    contact_number: str
+    contact_number: Optional[str] = None
     image_paths: Optional[List[str]] = []
 
     class Config:
@@ -36,7 +36,7 @@ class EventResponse(BaseModel):
     society: str
     location: str
     event_date: datetime
-    contact_number: str
+    contact_number: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     creator_id: int

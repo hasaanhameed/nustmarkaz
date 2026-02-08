@@ -166,14 +166,13 @@ export default function CreateEventsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contact_number">Contact Number *</Label>
+                <Label htmlFor="contact_number">Contact Number (Optional)</Label>
                 <Input
                   id="contact_number"
                   type="tel"
                   placeholder="03XX-XXXXXXX"
                   value={formData.contact_number}
                   onChange={(e) => handleChange("contact_number", e.target.value)}
-                  required
                 />
               </div>
 

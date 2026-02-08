@@ -13,7 +13,7 @@ class Event(Base):
     society = Column(String, nullable=False)
     location = Column(String, nullable=False)
     event_date = Column(DateTime, nullable=False)
-    contact_number = Column(String, nullable=False)
+    contact_number = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

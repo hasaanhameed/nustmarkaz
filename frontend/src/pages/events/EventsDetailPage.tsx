@@ -225,18 +225,20 @@ export default function EventsDetailPage() {
                 </div>
 
                 {/* Contact Information */}
-                <Card className="bg-accent/10">
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-accent" />
-                      <span className="font-medium">{event.contact_number}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Call for more details or registration
-                    </p>
-                  </CardContent>
-                </Card>
+                {event.contact_number && (
+                  <Card className="bg-accent/10">
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-accent" />
+                        <span className="font-medium">{event.contact_number}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Call for more details or registration
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Edit/Delete or Share buttons */}
                 {isCreator ? (
