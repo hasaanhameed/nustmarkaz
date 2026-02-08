@@ -18,3 +18,13 @@ class Donation(Base):
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     
     creator = relationship("User", back_populates="created_donations")
+    images = relationship("DonationImage", back_populates="donation", cascade="all, delete-orphan")
+
+class DonationImage(Base):
+    __tablename__ = 'donation_images'
+
+    id = Column(Integer, primary_key=True, index=True)
+    image_path = Column(String, nullable=False)
+    donation_id = Column(Integer, ForeignKey('donations.id', ondelete='CASCADE'))
+    
+    donation = relationship("Donation", back_populates="images")

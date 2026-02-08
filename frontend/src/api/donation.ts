@@ -7,6 +7,12 @@ export interface Creator {
   department: string;
 }
 
+export interface DonationImage {
+  id: number;
+  image_path: string;
+  donation_id: number;
+}
+
 export interface Donation {
   id: number;
   title: string;
@@ -19,6 +25,7 @@ export interface Donation {
   updated_at: string;
   creator_id: number;
   creator: Creator;
+  images: DonationImage[];
 }
 
 export interface DonationCreateRequest {
@@ -28,6 +35,7 @@ export interface DonationCreateRequest {
   goal_amount: number;
   end_date: string;
   contact_number: string;
+  image_paths?: string[];
 }
 
 export interface DonationUpdateRequest {
@@ -37,6 +45,7 @@ export interface DonationUpdateRequest {
   goal_amount?: number;
   end_date?: string;
   contact_number?: string;
+  image_paths?: string[];
 }
 
 // Get all donations

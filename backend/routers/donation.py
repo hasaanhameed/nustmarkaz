@@ -29,6 +29,14 @@ def create_donation(
     db.add(db_donation)
     db.commit()
     db.refresh(db_donation)
+
+    if donation.image_paths:
+        from models.donation import DonationImage
+        for image_path in donation.image_paths:
+            db_image = DonationImage(image_path=image_path, donation_id=db_donation.id)
+            db.add(db_image)
+        db.commit()
+        db.refresh(db_donation)
     
     return db_donation
 
@@ -89,6 +97,17 @@ def update_donation(
         db_donation.current_amount = donation.current_amount
     if donation.end_date is not None:
         db_donation.end_date = donation.end_date
+    if donation.contact_number is not None:
+        db_donation.contact_number = donation.contact_number
+
+    if donation.image_paths is not None:
+        from models.donation import DonationImage
+        # Delete existing images
+        db.query(DonationImage).filter(DonationImage.donation_id == donation_id).delete()
+        # Add new images
+        for image_path in donation.image_paths:
+            db_image = DonationImage(image_path=image_path, donation_id=donation_id)
+            db.add(db_image)
 
     db.commit()
     db.refresh(db_donation)

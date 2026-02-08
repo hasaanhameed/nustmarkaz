@@ -11,6 +11,14 @@ class Creator(BaseModel):
     class Config:
         from_attributes = True
 
+class DonationImageResponse(BaseModel):
+    id: int
+    image_path: str
+    donation_id: int
+
+    class Config:
+        from_attributes = True
+
 class DonationCreate(BaseModel):
     title: str
     description: str
@@ -18,6 +26,7 @@ class DonationCreate(BaseModel):
     goal_amount: float
     end_date: date
     contact_number: Optional[str] = None
+    image_paths: Optional[list[str]] = None
 
 class DonationUpdate(BaseModel):
     title: Optional[str] = None
@@ -25,6 +34,8 @@ class DonationUpdate(BaseModel):
     goal_amount: Optional[float] = None
     current_amount: Optional[float] = None
     end_date: Optional[str] = None
+    contact_number: Optional[str] = None
+    image_paths: Optional[list[str]] = None
 
     class Config:
         from_attributes = True
@@ -41,6 +52,7 @@ class DonationResponse(BaseModel):
     updated_at: datetime
     creator_id: int
     creator: Creator
+    images: list[DonationImageResponse] = []
 
     class Config:
         from_attributes = True

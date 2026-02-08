@@ -70,7 +70,7 @@ def donation_to_card(d: Donation) -> DashboardCard:
         title=d.title,
         subtitle=d.beneficiary,
         price=d.goal_amount,
-        image=None,
+        image=d.images[0].image_path if d.images else None,
         creator_username=d.creator.username,
         created_at=d.created_at
     )

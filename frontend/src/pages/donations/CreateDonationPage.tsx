@@ -7,13 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createDonation } from "@/api/donation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CreateDonationPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -25,6 +26,17 @@ export default function CreateDonationPage() {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,6 +66,7 @@ export default function CreateDonationPage() {
         goal_amount: parseFloat(formData.goal_amount),
         end_date: formData.end_date,
         contact_number: formData.contact_number,
+        image_paths: image ? [image] : [],
       });
 
       toast({
@@ -91,6 +104,33 @@ export default function CreateDonationPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Image Upload */}
+              <div className="space-y-2">
+                <Label>Cover Image</Label>
+                {image ? (
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+                    <img src={image} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setImage(null)}
+                      className="absolute top-2 right-2 p-1 rounded-full bg-background/80 hover:bg-background"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
+                    <Upload className="h-8 w-8" />
+                    <span>Upload Cover Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="title">Drive Title</Label>
                 <Input
