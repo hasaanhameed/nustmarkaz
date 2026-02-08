@@ -52,8 +52,8 @@ def get_cafes_with_reviews(db: Session = Depends(get_db)):
             "id": cafe.id,
             "name": cafe.name,
             "image_url": cafe.image_url,
-            "location": cafe.location,
-            "description": cafe.description,
+            "location": getattr(cafe, "location", None),
+            "description": getattr(cafe, "description", None),
             "average_rating": ratings_data['average_rating'],
             "review_count": ratings_data['review_count']
         })
