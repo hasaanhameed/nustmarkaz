@@ -101,7 +101,7 @@ export function Navbar() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[280px] sm:w-[350px] p-0 border-r-border/30 shadow-2xl">
                   <div className="flex flex-col h-full bg-background">
-                    <SheetHeader className="p-6 md:p-10 border-b border-white/20 text-left bg-blue-400">
+                    <SheetHeader className="p-2 md:p-4 border-b border-white/20 text-left bg-blue-400">
                       <SheetTitle className="flex justify-center cursor-pointer" onClick={() => {
                         setIsOpen(false);
                         if (currentUser || localStorage.getItem("access_token")) {
@@ -110,7 +110,7 @@ export function Navbar() {
                           navigate("/");
                         }
                       }}>
-                        <Logo size="md" className="md:h-auto" />
+                        <Logo size="sm" className="h-12 md:h-auto" />
                       </SheetTitle>
                     </SheetHeader>
 
@@ -135,13 +135,13 @@ export function Navbar() {
                       </div>
                     </div>
 
-                    <div className="p-4 md:p-8 border-t border-border/50 bg-secondary/30">
+                    <div className="p-2 md:p-3 border-t border-border/50 bg-secondary/30">
                       {currentUser ? (
-                        <div className="space-y-3 md:space-y-4">
+                        <div className="space-y-2 md:space-y-3">
                           <Link to="/profile" onClick={() => setIsOpen(false)}>
-                            <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl hover:bg-background transition-colors border border-transparent hover:border-border/50">
-                              <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
-                                <User className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                            <div className="flex items-center gap-3 md:gap-4 p-1.5 md:p-2 rounded-xl md:rounded-2xl hover:bg-background transition-colors border border-transparent hover:border-border/50">
+                              <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                                <User className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm md:text-base font-bold truncate">{currentUser.username}</p>
@@ -151,7 +151,7 @@ export function Navbar() {
                           </Link>
                           <Button
                             variant="outline"
-                            className="w-full h-10 md:h-12 justify-start gap-3 md:gap-4 rounded-xl md:rounded-2xl border-border/50 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/20 font-bold text-sm md:text-base"
+                            className="w-full h-8 md:h-10 justify-start gap-3 md:gap-4 rounded-xl md:rounded-2xl border-border/50 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/20 font-bold text-sm md:text-base"
                             onClick={() => {
                               handleLogoutClick();
                               setIsOpen(false);
