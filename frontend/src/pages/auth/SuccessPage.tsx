@@ -33,7 +33,7 @@ export default function SuccessPage() {
                   size="lg"
                   className="w-full h-14 text-lg font-bold rounded-2xl group/btn shadow-lg hover:shadow-xl transition-all"
                 >
-                  Log in to start exploring
+                  Log in to start exploring!
                   <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </Link>

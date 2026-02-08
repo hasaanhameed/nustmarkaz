@@ -87,7 +87,7 @@ export default function LoginPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Your Nust Email"
+                      placeholder="Your NUST Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="h-14 pl-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all"

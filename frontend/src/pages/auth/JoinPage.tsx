@@ -27,12 +27,12 @@ export default function JoinPage() {
 
               <div className="space-y-6">
                 {/* Sign Up with Student Email */}
-                <Card className="p-8 hover:shadow-xl transition-all border-2 hover:border-primary/20 bg-white/60">
-                  <div className="flex items-start gap-6">
+                <Card className="p-6 md:p-8 hover:shadow-xl transition-all border-2 hover:border-primary/20 bg-white/60">
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
                     <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                       <UserPlus className="w-8 h-8 text-primary" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 w-full">
                       <h3 className="text-2xl font-black text-foreground mb-2">
                         Sign Up with Student Email
                       </h3>
@@ -40,7 +40,7 @@ export default function JoinPage() {
                         New to NustMarkaz? Create an account using your NUST email address
                       </p>
                       <Link to="/auth/google">
-                        <Button className="w-full h-14 text-lg font-bold rounded-2xl group/btn">
+                        <Button className="w-full h-12 md:h-14 text-base md:text-lg font-bold rounded-2xl group/btn">
                           <Mail className="w-5 h-5 mr-2" />
                           Sign Up with Google
                           <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
@@ -51,12 +51,12 @@ export default function JoinPage() {
                 </Card>
 
                 {/* Login */}
-                <Card className="p-8 hover:shadow-xl transition-all border-2 hover:border-primary/20 bg-white/60">
-                  <div className="flex items-start gap-6">
+                <Card className="p-6 md:p-8 hover:shadow-xl transition-all border-2 hover:border-primary/20 bg-white/60">
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
                     <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                       <LogIn className="w-8 h-8 text-primary" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 w-full">
                       <h3 className="text-2xl font-black text-foreground mb-2">
                         Already Have an Account?
                       </h3>
@@ -66,7 +66,7 @@ export default function JoinPage() {
                       <Link to="/auth/login">
                         <Button
                           variant="outline"
-                          className="w-full h-14 text-lg font-bold rounded-2xl border-2 group/btn"
+                          className="w-full h-12 md:h-14 text-base md:text-lg font-bold rounded-2xl border-2 group/btn"
                         >
                           <LogIn className="w-5 h-5 mr-2" />
                           Log In
