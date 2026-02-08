@@ -55,7 +55,7 @@ import NotFound from "./pages/NotFound";
 
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-import DiagnosticsPage from "./pages/auth/DiagnosticsPage";
+
 
 import { UserProvider } from "./contexts/UserContext";
 
@@ -147,8 +147,6 @@ const App = () => (
             {/* Legal */}
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
-
-            <Route path="/auth/diagnostics" element={<DiagnosticsPage />} />
 
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />

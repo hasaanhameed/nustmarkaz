@@ -25,6 +25,9 @@ RUN npm install -g serve
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
 
+# Copy serve configuration for SPA routing
+COPY serve.json ./
+
 # Expose port
 EXPOSE 5173
 

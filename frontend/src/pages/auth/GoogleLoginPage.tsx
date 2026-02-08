@@ -33,37 +33,17 @@ export default function GoogleLoginPage() {
             setLoading(true);
             setError(null);
 
-            // Get the current origin - this handles both www and non-www
-            const currentOrigin = window.location.origin;
-            const redirectUrl = `${currentOrigin}/auth/callback`;
-
-            console.log('🔍 Initiating Google OAuth...');
-            console.log('📍 Current origin:', currentOrigin);
-            console.log('🔗 Redirect URL:', redirectUrl);
-
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: redirectUrl,
-                    queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
-                    },
-                    skipBrowserRedirect: false,
+                    redirectTo: `${window.location.origin}/auth/callback`
                 }
             });
 
-            if (error) {
-                console.error('❌ OAuth error:', error);
-                throw error;
-            }
-
-            console.log('✅ OAuth initiated successfully:', data);
-            // Browser will redirect to Google, then back to /auth/callback
-
+            if (error) throw error;
         } catch (err: any) {
-            console.error('❌ Login error:', err);
             setError(err.message || 'Login failed');
+        } finally {
             setLoading(false);
         }
     };
@@ -108,12 +88,6 @@ export default function GoogleLoginPage() {
                                 </>
                             )}
                         </button>
-
-                        <div className="mt-6">
-                            <p className="text-xs text-muted-foreground">
-                                By signing in, you agree to use your NUST email address
-                            </p>
-                        </div>
                     </Card>
                 </div>
             </section>
