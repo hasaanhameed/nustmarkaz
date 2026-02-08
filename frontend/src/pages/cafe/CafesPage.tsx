@@ -17,7 +17,8 @@ export default function CafesPage() {
       try {
         setLoading(true);
         const data = await getCafesWithRatings();
-        setCafes(data);
+        const sortedData = data.sort((a, b) => b.average_rating - a.average_rating);
+        setCafes(sortedData);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch cafes:", err);

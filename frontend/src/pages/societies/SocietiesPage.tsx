@@ -17,7 +17,8 @@ export default function SocietiesPage() {
             try {
                 setLoading(true);
                 const data = await getSocietiesWithRatingsDetailed();
-                setSocieties(data);
+                const sortedData = data.sort((a, b) => b.average_rating - a.average_rating);
+                setSocieties(sortedData);
                 setError(null);
             } catch (err) {
                 console.error("Failed to fetch societies:", err);
