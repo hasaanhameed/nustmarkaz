@@ -12,7 +12,7 @@ class Donation(Base):
     beneficiary = Column(String, nullable=False)  
     goal_amount = Column(Float, nullable=False) 
     end_date = Column(Date, nullable=False)
-    contact_number = Column(String, nullable=False)  # Add this line
+    contact_number = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     creator_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

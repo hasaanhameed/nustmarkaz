@@ -17,7 +17,7 @@ class DonationCreate(BaseModel):
     beneficiary: str
     goal_amount: float
     end_date: date
-    contact_number: str  # Add this line
+    contact_number: Optional[str] = None
 
 class DonationUpdate(BaseModel):
     title: Optional[str] = None
@@ -36,7 +36,7 @@ class DonationResponse(BaseModel):
     beneficiary: str
     goal_amount: float
     end_date: date
-    contact_number: str  # Add this line
+    contact_number: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     creator_id: int

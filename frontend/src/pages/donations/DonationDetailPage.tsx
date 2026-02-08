@@ -181,18 +181,20 @@ export default function DonationDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Contact Information */}
-                <Card className="bg-accent/10">
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4 text-accent" />
-                      <span className="font-medium">{donation.contact_number}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Call to contribute or learn more
-                    </p>
-                  </CardContent>
-                </Card>
+                {donation.contact_number && (
+                  <Card className="bg-accent/10">
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold mb-2 text-sm">Contact Organizer</h3>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-accent" />
+                        <span className="font-medium">{donation.contact_number}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Call to contribute or learn more
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Edit/Delete or Share buttons */}
                 {isCreator ? (

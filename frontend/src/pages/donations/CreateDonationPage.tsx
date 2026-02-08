@@ -35,8 +35,7 @@ export default function CreateDonationPage() {
       !formData.description ||
       !formData.beneficiary ||
       !formData.goal_amount ||
-      !formData.end_date ||
-      !formData.contact_number
+      !formData.end_date
     ) {
       toast({
         title: "Error",
@@ -106,7 +105,7 @@ export default function CreateDonationPage() {
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  placeholder="Explain the cause and how funds will be used..."
+                  placeholder="Explain the cause and how funds will be used. You can also add a Bank Account/Digital Payment Number."
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   rows={5}
@@ -124,7 +123,7 @@ export default function CreateDonationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contact_number">Contact Number</Label>
+                <Label htmlFor="contact_number">Contact Number (Optional)</Label>
                 <Input
                   id="contact_number"
                   type="tel"
