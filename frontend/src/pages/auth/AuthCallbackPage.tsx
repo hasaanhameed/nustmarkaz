@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Layout } from '@/components/layout/Layout';
@@ -26,8 +26,12 @@ export default function AuthCallbackPage() {
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const hasRunRef = useRef(false);
 
     useEffect(() => {
+        if (hasRunRef.current) return;
+        hasRunRef.current = true;
+
         const handleCallback = async () => {
             try {
                 // Give Supabase a moment to process the callback
@@ -62,11 +66,11 @@ export default function AuthCallbackPage() {
                     // Store session and navigate to complete profile
                     // The complete profile page will handle user creation
                     localStorage.setItem('supabase_session', JSON.stringify(session));
-                    navigate('/auth/complete-profile');
+                    navigate('/auth/complete-profile', { replace: true });
                 } catch (err) {
                     // If user doesn't exist, go to complete profile
                     localStorage.setItem('supabase_session', JSON.stringify(session));
-                    navigate('/auth/complete-profile');
+                    navigate('/auth/complete-profile', { replace: true });
                 }
             } catch (err: any) {
                 console.error('Auth callback error:', err);
