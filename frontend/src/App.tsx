@@ -55,7 +55,7 @@ import NotFound from "./pages/NotFound";
 
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-
+import DiagnosticsPage from "./pages/auth/DiagnosticsPage";
 
 import { UserProvider } from "./contexts/UserContext";
 
@@ -130,7 +130,7 @@ const App = () => (
             <Route path="/societies/:id" element={<SocietyDetailsPage />} />
             <Route path="/societies" element={<SocietiesPage />} />
 
-              {/* Carpooling - specific routes before dynamic ones */}
+            {/* Carpooling - specific routes before dynamic ones */}
             <Route path="/carpooling/create" element={<Navigate to="/carpooling?create=true" replace />} />
             <Route path="/carpooling/edit/:id" element={<EditCarpoolPage />} />
             <Route path="/carpooling/ride/:id" element={<RideDetailPage />} />
@@ -147,6 +147,8 @@ const App = () => (
             {/* Legal */}
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
+
+            <Route path="/auth/diagnostics" element={<DiagnosticsPage />} />
 
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
