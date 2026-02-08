@@ -5,6 +5,7 @@ import { Star, ExternalLink, User, Loader2, AlertCircle, Users } from "lucide-re
 import { useState, useEffect } from "react";
 import { getSocietyById, createSocietyReview } from "@/api/society";
 import type { SocietyWithReviews } from "@/api/society";
+import { toast } from "sonner";
 
 export default function SocietyDetailsPage() {
     const { id } = useParams<{ id: string }>();
@@ -85,7 +86,7 @@ export default function SocietyDetailsPage() {
             setNewComment("");
 
             // Show success message (optional)
-            alert("Review submitted successfully.");
+            toast.success("Review submitted successfully.");
         } catch (err: any) {
             console.error("Failed to submit review:", err);
 
