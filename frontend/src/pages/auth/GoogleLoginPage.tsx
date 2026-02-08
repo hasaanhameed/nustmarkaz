@@ -36,7 +36,7 @@ export default function GoogleLoginPage() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `https://nustmarkaz.com/auth/callback`
+                    redirectTo: `${window.location.origin}/auth/callback`
                 }
             });
 

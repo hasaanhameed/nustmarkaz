@@ -23,7 +23,7 @@ export default function CompleteProfilePage() {
         const checkSession = async () => {
             try {
                 const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                
+
                 if (sessionError) throw sessionError;
                 if (!session) {
                     navigate('/auth/google');
@@ -41,59 +41,59 @@ export default function CompleteProfilePage() {
         checkSession();
     }, [navigate]);
 
-   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!username.trim()) {
-        setError('Please enter your full name');
-        return;
-    }
-    if (!department.trim()) {
-        setError('Please select your department/school');
-        return;
-    }
-    if (!password.trim()) {
-        setError('Please enter a password');
-        return;
-    }
-    if (password.length < 6) {
-        setError('Password must be at least 6 characters long');
-        return;
-    }
-    if (password !== confirmPassword) {
-        setError('Passwords do not match');
-        return;
-    }
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-    try {
-        setSubmitting(true);
-        setError(null);
-
-        // Create user in backend
-        const response = await createUser({
-            username: username.trim(),
-            email: email,
-            department: department,
-            password: password
-        });
-
-        // Store token from backend response
-        if (response.access_token) {
-            localStorage.setItem('access_token', response.access_token);
+        if (!username.trim()) {
+            setError('Please enter your full name');
+            return;
+        }
+        if (!department.trim()) {
+            setError('Please select your department/school');
+            return;
+        }
+        if (!password.trim()) {
+            setError('Please enter a password');
+            return;
+        }
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long');
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
         }
 
-        // Clear Supabase session as we're using backend auth now
-        await supabase.auth.signOut();
+        try {
+            setSubmitting(true);
+            setError(null);
 
-        // Redirect to success page
-        navigate('/auth/success');
-    } catch (err: any) {
-        console.error('Profile creation error:', err);
-        setError(err.response?.data?.detail || 'Failed to create profile');
-    } finally {
-        setSubmitting(false);
-    }
-};
+            // Create user in backend
+            const response = await createUser({
+                username: username.trim(),
+                email: email,
+                department: department,
+                password: password
+            });
+
+            // Store token from backend response
+            if (response.access_token) {
+                localStorage.setItem('access_token', response.access_token);
+            }
+
+            // Clear Supabase session as we're using backend auth now
+            await supabase.auth.signOut();
+
+            // Redirect to success page
+            navigate('/auth/success');
+        } catch (err: any) {
+            console.error('Profile creation error:', err);
+            setError(err.response?.data?.detail || 'Failed to create profile');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     if (loading) {
         return (
