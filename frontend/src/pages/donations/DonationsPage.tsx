@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DonationPost } from "@/components/ui/DonationPost";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { getAllDonations, Donation } from "@/api/donation";
 import { Search, Plus, Heart } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
@@ -91,9 +91,7 @@ export default function DonationsPage() {
 
               {/* Loading State */}
               {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <LoadingSpinner />
-                </div>
+                <PageLoader />
               ) : error ? (
                 <EmptyState
                   icon={Heart}

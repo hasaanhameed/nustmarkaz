@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Star, MapPin, Loader2 } from "lucide-react";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { useEffect, useState } from "react";
 import { getCafesWithRatings } from "@/api/cafe";
 import type { CafeCardData } from "@/api/cafe";
@@ -31,18 +32,13 @@ export default function CafesPage() {
 
   // Loading state
   if (loading) {
-    return (
-      <Layout>
-        <section className="container-custom py-16">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading cafes...</p>
-            </div>
-          </div>
-        </section>
-      </Layout>
-    );
+    if (loading) {
+      return (
+        <Layout>
+          <PageLoader />
+        </Layout>
+      );
+    }
   }
 
   // Error state

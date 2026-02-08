@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Card } from "@/components/ui/card";
 import { Star, MapPin, User, Loader2, AlertCircle } from "lucide-react";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { useState, useEffect } from "react";
 import { getCafeById, createReview, deleteReview } from "@/api/cafe";
 import type { CafeWithReviews } from "@/api/cafe";
@@ -163,14 +164,7 @@ export default function CafeDetailsPage() {
   if (loading) {
     return (
       <Layout>
-        <section className="container-custom py-12">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading cafe details...</p>
-            </div>
-          </div>
-        </section>
+        <PageLoader />
       </Layout>
     );
   }

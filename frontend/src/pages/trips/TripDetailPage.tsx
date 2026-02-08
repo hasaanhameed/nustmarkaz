@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import {
   ArrowLeft,
   MapPin,
@@ -74,9 +75,7 @@ export default function TripDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="container-custom py-8">
-          <div className="text-center py-12">Loading trip details...</div>
-        </div>
+        <PageLoader />
       </Layout>
     );
   }

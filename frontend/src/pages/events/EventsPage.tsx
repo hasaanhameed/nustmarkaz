@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { Search, Plus, Calendar, MapPin, Users, Share2 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { getAllEvents, Event } from "@/api/event";
@@ -64,13 +65,13 @@ export default function EventsPage() {
   };
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="container-custom py-8">
-          <div className="text-center">Loading events...</div>
-        </div>
-      </Layout>
-    );
+    if (loading) {
+      return (
+        <Layout>
+          <PageLoader />
+        </Layout>
+      );
+    }
   }
 
   return (

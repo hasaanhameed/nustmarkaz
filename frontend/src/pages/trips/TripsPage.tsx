@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { Search, Plus, MapPin } from "lucide-react";
 import { getAllTrips, Trip } from "@/api/trip";
 import { useUser } from "@/contexts/UserContext";
@@ -80,7 +81,7 @@ export default function TripsPage() {
 
         {/* Trips Grid */}
         {loading ? (
-          <div className="text-center py-12">Loading trips...</div>
+          <PageLoader />
         ) : filteredTrips.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTrips.map((trip) => (

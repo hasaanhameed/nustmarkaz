@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { getDonationById, deleteDonation, Donation } from "@/api/donation";
 import { getCurrentUser } from "@/api/user";
 import { ArrowLeft, Share2, Phone, Pencil, Trash2 } from "lucide-react";
@@ -71,9 +71,7 @@ export default function DonationDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center py-12">
-          <LoadingSpinner />
-        </div>
+        <PageLoader />
       </Layout>
     );
   }

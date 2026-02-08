@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Card } from "@/components/ui/card";
 import { Star, ExternalLink, User, Loader2, AlertCircle, Users } from "lucide-react";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { useState, useEffect } from "react";
 import { getSocietyById, createSocietyReview } from "@/api/society";
 import type { SocietyWithReviews } from "@/api/society";
@@ -137,14 +138,7 @@ export default function SocietyDetailsPage() {
     if (loading) {
         return (
             <Layout>
-                <section className="container-custom py-12">
-                    <div className="flex items-center justify-center min-h-[400px]">
-                        <div className="text-center">
-                            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-                            <p className="text-muted-foreground">Loading society details...</p>
-                        </div>
-                    </div>
-                </section>
+                <PageLoader />
             </Layout>
         );
     }

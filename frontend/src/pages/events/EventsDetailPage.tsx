@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Share2, Calendar, MapPin, Users, Phone, Pencil, Trash2 } from "lucide-react";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   AlertDialog,
@@ -94,9 +95,7 @@ export default function EventsDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="container-custom py-8">
-          <div className="text-center">Loading event details...</div>
-        </div>
+        <PageLoader />
       </Layout>
     );
   }

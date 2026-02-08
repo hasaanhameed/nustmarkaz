@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { Phone, Pencil, Trash2 } from "lucide-react";
 import {
   ArrowLeft,
@@ -84,9 +84,7 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="container-custom py-8 flex justify-center items-center min-h-screen">
-          <LoadingSpinner />
-        </div>
+        <PageLoader />
       </Layout>
     );
   }

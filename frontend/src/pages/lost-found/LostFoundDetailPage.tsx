@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { Phone, Mail, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import {
   ArrowLeft,
@@ -66,9 +66,7 @@ export default function LostFoundDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="container-custom py-8 flex justify-center items-center min-h-screen">
-          <LoadingSpinner />
-        </div>
+        <PageLoader />
       </Layout>
     );
   }
@@ -216,7 +214,7 @@ export default function LostFoundDetailPage() {
                 </div>
                 <p className="font-medium text-lg mb-2">{item.contact_info}</p>
                 <p className="text-sm text-muted-foreground">
-                  {isLost 
+                  {isLost
                     ? "If you found this item, please contact the owner using the information above."
                     : "If this is your item, please contact the finder using the information above."}
                 </p>
@@ -266,7 +264,7 @@ export default function LostFoundDetailPage() {
             <Card className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900">
               <CardContent className="p-4">
                 <p className="text-sm text-blue-900 dark:text-blue-100">
-                  <strong>Note:</strong> Please verify ownership details before claiming or returning any item. 
+                  <strong>Note:</strong> Please verify ownership details before claiming or returning any item.
                   Stay safe and meet in public places when exchanging items.
                 </p>
               </CardContent>

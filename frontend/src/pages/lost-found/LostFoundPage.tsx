@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { LostFoundCard } from "@/components/ui/LostFoundCard";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { CreateLostFoundDialog } from "./CreateLostFoundDialog";
 import { toast } from "sonner";
 import { getAllLostFoundItems, LostFoundItem } from "@/api/lostFound";
@@ -127,9 +128,7 @@ export default function LostFoundPage() {
                 </div>
 
                 {isLoading ? (
-                    <div className="text-center py-12">
-                        <p className="text-muted-foreground">Loading items...</p>
-                    </div>
+                    <PageLoader />
                 ) : (
                     <Tabs defaultValue="lost" className="w-full">
                         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
