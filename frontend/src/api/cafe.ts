@@ -95,31 +95,18 @@ export const getCafeAverageRating = async (cafeId: number): Promise<AverageRatin
 
 // Get all cafes with their ratings (for listing page)
 export const getCafesWithRatings = async (): Promise<CafeCardData[]> => {
-    const cafes = await getCafes();
+    // OLD: Fetch cafes then loop for ratings (N+1 queries)
+    // const cafes = await getCafes();
+    // ...
 
-    // Fetch ratings for all cafes in parallel
-    const cafesWithRatings = await Promise.all(
-        cafes.map(async (cafe) => {
-            try {
-                const ratingData = await getCafeAverageRating(cafe.id);
-                return {
-                    ...cafe,
-                    average_rating: ratingData.average_rating,
-                    review_count: ratingData.review_count,
-                };
-            } catch (error) {
-                // If rating fetch fails, return cafe with default values
-                console.error(`Failed to fetch rating for cafe ${cafe.id}:`, error);
-                return {
-                    ...cafe,
-                    average_rating: 0,
-                    review_count: 0,
-                };
-            }
-        })
-    );
+    // NEW: Use optimized endpoint
+    const response = await api.get<any[]>('/cafes/with-reviews');
 
-    return cafesWithRatings;
+    // Process image URLs
+    return response.data.map(cafe => ({
+        ...cafe,
+        image_url: convertToPublicUrl(cafe.image_url)
+    })) as CafeCardData[];
 };
 
 // Create a new cafe (admin/authenticated users)

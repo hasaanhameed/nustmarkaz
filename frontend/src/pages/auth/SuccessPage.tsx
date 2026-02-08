@@ -28,28 +28,15 @@ export default function SuccessPage() {
               </p>
 
               {/* Continue Button */}
-              <Link to="/">
-                <Button 
-                  size="lg" 
+              <Link to="/auth/login">
+                <Button
+                  size="lg"
                   className="w-full h-14 text-lg font-bold rounded-2xl group/btn shadow-lg hover:shadow-xl transition-all"
                 >
-                  Continue to Home
+                  Log in to start exploring
                   <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-
-              {/* Additional Info */}
-              <div className="mt-8 pt-8 border-t border-border/30">
-                <p className="text-sm text-muted-foreground">
-                  Ready to get started?{" "}
-                  <Link 
-                    to="/auth/login" 
-                    className="text-primary font-semibold hover:underline"
-                  >
-                    Log in now
-                  </Link>
-                </p>
-              </div>
             </div>
           </div>
         </div>

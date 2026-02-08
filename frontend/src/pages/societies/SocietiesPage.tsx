@@ -92,7 +92,7 @@ export default function SocietiesPage() {
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl">
                         Explore student societies on campus. Read reviews from fellow
-                        students and share your own experiences with different societies.
+                        students and share your own experiences with different societies. Completely anonymous, so you can be honest!
                     </p>
                 </div>
 

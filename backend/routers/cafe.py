@@ -15,6 +15,51 @@ def list_cafes(db: Session = Depends(get_db)):
     """List all cafes"""
     return db.query(Cafe).all()
 
+# OPTIMIZED: Get cafes with ratings using only 2 queries (similar to societies logic)
+@router.get("/with-reviews", response_model=List[dict])
+def get_cafes_with_reviews(db: Session = Depends(get_db)):
+    """Get all cafes with reviews and average ratings - OPTIMIZED VERSION"""
+    
+    # Query 1: Get all cafes
+    cafes = db.query(Cafe).all()
+    
+    # Query 2: Get all ratings aggregated by cafe_id in a single query
+    ratings_query = (
+        db.query(
+            Review.cafe_id,
+            func.avg(Review.rating).label('avg_rating'),
+            func.count(Review.id).label('review_count')
+        )
+        .group_by(Review.cafe_id)
+        .all()
+    )
+    
+    # Create a lookup dictionary for O(1) access
+    ratings_dict = {
+        rating.cafe_id: {
+            'average_rating': round(float(rating.avg_rating), 2) if rating.avg_rating else 0.0,
+            'review_count': rating.review_count
+        }
+        for rating in ratings_query
+    }
+    
+    # Build the result with ratings
+    result = []
+    for cafe in cafes:
+        ratings_data = ratings_dict.get(cafe.id, {'average_rating': 0.0, 'review_count': 0})
+        
+        result.append({
+            "id": cafe.id,
+            "name": cafe.name,
+            "image_url": cafe.image_url,
+            "location": cafe.location,
+            "description": cafe.description,
+            "average_rating": ratings_data['average_rating'],
+            "review_count": ratings_data['review_count']
+        })
+    
+    return result
+
 @router.get("/{cafe_id}", response_model=CafeWithReviews)
 def get_cafe(cafe_id: int, db: Session = Depends(get_db)):
     """Get a specific cafe with all its reviews"""

@@ -92,7 +92,7 @@ export default function CafesPage() {
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
             Discover the best spots to grab a bite on campus. Read reviews from
-            fellow students and share your own experiences.
+            fellow students and share your own experiences. All your reviews and ratings are commpletely annonymous, so you can be completely honest!
           </p>
         </div>
 
