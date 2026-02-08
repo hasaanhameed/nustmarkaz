@@ -121,17 +121,15 @@ export default function DonationDetailPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="aspect-video rounded-xl overflow-hidden bg-muted mb-6">
-              <img
-                src={
-                  donation.images && donation.images.length > 0
-                    ? donation.images[0].image_path
-                    : "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800"
-                }
-                alt={donation.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            {donation.images && donation.images.length > 0 && (
+              <div className="aspect-video rounded-xl overflow-hidden bg-muted mb-6">
+                <img
+                  src={donation.images[0].image_path}
+                  alt={donation.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
 
             <Badge className="bg-warning text-warning-foreground mb-4">
               Donation Drive
