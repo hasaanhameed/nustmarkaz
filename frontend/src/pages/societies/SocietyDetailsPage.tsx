@@ -270,7 +270,7 @@ export default function SocietyDetailsPage() {
                                         <div className="flex items-center justify-between mb-2">
                                             <div>
                                                 <h3 className="font-semibold text-primary">
-                                                    {review.creator.username}
+                                                    Anonymous Student
                                                 </h3>
                                                 <div className="flex items-center gap-2 mt-1">
                                                     {renderStars(review.rating, "w-4 h-4")}

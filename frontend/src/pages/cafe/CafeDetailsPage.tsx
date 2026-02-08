@@ -116,7 +116,7 @@ export default function CafeDetailsPage() {
   // Handle review deletion
   const handleDeleteReview = async (reviewId: number) => {
     if (!cafe) return;
-    
+
     setDeletingReviewId(reviewId);
     try {
       await deleteReview(cafe.id, reviewId);
@@ -150,8 +150,8 @@ export default function CafeDetailsPage() {
           <Star
             key={star}
             className={`${size} ${star <= rating
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-gray-200 text-gray-200"
+              ? "fill-yellow-400 text-yellow-400"
+              : "fill-gray-200 text-gray-200"
               }`}
           />
         ))}
@@ -300,7 +300,7 @@ export default function CafeDetailsPage() {
                     <div className="flex items-center justify-between mb-2">
                       <div>
                         <h3 className="font-semibold text-primary">
-                          User #{review.user_id}
+                          Anonymous Student
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
                           {renderStars(review.rating, "w-4 h-4")}
@@ -375,8 +375,8 @@ export default function CafeDetailsPage() {
                     >
                       <Star
                         className={`w-8 h-8 ${star <= newRating
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "fill-gray-200 text-gray-200 hover:fill-yellow-200 hover:text-yellow-200"
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "fill-gray-200 text-gray-200 hover:fill-yellow-200 hover:text-yellow-200"
                           }`}
                       />
                     </button>
