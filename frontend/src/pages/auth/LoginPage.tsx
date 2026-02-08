@@ -38,7 +38,7 @@ export default function LoginPage() {
     }
 
     if (!validateEmail(email)) {
-      setError("Invalid email format. Your email must start with a letter and follow the pattern: name@nust.edu.pk. No random strings or numbers-only IDs allowed.");
+      setError("Incorrect email. Please enter your correct NUST email account.");
       return;
     }
 
@@ -52,10 +52,10 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
       localStorage.setItem("access_token", data.access_token);
-      
+
       // Invalidate and refetch user query to update the UI
       await queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
-      
+
       navigate("/dashboard");
     } catch (err) {
       setError("Authentication failed. Please verify your credentials and try again.");
