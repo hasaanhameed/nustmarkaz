@@ -251,6 +251,22 @@ export default function CompleteProfilePage() {
                                 </div>
                             </div>
 
+                            {/* Terms and Conditions */}
+                            <div className="flex items-start gap-2">
+                                <div className="flex items-center h-5">
+                                    <input
+                                        id="terms"
+                                        type="checkbox"
+                                        checked={agreeTerms}
+                                        onChange={(e) => setAgreeTerms(e.target.checked)}
+                                        className="w-4 h-4 border border-border rounded bg-background text-primary focus:ring-2 focus:ring-primary/20"
+                                    />
+                                </div>
+                                <label htmlFor="terms" className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                    I agree to the <a href="/terms" target="_blank" className="text-primary hover:underline font-medium">Terms and Conditions</a> and <a href="/privacy" target="_blank" className="text-primary hover:underline font-medium">Privacy Policy</a>
+                                </label>
+                            </div>
+
                             <button
                                 type="submit"
                                 disabled={submitting}
@@ -269,6 +285,6 @@ export default function CompleteProfilePage() {
                     </Card>
                 </div>
             </section>
-        </Layout>
+        </Layout >
     );
 }
