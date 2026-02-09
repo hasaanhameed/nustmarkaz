@@ -21,7 +21,7 @@ export interface Trip {
   start_date: string;
   end_date: string;
   departure_location: string;
-  max_participants: number;
+  max_participants?: number;
   cost_per_person: number;
   contact_number: string;
   creator_id: number;

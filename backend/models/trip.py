@@ -14,7 +14,7 @@ class Trip(Base):
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
     departure_location = Column(String, nullable=False)
-    max_participants = Column(Integer, nullable=False)
+    max_participants = Column(Integer, nullable=True)
     cost_per_person = Column(Float, nullable=False)
     contact_number = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)

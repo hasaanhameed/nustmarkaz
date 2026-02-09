@@ -22,7 +22,7 @@ class TripCreate(BaseModel):
     start_date: date
     end_date: date
     departure_location: str
-    max_participants: int
+    max_participants: Optional[int] = None
     cost_per_person: float
     contact_number: str
     image_paths: Optional[List[str]] = []
@@ -58,7 +58,7 @@ class TripResponse(BaseModel):
     start_date: date
     end_date: date
     departure_location: str
-    max_participants: int
+    max_participants: Optional[int] = None
     cost_per_person: float
     contact_number: str
     created_at: datetime

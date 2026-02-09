@@ -88,7 +88,7 @@ export default function CreateTripPage() {
       newErrors.departureDate = "Departure date is required";
     if (!formData.returnDate) newErrors.returnDate = "Return date is required";
     if (!formData.price) newErrors.price = "Price is required";
-    if (!formData.spots) newErrors.spots = "Number of spots is required";
+    // if (!formData.spots) newErrors.spots = "Number of spots is required";
     if (!formData.meetingPoint)
       newErrors.meetingPoint = "Meeting point is required";
     if (!formData.contactNumber) newErrors.contactNumber = "Contact number is required";
@@ -115,7 +115,7 @@ export default function CreateTripPage() {
         start_date: formData.departureDate,
         end_date: formData.returnDate,
         departure_location: formData.meetingPoint,
-        max_participants: parseInt(formData.spots),
+        max_participants: formData.spots ? parseInt(formData.spots) : undefined,
         cost_per_person: parseFloat(formData.price),
         contact_number: formData.contactNumber,
         image_paths: image ? [image] : [],
@@ -320,7 +320,7 @@ export default function CreateTripPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="spots">Total Spots *</Label>
+                  <Label htmlFor="spots">Total Spots (Optional)</Label>
                   <Input
                     id="spots"
                     type="number"
