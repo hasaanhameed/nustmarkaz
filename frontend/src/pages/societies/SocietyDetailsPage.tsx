@@ -96,7 +96,7 @@ export default function SocietyDetailsPage() {
             } else if (err.response?.status === 400) {
                 setSubmitError(
                     err.response?.data?.detail ||
-                    "You have already reviewed this society. You can update your existing review instead."
+                    "You can only add one review"
                 );
             } else if (err.response?.status === 404) {
                 setSubmitError("Society not found");
@@ -274,6 +274,8 @@ export default function SocietyDetailsPage() {
                                                     </span>
                                                 </div>
                                             </div>
+                                            {/* Delete button (hidden for now as not implemented on backend for public/auth users, only admin/owner usually) */}
+                                            {/* Add similar logic as CafeDetails if applicable */}
                                         </div>
                                         <p className="text-muted-foreground leading-relaxed">
                                             {review.comment}
@@ -291,8 +293,8 @@ export default function SocietyDetailsPage() {
                         </h3>
 
                         {submitError && (
-                            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                                <p className="text-destructive text-sm">{submitError}</p>
+                            <div className="mb-6 p-4 bg-red-100 border border-red-200 rounded-lg">
+                                <p className="text-red-800 font-semibold text-sm">{submitError}</p>
                             </div>
                         )}
 

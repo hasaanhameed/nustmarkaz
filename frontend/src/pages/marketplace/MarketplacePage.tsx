@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { Search, Plus, ShoppingBag } from "lucide-react";
 import {
   Select,
@@ -149,11 +149,7 @@ export default function MarketplacePage() {
 
             {/* Content Area */}
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                  <div key={i} className="h-[400px] rounded-[2rem] bg-secondary/30 animate-pulse border border-border/50" />
-                ))}
-              </div>
+              <PageLoader />
             ) : error ? (
               <div className="text-center py-32 animate-entrance bg-white/40 backdrop-blur-md rounded-[3rem] border border-border/50">
                 <p className="text-destructive font-bold mb-6 text-lg">{error}</p>

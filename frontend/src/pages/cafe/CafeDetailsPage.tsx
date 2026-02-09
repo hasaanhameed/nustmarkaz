@@ -104,6 +104,11 @@ export default function CafeDetailsPage() {
 
       if (err.response?.status === 401) {
         setSubmitError("Please log in to submit a review");
+      } else if (err.response?.status === 400) {
+        setSubmitError(
+          err.response?.data?.detail ||
+          "You can only add one review"
+        );
       } else if (err.response?.status === 404) {
         setSubmitError("Cafe not found");
       } else {
@@ -305,7 +310,7 @@ export default function CafeDetailsPage() {
                       </div>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <button className="text-destructive hover:text-destructive/80 text-sm font-semibold transition-colors">
+                          <button className="text-red-600 hover:text-red-700 text-sm font-semibold transition-colors">
                             Delete
                           </button>
                         </AlertDialogTrigger>
@@ -347,8 +352,8 @@ export default function CafeDetailsPage() {
             </h3>
 
             {submitError && (
-              <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <p className="text-destructive text-sm">{submitError}</p>
+              <div className="mb-6 p-4 bg-red-100 border border-red-200 rounded-lg">
+                <p className="text-red-800 font-semibold text-sm">{submitError}</p>
               </div>
             )}
 
