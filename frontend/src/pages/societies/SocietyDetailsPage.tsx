@@ -4,19 +4,33 @@ import { Card } from "@/components/ui/card";
 import { Star, ExternalLink, User, Loader2, AlertCircle, Users } from "lucide-react";
 import { PageLoader } from "@/components/ui/LoadingSpinner";
 import { useState, useEffect } from "react";
-import { getSocietyById, createSocietyReview } from "@/api/society";
+import { getSocietyById, createSocietyReview, deleteSocietyReview } from "@/api/society";
 import type { SocietyWithReviews } from "@/api/society";
 import { toast } from "sonner";
+import { useUser } from "@/contexts/UserContext";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function SocietyDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { user: currentUser } = useUser();
 
     const [society, setSociety] = useState<SocietyWithReviews | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [deletingReviewId, setDeletingReviewId] = useState<number | null>(null);
 
     const [newRating, setNewRating] = useState(0);
     const [newComment, setNewComment] = useState("");
@@ -105,6 +119,27 @@ export default function SocietyDetailsPage() {
             }
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    // Handle review deletion
+    const handleDeleteReview = async (reviewId: number) => {
+        if (!society) return;
+
+        setDeletingReviewId(reviewId);
+        try {
+            await deleteSocietyReview(reviewId);
+            setSociety({
+                ...society,
+                reviews: society.reviews.filter((r) => r.id !== reviewId),
+            });
+            toast.success("Review deleted successfully.");
+        } catch (err: any) {
+            toast.error(
+                `Failed to delete review. ${err.response?.data?.detail || err.message}`
+            );
+        } finally {
+            setDeletingReviewId(null);
         }
     };
 
@@ -274,6 +309,33 @@ export default function SocietyDetailsPage() {
                                                     </span>
                                                 </div>
                                             </div>
+                                            {currentUser?.id === review.user_id && (
+                                                <AlertDialog>
+                                                    <AlertDialogTrigger asChild>
+                                                        <button className="text-blue-700 hover:text-blue-900 text-sm font-semibold transition-colors">
+                                                            Delete
+                                                        </button>
+                                                    </AlertDialogTrigger>
+                                                    <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                            <AlertDialogTitle>Delete Review</AlertDialogTitle>
+                                                            <AlertDialogDescription>
+                                                                Are you sure you want to delete this review? This action cannot be undone.
+                                                            </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                            <AlertDialogAction
+                                                                onClick={() => handleDeleteReview(review.id)}
+                                                                disabled={deletingReviewId === review.id}
+                                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                            >
+                                                                {deletingReviewId === review.id ? "Deleting..." : "Delete"}
+                                                            </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                    </AlertDialogContent>
+                                                </AlertDialog>
+                                            )}
                                         </div>
                                         <p className="text-muted-foreground leading-relaxed">
                                             {review.comment}

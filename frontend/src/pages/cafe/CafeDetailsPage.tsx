@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { useUser } from "@/contexts/UserContext";
 import { Card } from "@/components/ui/card";
 import { Star, MapPin, User, Loader2, AlertCircle } from "lucide-react";
 import { PageLoader } from "@/components/ui/LoadingSpinner";
@@ -22,6 +23,7 @@ import {
 export default function CafeDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user: currentUser } = useUser();
 
   const [cafe, setCafe] = useState<CafeWithReviews | null>(null);
   const [loading, setLoading] = useState(true);
@@ -303,31 +305,33 @@ export default function CafeDetailsPage() {
                           </span>
                         </div>
                       </div>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <button className="text-destructive hover:text-destructive/80 text-sm font-semibold transition-colors">
-                            Delete
-                          </button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Review</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete this review? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteReview(review.id)}
-                              disabled={deletingReviewId === review.id}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              {deletingReviewId === review.id ? "Deleting..." : "Delete"}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      {currentUser?.id === review.user_id && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <button className="text-blue-700 hover:text-blue-900 text-sm font-semibold transition-colors">
+                              Delete
+                            </button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Review</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this review? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteReview(review.id)}
+                                disabled={deletingReviewId === review.id}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {deletingReviewId === review.id ? "Deleting..." : "Delete"}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </div>
                     {review.comment && (
                       <p className="text-muted-foreground leading-relaxed">
