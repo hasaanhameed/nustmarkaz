@@ -70,9 +70,8 @@ export default function AuthCallbackPage() {
 
                     // User exists - login successful
                     localStorage.setItem('access_token', response.access_token);
-                    // Force a refetch to update UserContext state immediately
-                    await refetchUser();
-                    navigate('/dashboard');
+                    // Force a full page reload to ensure fresh state for the dashboard
+                    window.location.href = '/dashboard';
                 } catch (err) {
                     // User does not exist (404) or other error -> go to complete profile
                     console.log("User not found in backend, redirecting to complete profile");
