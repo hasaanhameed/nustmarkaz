@@ -106,7 +106,7 @@ export default function CreateDonationPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Image Upload */}
               <div className="space-y-2">
-                <Label>Cover Image</Label>
+                <Label>Cover Image (Optional)</Label>
                 {image ? (
                   <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
                     <img src={image} alt="" className="w-full h-full object-cover" />
