@@ -9,6 +9,7 @@ interface UserContextType {
     logout: () => void;
     refetchUser: () => void;
     isAuthenticated: boolean;
+    isFetching: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -16,7 +17,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const queryClient = useQueryClient();
 
-    const { data: user, isLoading, error, refetch } = useQuery({
+    const { data: user, isLoading, error, refetch, isFetching } = useQuery({
         queryKey: ['user', 'me'],
         queryFn: getCurrentUser,
         staleTime: 5 * 60 * 1000, // 5 minutes
@@ -41,7 +42,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             error,
             logout,
             refetchUser: refetch,
-            isAuthenticated
+            isAuthenticated,
+            isFetching
         }}>
             {children}
         </UserContext.Provider>

@@ -55,11 +55,16 @@ const navLinks = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user: currentUser, logout, isLoading: isUserLoading } = useUser();
+  const { user: currentUser, logout, isLoading: isUserLoading, isFetching: isUserFetching } = useUser();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [location]);
 
   const handleLogoutClick = () => {
     setShowLogoutDialog(true);
@@ -192,7 +197,12 @@ export function Navbar() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {currentUser ? (
+              {isUserLoading || isUserFetching || isNavigating ? (
+                <Button size="sm" disabled className="h-10 px-6 rounded-xl font-bold bg-primary/80 text-primary-foreground">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging you in...
+                </Button>
+              ) : currentUser ? (
                 <Link to="/profile">
                   <Button
                     className="h-10 md:h-12 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all duration-300 rounded-full p-0 md:pl-3 md:pr-6 md:gap-3 group border-none"
@@ -204,7 +214,7 @@ export function Navbar() {
                   </Button>
                 </Link>
               ) : (
-                <Link to="/auth/google">
+                <Link to="/auth/google" onClick={() => setIsNavigating(true)}>
                   <Button size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary text-primary-foreground shadow-lg shadow-primary/20 btn-hover-effect">
                     Join Community
                   </Button>

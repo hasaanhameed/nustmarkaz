@@ -24,8 +24,11 @@ const VALID_NUST_DOMAINS = [
     'student.nust.edu.pk'
 ];
 
+import { useUser } from '@/contexts/UserContext';
+
 export default function AuthCallbackPage() {
     const navigate = useNavigate();
+    const { refetchUser } = useUser();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -67,6 +70,8 @@ export default function AuthCallbackPage() {
 
                     // User exists - login successful
                     localStorage.setItem('access_token', response.access_token);
+                    // Force a refetch to update UserContext state immediately
+                    await refetchUser();
                     navigate('/dashboard');
                 } catch (err) {
                     // User does not exist (404) or other error -> go to complete profile
