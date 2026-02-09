@@ -125,7 +125,7 @@ export default function SocietyDetailsPage() {
                     <Star
                         key={star}
                         className={`${size} ${star <= rating
-                            ? "fill-yellow-400 text-yellow-400"
+                            ? "fill-primary text-primary"
                             : "fill-gray-200 text-gray-200"
                             }`}
                     />
@@ -313,8 +313,8 @@ export default function SocietyDetailsPage() {
                                         >
                                             <Star
                                                 className={`w-8 h-8 ${star <= newRating
-                                                    ? "fill-yellow-400 text-yellow-400"
-                                                    : "fill-gray-200 text-gray-200 hover:fill-yellow-200 hover:text-yellow-200"
+                                                    ? "fill-primary text-primary"
+                                                    : "fill-gray-200 text-gray-200 hover:fill-primary/50 hover:text-primary/50"
                                                     }`}
                                             />
                                         </button>

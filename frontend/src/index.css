@@ -28,12 +28,13 @@
     --muted: 210 20% 94%;
     --muted-foreground: 215 16% 47%;
 
-    /* Accent - Warm Human Gold */
-    --accent: 38 92% 50%;
+    /* Accent - Vibrant Blue (replacing Gold) */
+    --accent: 213 94% 68%;
     --accent-foreground: 210 40% 98%;
 
     /* UI States */
-    --destructive: 0 84% 60%;
+    /* Destructive - Deep Blue (replacing Red) */
+    --destructive: 226 71% 40%;
     --destructive-foreground: 210 40% 98%;
 
     --success: 142 72% 29%;
@@ -85,10 +86,10 @@
     --muted: 222 47% 12%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 205 90% 55%;
+    --accent: 213 90% 70%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 63% 31%;
+    --destructive: 226 60% 45%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217 32% 17%;

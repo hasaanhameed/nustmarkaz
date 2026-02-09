@@ -284,16 +284,8 @@ export default function ProductDetailPage() {
               ) : (
                 <>
                   <Button variant="outline" className="flex-1 gap-2">
-                    <Heart className="h-4 w-4" />
-                    Save
-                  </Button>
-                  <Button variant="outline" className="flex-1 gap-2">
                     <Share2 className="h-4 w-4" />
                     Share
-                  </Button>
-                  <Button variant="outline" className="flex-1 gap-2">
-                    <Flag className="h-4 w-4" />
-                    Report
                   </Button>
                 </>
               )}

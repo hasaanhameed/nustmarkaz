@@ -124,7 +124,7 @@ export default function SocietiesPage() {
 
                                         {/* Rating Badge */}
                                         <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-lg">
-                                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                            <Star className="w-4 h-4 fill-primary text-primary" />
                                             <span className="font-semibold text-sm text-gray-900">
                                                 {society.average_rating > 0
                                                     ? society.average_rating.toFixed(1)
