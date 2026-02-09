@@ -33,9 +33,9 @@
     --accent-foreground: 210 40% 98%;
 
     /* UI States */
-    /* Destructive - Deep Blue (replacing Red) */
-    --destructive: 226 71% 40%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive - Very Light Blue for distinction */
+    --destructive: 210 96% 89%;
+    --destructive-foreground: 222 47% 11%;
 
     --success: 142 72% 29%;
     --success-foreground: 210 40% 98%;
@@ -89,7 +89,8 @@
     --accent: 213 90% 70%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 226 60% 45%;
+    --destructive: 210 96% 15%;
+    /* Keep dark mode destructive dark, but distinct */
     --destructive-foreground: 210 40% 98%;
 
     --border: 217 32% 17%;
