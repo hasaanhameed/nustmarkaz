@@ -70,18 +70,9 @@ export default function AuthCallbackPage() {
 
                     // User exists - login successful
                     localStorage.setItem('access_token', response.access_token);
-
-                    // Verify the token works by fetching user data before reloading
-                    try {
-                        await refetchUser();
-                        // Small delay to ensure localStorage is persisted
-                        setTimeout(() => {
-                            window.location.href = '/dashboard';
-                        }, 100);
-                    } catch (tokenError) {
-                        console.error("Token validation failed after login:", tokenError);
-                        throw new Error("Failed to validate login session");
-                    }
+                    // Force a refetch to update UserContext state immediately
+                    await refetchUser();
+                    navigate('/dashboard');
                 } catch (err) {
                     // User does not exist (404) or other error -> go to complete profile
                     console.log("User not found in backend, redirecting to complete profile");
