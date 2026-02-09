@@ -15,14 +15,18 @@ import {
   User,
   Navigation,
   MessageCircle,
+  Share2,
+  Trash2,
 } from "lucide-react";
 import { Ride, getRideById } from "@/api/ride";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { format } from "date-fns";
+import { useUser } from "@/contexts/UserContext";
 
 export default function RideDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user: currentUser } = useUser();
   const [ride, setRide] = useState<Ride | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -232,6 +236,34 @@ export default function RideDetailPage() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-4 space-y-4">
+              {/* Action Buttons */}
+              {ride.requester?.id === currentUser?.id ? (
+                <div className="space-y-3">
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      toast.error("Delete functionality not implemented in this view yet");
+                    }}
+                    className="w-full gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete Request
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Link copied to clipboard!");
+                  }}
+                >
+                  <Share2 className="h-4 w-4" />
+                  Share Ride Request
+                </Button>
+              )}
+
               {/* Safety Tips */}
               <div className="bg-warning/5 border border-warning/20 rounded-lg p-4">
                 <div className="flex items-start gap-2 mb-2">

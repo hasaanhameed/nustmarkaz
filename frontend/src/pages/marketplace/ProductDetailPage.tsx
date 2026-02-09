@@ -128,6 +128,11 @@ export default function ProductDetailPage() {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard!");
+  };
+
   return (
     <Layout>
       <div className="container-custom py-8">
@@ -283,7 +288,7 @@ export default function ProductDetailPage() {
                 </>
               ) : (
                 <>
-                  <Button variant="outline" className="flex-1 gap-2">
+                  <Button variant="outline" className="flex-1 gap-2" onClick={handleShare}>
                     <Share2 className="h-4 w-4" />
                     Share
                   </Button>

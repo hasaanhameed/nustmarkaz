@@ -278,7 +278,10 @@ export default function EventsDetailPage() {
                     </AlertDialog>
                   </div>
                 ) : (
-                  <Button variant="outline" className="w-full gap-2">
+                  <Button variant="outline" className="w-full gap-2" onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Link copied to clipboard!");
+                  }}>
                     <Share2 className="h-4 w-4" />
                     Share Event
                   </Button>
