@@ -116,31 +116,6 @@ export default function DonationsPage() {
                 />
               )}
             </div>
-
-            {/* Sidebar */}
-            <div className="lg:col-span-1 hidden lg:block">
-              <div className="sticky top-20 space-y-6">
-                {/* Stats Card */}
-                <div className="bg-muted/50 rounded-lg p-4 border">
-                  <h3 className="font-semibold mb-3">Active Drives</h3>
-                  <p className="text-3xl font-bold text-primary mb-2">
-                    {
-                      donations.filter((d) => {
-                        const daysLeft = Math.ceil(
-                          (new Date(d.end_date).getTime() -
-                            new Date().getTime()) /
-                          (1000 * 60 * 60 * 24),
-                        );
-                        return daysLeft > 0;
-                      }).length
-                    }
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    out of {donations.length} total
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
