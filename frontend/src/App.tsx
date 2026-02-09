@@ -10,7 +10,6 @@ import SuccessPage from './pages/auth/SuccessPage';
 
 // Pages
 import LandingPage from "./pages/LandingPage";
-import OldLoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import MarketplacePage from "./pages/marketplace/MarketplacePage";
@@ -89,7 +88,7 @@ const App = () => (
             <Route path="/terms" element={<TermsOfService />} />
 
             {/* Auth Routes */}
-            <Route path="/auth/login" element={<OldLoginPage />} />
+            <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/google" element={<LoginPage />} />
             <Route path="/auth/signin" element={<LoginPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
