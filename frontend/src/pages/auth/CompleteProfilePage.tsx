@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { createUser } from '@/api/user';
 import { Layout } from '@/components/layout/Layout';
@@ -8,6 +9,7 @@ import { Loader2, Eye, EyeOff } from 'lucide-react';
 
 export default function CompleteProfilePage() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [department, setDepartment] = useState('');
@@ -85,6 +87,9 @@ export default function CompleteProfilePage() {
             // Store token from backend response
             if (response.access_token) {
                 localStorage.setItem('access_token', response.access_token);
+
+                // Invalidate user query to trigger immediate refetch with new token
+                queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
             }
 
             // Clear Supabase session as we're using backend auth now
