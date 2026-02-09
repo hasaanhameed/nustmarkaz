@@ -13,7 +13,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const formData = new FormData();
     formData.append('username', email);  // OAuth2 uses 'username' field
     formData.append('password', password);
-    
+
     const response = await api.post<LoginResponse>('/login', formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -22,6 +22,16 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     return response.data;
   } catch (error) {
     console.error("Login failed", error);
+    throw error;
+  }
+};
+
+export const socialLogin = async (email: string): Promise<LoginResponse> => {
+  try {
+    const response = await api.post<LoginResponse>('/authentication/login/social', { email });
+    return response.data;
+  } catch (error) {
+    console.error("Social login check failed", error);
     throw error;
   }
 };

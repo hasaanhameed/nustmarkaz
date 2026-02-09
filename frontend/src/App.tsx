@@ -3,14 +3,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import GoogleLoginPage from './pages/auth/GoogleLoginPage';
+import LoginPage from './pages/auth/LoginPage';
 import AuthCallbackPage from './pages/auth/AuthCallbackPage';
 import JoinPage from './pages/auth/JoinPage';
 import SuccessPage from './pages/auth/SuccessPage';
 
 // Pages
 import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/auth/LoginPage";
+import OldLoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import MarketplacePage from "./pages/marketplace/MarketplacePage";
@@ -89,8 +89,9 @@ const App = () => (
             <Route path="/terms" element={<TermsOfService />} />
 
             {/* Auth Routes */}
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/auth/google" element={<GoogleLoginPage />} />
+            <Route path="/auth/login" element={<OldLoginPage />} />
+            <Route path="/auth/google" element={<LoginPage />} />
+            <Route path="/auth/signin" element={<LoginPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/auth/complete-profile" element={<CompleteProfilePage />} />
             <Route path="/auth/success" element={<SuccessPage />} />

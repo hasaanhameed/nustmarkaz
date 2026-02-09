@@ -25,3 +25,25 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     access_token = create_access_token(data={"sub": db_user.email})
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+from schemas.auth import SocialLoginRequest
+
+@router.post("/login/social", response_model=Token)
+def social_login(request: SocialLoginRequest, db: Session = Depends(get_db)):
+    """
+    Check if a user exists by email and return an access token if they do.
+    Used for social login flows where the frontend has already verified the identity.
+    """
+    db_user = db.query(User).filter(User.email == request.email).first()
+
+    if db_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    # Create the JWT token for the user
+    access_token = create_access_token(data={"sub": db_user.email})
+
+    return {"access_token": access_token, "token_type": "bearer"}

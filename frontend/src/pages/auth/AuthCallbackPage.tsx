@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Layout } from '@/components/layout/Layout';
 import { Loader2 } from 'lucide-react';
 import api from '@/api/api';
+import { socialLogin } from '@/api/auth';
 
 const VALID_NUST_DOMAINS = [
     'seecs.edu.pk',
@@ -19,7 +20,8 @@ const VALID_NUST_DOMAINS = [
     'iese.edu.pk',
     'igis.edu.pk',
     'uspcase.edu.pk',
-    'nust.edu.pk'
+    'nust.edu.pk',
+    'student.nust.edu.pk'
 ];
 
 export default function AuthCallbackPage() {
@@ -48,6 +50,10 @@ export default function AuthCallbackPage() {
                     throw new Error('No email found in session');
                 }
 
+
+
+                // ... inside handleCallback ...
+
                 // Verify NUST email domain
                 const domain = userEmail.split('@')[1];
                 if (!VALID_NUST_DOMAINS.includes(domain)) {
@@ -55,16 +61,16 @@ export default function AuthCallbackPage() {
                     throw new Error(`Only NUST email addresses are allowed. You used: ${userEmail}`);
                 }
 
-                // Check if user exists in backend by trying to login
+                // Check if user exists in backend
                 try {
-                    // Try to get user info from backend using email
-                    // Since we don't have a check endpoint, we'll use a different approach
-                    // Store session and navigate to complete profile
-                    // The complete profile page will handle user creation
-                    localStorage.setItem('supabase_session', JSON.stringify(session));
-                    navigate('/auth/complete-profile');
+                    const response = await socialLogin(userEmail);
+
+                    // User exists - login successful
+                    localStorage.setItem('access_token', response.access_token);
+                    navigate('/dashboard');
                 } catch (err) {
-                    // If user doesn't exist, go to complete profile
+                    // User does not exist (404) or other error -> go to complete profile
+                    console.log("User not found in backend, redirecting to complete profile");
                     localStorage.setItem('supabase_session', JSON.stringify(session));
                     navigate('/auth/complete-profile');
                 }

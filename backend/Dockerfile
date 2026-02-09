@@ -24,6 +24,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 COPY --chown=appuser:appuser . .
 
-USER appuser
+USER appuser 
 
-CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT"]
+EXPOSE 8000 
+
+CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"]

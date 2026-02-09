@@ -1,140 +1,120 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ModernBackground } from "@/components/ui/modern-background";
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
-import { login } from "@/api/auth";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useNavigate } from 'react-router-dom';
+import { Layout } from '@/components/layout/Layout';
+import { Card } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState<string | null>(null); // 'google' | 'azure' | null
+  const [error, setError] = useState<string | null>(null);
 
-  const validateEmail = (email: string) => {
-    // Strict NUST-style email validation:
-    // 1. Must start with a letter (blocks random number IDs or "123@...")
-    // 2. Contains standard characters
-    // 3. Must have a domain with at least one dot
-    const re = /^[a-zA-Z][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return re.test(email);
-  };
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      const backendToken = localStorage.getItem('access_token');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+      if (data.session && backendToken) {
+        // Both Supabase AND backend auth exist - go to dashboard
+        navigate('/dashboard');
+      } else if (data.session && !backendToken) {
+        // Has Supabase session but no backend token - complete profile
+        navigate('/auth/complete-profile');
+      }
+      // Otherwise stay on this page to show login button
+    };
+    checkUser();
+  }, [navigate]);
 
-    if (!email.trim()) {
-      setError("Email is required. Please enter your campus email.");
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      setError("Incorrect email. Please enter your correct NUST email account.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      return;
-    }
-
-    setIsLoading(true);
-
+  const handleLogin = async (provider: 'google' | 'azure') => {
     try {
-      const data = await login(email, password);
-      localStorage.setItem("access_token", data.access_token);
+      setLoading(provider);
+      setError(null);
 
-      // Invalidate and refetch user query to update the UI
-      await queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: provider === 'azure' ? 'email openid profile' : undefined
+        }
+      });
 
-      navigate("/dashboard");
-    } catch (err) {
-      setError("Authentication failed. Please verify your credentials and try again.");
-    } finally {
-      setIsLoading(false);
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+      setLoading(null);
     }
   };
 
   return (
-    <Layout showFooter={false}>
-      <div className="relative min-h-[calc(100vh-80px)] overflow-hidden flex items-center justify-center p-6 md:p-12">
-        <ModernBackground />
+    <Layout>
+      <section className="container-custom py-16">
+        <div className="max-w-md mx-auto">
+          <Card className="p-8 text-center">
+            <h1 className="text-3xl font-bold mb-2 text-primary">
+              Welcome to NustMarkaz
+            </h1>
+            <p className="text-muted-foreground mb-8">
+              Sign in with your NUST email
+            </p>
 
-        <div className="w-full max-w-md animate-entrance">
-          <div className="bg-white/40 backdrop-blur-3xl rounded-[3.5rem] border border-white/40 p-10 md:p-16 shadow-2xl overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-            <div className="relative z-10">
-              <div className="text-center mb-12">
-                <h1 className="text-5xl font-black text-foreground mb-4 tracking-[-0.04em]">Welcome Back.</h1>
-                <p className="text-muted-foreground font-bold text-lg opacity-70">Sign in to your campus account.</p>
+            {error && (
+              <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <p className="text-destructive text-sm">{error}</p>
               </div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="space-y-3">
-                  <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">Email</Label>
-                  <div className="relative group/input">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Your NUST Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-14 pl-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all"
-                      disabled={isLoading}
-                    />
-                  </div>
-                </div>
+            <div className="space-y-4">
+              {/* Google Login Button */}
+              <button
+                onClick={() => handleLogin('google')}
+                disabled={!!loading}
+                className="w-full bg-white text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              >
+                {loading === 'google' ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Connecting to Google...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                      <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>
+                    Sign in with Google
+                  </>
+                )}
+              </button>
 
-                <div className="space-y-3">
-                  <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest pl-1 opacity-50">Password</Label>
-                  <div className="relative group/input">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within/input:text-primary" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-14 pl-12 pr-12 rounded-2xl bg-white/50 border-white/40 focus:bg-white focus:ring-primary/20 transition-all"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                </div>
-
-                {error && <p className="text-sm font-bold text-red-500 text-center">{error}</p>}
-
-                <Button type="submit" className="w-full h-16 text-xl font-black rounded-3xl shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="mr-3 h-6 w-6 animate-spin" /> : "Sign In"}
-                </Button>
-              </form>
-
-              <p className="text-center text-base mt-10 font-bold text-muted-foreground">
-                Don't have an account?{" "}
-                <Link to="/join" className="text-primary hover:underline">Sign up</Link>
-              </p>
+              {/* Outlook Login Button */}
+              <button
+                onClick={() => handleLogin('azure')}
+                disabled={!!loading}
+                className="w-full bg-[#0078D4] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#0078D4]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              >
+                {loading === 'azure' ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Connecting to Outlook...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M14,1.5C14,1.5 14,10 14,10C14,10 23,11.5 23,11.5C23,11.5 23,0.5 23,0.5C23,0.5 14,1.5 14,1.5ZM13,2C13,2 2,3.5 2,3.5C2,3.5 2,19.5 2,19.5C2,19.5 13,21 13,21C13,21 13,2 13,2ZM14,11C14,11 14,22 14,22C14,22 23,23.5 23,23.5C23,23.5 23,12.5 23,12.5C23,12.5 14,11 14,11ZM7,7.125C7,7.125 9.5,7.125 9.5,7.125C9.5,7.125 9.5,9.625 9.5,9.625C9.5,9.625 7,9.625 7,9.625C7,9.625 7,7.125 7,7.125ZM16.5,5.125C16.5,5.125 19,5.125 19,5.125C19,5.125 19,7.625 19,7.625C19,7.625 16.5,7.625 16.5,7.625C16.5,7.625 16.5,5.125 16.5,5.125ZM16.5,15.125C16.5,15.125 19,15.125 19,15.125C19,15.125 19,17.625 19,17.625C19,17.625 16.5,17.625 16.5,17.625C16.5,17.625 16.5,15.125 16.5,15.125ZM7,13.125C7,13.125 9.5,13.125 9.5,13.125C9.5,13.125 9.5,15.625 9.5,15.625C9.5,15.625 7,15.625 7,15.625C7,15.625 7,13.125 7,13.125Z" />
+                    </svg>
+                    Sign in with Outlook
+                  </>
+                )}
+              </button>
             </div>
-          </div>
+          </Card>
         </div>
-      </div>
+      </section>
     </Layout>
   );
 }
