@@ -179,7 +179,7 @@ export default function CompleteProfilePage() {
                                     <option value="SEECS">SEECS (School of Electrical Engineering & Computer Science)</option>
                                     <option value="SMME">SMME (School of Mechanical & Manufacturing Engineering)</option>
                                     <option value="SCME">SCME (School of Civil & Environmental Engineering)</option>
-                                    <option value="ASAB">ASAB (School of Aerospace & Aviation)</option>
+                                    <option value="ASAB">ASAB (Ata-ur-RehmanSchool of Biosciences)</option>
                                     <option value="NBS">NBS (Nust Business School)</option>
                                     <option value="S3H">S3H (School of Social Sciences & Humanities)</option>
                                     <option value="SNS">SNS (School of Natural Sciences)</option>
