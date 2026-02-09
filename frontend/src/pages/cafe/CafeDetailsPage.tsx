@@ -106,6 +106,8 @@ export default function CafeDetailsPage() {
 
       if (err.response?.status === 401) {
         setSubmitError("Please log in to submit a review");
+      } else if (err.response?.status === 400) {
+        setSubmitError("One user can only post one review per cafe at a time.");
       } else if (err.response?.status === 404) {
         setSubmitError("Cafe not found");
       } else {

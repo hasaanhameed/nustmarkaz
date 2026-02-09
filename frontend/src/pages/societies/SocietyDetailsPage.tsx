@@ -108,10 +108,7 @@ export default function SocietyDetailsPage() {
             if (err.response?.status === 401) {
                 setSubmitError("Please log in to submit a review");
             } else if (err.response?.status === 400) {
-                setSubmitError(
-                    err.response?.data?.detail ||
-                    "You have already reviewed this society. You can update your existing review instead."
-                );
+                setSubmitError("One user can only post one review per society at a time.");
             } else if (err.response?.status === 404) {
                 setSubmitError("Society not found");
             } else {
