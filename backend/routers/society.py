@@ -176,3 +176,21 @@ def create_review(
 @router.get("/reviews/{society_id}", response_model=List[SocietyReviewResponse])
 def get_society_reviews(society_id: int, db: Session = Depends(get_db)):
     return db.query(SocietyReview).filter(SocietyReview.society_id == society_id).all()
+
+@router.delete("/reviews/{review_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_society_review(
+    review_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Delete a review (only by the user who created it)"""
+    review = db.query(SocietyReview).filter(SocietyReview.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    if review.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this review")
+    
+    db.delete(review)
+    db.commit()
+    return
