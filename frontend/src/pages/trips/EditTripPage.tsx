@@ -15,7 +15,7 @@ export default function EditTripPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [trip, setTrip] = useState<Trip | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -46,7 +46,7 @@ export default function EditTripPage() {
           start_date: data.start_date.split('T')[0],
           end_date: data.end_date.split('T')[0],
           departure_location: data.departure_location,
-          max_participants: data.max_participants.toString(),
+          max_participants: data.max_participants ? data.max_participants.toString() : "",
           cost_per_person: data.cost_per_person.toString(),
           contact_number: data.contact_number,
         });
@@ -64,21 +64,21 @@ export default function EditTripPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!id || !trip) return;
 
-    if (!formData.title.trim() || !formData.description.trim() || 
-        !formData.destination.trim() || !formData.start_date || !formData.end_date ||
-        !formData.departure_location.trim() || !formData.max_participants || 
-        !formData.cost_per_person || !formData.contact_number.trim()) {
+    if (!formData.title.trim() || !formData.description.trim() ||
+      !formData.destination.trim() || !formData.start_date || !formData.end_date ||
+      !formData.departure_location.trim() ||
+      !formData.cost_per_person || !formData.contact_number.trim()) {
       toast.error("Please fill in all fields.");
       return;
     }
 
-    const maxParticipants = parseInt(formData.max_participants);
+    const maxParticipants = formData.max_participants ? parseInt(formData.max_participants) : undefined;
     const costPerPerson = parseFloat(formData.cost_per_person);
-    
-    if (isNaN(maxParticipants) || maxParticipants <= 0) {
+
+    if (maxParticipants !== undefined && (isNaN(maxParticipants) || maxParticipants <= 0)) {
       toast.error("Please enter a valid number of participants.");
       return;
     }
@@ -219,14 +219,13 @@ export default function EditTripPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="max_participants">Max Participants *</Label>
+                  <Label htmlFor="max_participants">Max Participants (Optional)</Label>
                   <Input
                     id="max_participants"
                     type="number"
                     value={formData.max_participants}
                     onChange={(e) => setFormData({ ...formData, max_participants: e.target.value })}
                     placeholder="0"
-                    required
                   />
                 </div>
 
