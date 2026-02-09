@@ -84,6 +84,10 @@ const App = () => (
             <Route path="/login" element={<Navigate to="/auth/login" replace />} />
             <Route path="/signup" element={<Navigate to="/auth/google" replace />} />
 
+            {/* Legal */}
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+
             {/* Auth Routes */}
             <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/auth/google" element={<GoogleLoginPage />} />
@@ -144,9 +148,7 @@ const App = () => (
             <Route path="/lost-found/:id" element={<LostFoundDetailPage />} />
             <Route path="/lost-found" element={<LostFoundPage />} />
 
-            {/* Legal */}
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
+
 
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />

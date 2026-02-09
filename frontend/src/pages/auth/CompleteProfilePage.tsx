@@ -18,6 +18,7 @@ export default function CompleteProfilePage() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [agreeTerms, setAgreeTerms] = useState(false);
 
     useEffect(() => {
         const checkSession = async () => {
@@ -62,6 +63,10 @@ export default function CompleteProfilePage() {
         }
         if (password !== confirmPassword) {
             setError('Passwords do not match');
+            return;
+        }
+        if (!agreeTerms) {
+            setError('You must agree to the Terms and Conditions');
             return;
         }
 
