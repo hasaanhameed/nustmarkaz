@@ -8,9 +8,11 @@ import { Label } from '@/components/ui/label';
 import { ModernBackground } from '@/components/ui/modern-background';
 import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { login } from '@/api/auth';
+import { useUser } from '@/contexts/UserContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { refetchUser } = useUser();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -53,6 +55,8 @@ export default function LoginPage() {
       setError(null);
       const response = await login(formData.email, formData.password);
       localStorage.setItem('access_token', response.access_token);
+      // Refetch user data so navbar updates immediately
+      await refetchUser();
       navigate('/dashboard');
     } catch (err: any) {
       console.error(err);
